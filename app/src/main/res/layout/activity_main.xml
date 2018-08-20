@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/activity_material_design"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <pl.itomaszjanik.test.NoTouchViewPager
+            android:id="@+id/viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+    />
+
+    <me.majiajie.pagerbottomtabstrip.PageNavigationView
+            android:id="@+id/tab_top"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="@drawable/tab_background"
+            android:layout_gravity="top"
+    />
+
+    <me.majiajie.pagerbottomtabstrip.PageNavigationView
+            android:id="@+id/tab_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="@drawable/tab_background"
+            android:layout_gravity="bottom"
+    />
+
+</FrameLayout>
