@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/activity_material_design"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
+             android:id="@+id/activity_material_design"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             tools:context=".MainActivity"
+>
 
     <pl.itomaszjanik.test.NoTouchViewPager
             android:id="@+id/viewPager"
@@ -11,8 +13,10 @@
     />
 
     <LinearLayout
+            android:id="@+id/navigation_top"
             android:layout_width="match_parent"
             android:layout_height="56dp"
+            android:baselineAligned="false"
             android:background="@drawable/top_background"
             android:layout_gravity="top"
             android:weightSum="100">
@@ -20,19 +24,25 @@
         <RelativeLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="33">
+                android:layout_weight="33"
+                android:onClick="clickTop"
+                android:clickable="true"
+                android:focusable="true">
 
             <ImageButton
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="?android:selectableItemBackground"
+                    android:clickable="false"
             />
 
-            <ImageView
+            <pl.itomaszjanik.test.CustomImage
+                    android:id="@+id/icon_top"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:src="@drawable/ic_restore_gray_24dp"
+                    android:clickable="false"
             />
 
         </RelativeLayout>
@@ -40,7 +50,9 @@
         <RelativeLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="33">
+                android:layout_weight="33"
+                android:clickable="true"
+                android:focusable="true">
 
             <TextView
                     android:layout_width="wrap_content"
@@ -56,19 +68,26 @@
         <RelativeLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="33">
+                android:layout_weight="33"
+                android:onClick="clickProfile"
+
+        >
+
 
             <ImageButton
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="?android:selectableItemBackground"
+                    android:clickable="false"
             />
 
-            <ImageView
+            <pl.itomaszjanik.test.CustomImage
+                    android:id="@+id/icon_profile"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:src="@drawable/ic_restore_gray_24dp"
+                    android:clickable="false"
             />
 
         </RelativeLayout>
@@ -78,6 +97,7 @@
     </LinearLayout>
 
     <LinearLayout
+            android:id="@+id/navigation_bottom"
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:background="@drawable/bottom_background"
@@ -85,21 +105,28 @@
             android:weightSum="100">
 
         <RelativeLayout
+                android:id="@+id/feed"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="33">
+                android:layout_weight="33"
+                android:clickable="true"
+                android:focusable="true"
+                android:onClick="clickFeed">
 
             <ImageButton
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="?android:selectableItemBackground"
+                    android:clickable="false"
             />
 
-            <ImageView
+            <pl.itomaszjanik.test.CustomImage
+                    android:id="@+id/icon_feed"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:src="@drawable/ic_restore_gray_24dp"
+                    android:clickable="false"
             />
 
         </RelativeLayout>
@@ -107,19 +134,25 @@
         <RelativeLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="33">
+                android:layout_weight="33"
+                android:clickable="true"
+                android:focusable="true"
+                android:onClick="clickAdd">
 
             <ImageButton
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="?android:selectableItemBackground"
+                    android:clickable="false"
             />
 
-            <ImageView
+            <pl.itomaszjanik.test.CustomImage
+                    android:id="@+id/icon_add"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:src="@drawable/ic_add_gray_24dp"
+                    android:clickable="false"
             />
 
         </RelativeLayout>
@@ -127,19 +160,25 @@
         <RelativeLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="33">
+                android:layout_weight="33"
+                android:clickable="true"
+                android:focusable="true"
+                android:onClick="clickSearch">
 
             <ImageButton
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="?android:selectableItemBackground"
+                    android:clickable="false"
             />
 
-            <ImageView
+            <pl.itomaszjanik.test.CustomImage
+                    android:id="@+id/icon_search"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:src="@drawable/ic_nearby_gray_24dp"
+                    android:clickable="false"
             />
 
         </RelativeLayout>
