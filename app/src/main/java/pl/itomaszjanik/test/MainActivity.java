@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import android.widget.Toast;
 import me.majiajie.pagerbottomtabstrip.NavigationController;
 import me.majiajie.pagerbottomtabstrip.PageNavigationView;
 import me.majiajie.pagerbottomtabstrip.item.BaseTabItem;
@@ -25,20 +26,26 @@ import pl.itomaszjanik.test.Fragments.AddPost;
 import pl.itomaszjanik.test.Fragments.ItemFeed;
 import pl.itomaszjanik.test.Fragments.Search;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class MainActivity extends AppCompatActivity {
 
     private static NavigationController mNavigationControllerBottom, mNavigationControllerTop;
+    private TestViewPagerAdapter testViewPagerAdapter;
+    private ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+      //  testViewPagerAdapter = new TestViewPagerAdapter(getSupportFragmentManager());
 
-        initUpperTab();
-        initLowerTab();
+//        initUpperTab();
+//        initLowerTab();
+//
+        viewPager = (ViewPager) findViewById(R.id.viewPager);
+        viewPager.setAdapter(testViewPagerAdapter);
+
+        //mNavigationControllerBottom.setupWithViewPager(viewPager);
+      //  mNavigationControllerTop.setupWithViewPager(viewPager);
     }
 
     private void initUpperTab(){
@@ -50,9 +57,6 @@ public class MainActivity extends AppCompatActivity {
                 .addItem(newItem(R.drawable.ic_restore_gray_24dp,R.drawable.ic_restore_red_24dp))
                 .build();
 
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
-        viewPager.setAdapter(new TestViewPagerAdapter(getSupportFragmentManager()));
-        mNavigationControllerTop.setupWithViewPager(viewPager);
     }
 
     private void initLowerTab(){
@@ -64,9 +68,6 @@ public class MainActivity extends AppCompatActivity {
                 .addItem(newItem(R.drawable.ic_restore_gray_24dp,R.drawable.ic_restore_red_24dp))
                 .build();
 
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
-        viewPager.setAdapter(new TestViewPagerAdapter(getSupportFragmentManager()));
-        mNavigationControllerBottom.setupWithViewPager(viewPager);
     }
 
     private BaseTabItem newItem(int drawable, int checkedDrawable){
@@ -96,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
+            Toast.makeText(MainActivity.this, ""+getCount(), Toast.LENGTH_LONG).show();
             switch (position){
                 case 0:
                     return ItemFeed.newInstance();
@@ -106,6 +108,8 @@ public class MainActivity extends AppCompatActivity {
                 case 3:
                     return Search.newInstance();
                 case 4:
+                    return Search.newInstance();
+                case 5:
                     return Search.newInstance();
                 default:
                     return ItemFeed.newInstance();
