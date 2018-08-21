@@ -14,12 +14,11 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.CustomViewHold
     private List<Note> notes;
 
     public class CustomViewHolder extends RecyclerView.ViewHolder {
-        public TextView movieName, genre, rating;
+        public TextView content, rating;
 
         public CustomViewHolder(View view) {
             super(view);
-            movieName = (TextView) view.findViewById(R.id.movieName);
-            genre = (TextView) view.findViewById(R.id.genre);
+            content = (TextView) view.findViewById(R.id.note_content);
             rating = (TextView) view.findViewById(R.id.rating);
         }
     }
@@ -37,8 +36,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.CustomViewHold
     @Override
     public void onBindViewHolder(CustomViewHolder holder, int position) {
         Note note = notes.get(position);
-        holder.movieName.setText(note.getContent());
-        holder.genre.setText(note.getAuthor());
+        holder.content.setText(note.getContent());
         holder.rating.setText(String.valueOf(note.getRating()));
     }
 

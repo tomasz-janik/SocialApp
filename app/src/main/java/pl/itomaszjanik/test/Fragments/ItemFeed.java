@@ -3,6 +3,7 @@ package pl.itomaszjanik.test.Fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
@@ -43,21 +44,23 @@ public class ItemFeed extends Fragment {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(new NoteAdapter(createPosts()));
 
-        //recyclerView.addItemDecoration(new DividerItemDecoration(view.getContext(), R.drawable.item_separator));
-        recyclerView.addItemDecoration(new DividerItemDecoration(view.getContext(),DividerItemDecoration.VERTICAL));
 
-        int space = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 64,
-                getResources().getDisplayMetrics());
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(view.getContext(), DividerItemDecoration.VERTICAL);
+        dividerItemDecoration.setDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.item_separator, null));
+        //recyclerView.addItemDecoration(new DividerItemDecoration(view.getContext(), R.drawable.item_separator));
+        recyclerView.addItemDecoration(dividerItemDecoration);
+
+        int space = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 64, getResources().getDisplayMetrics());
         recyclerView.addItemDecoration(new SpacesItemDecoration(space));
 
-        recyclerView.addOnScrollListener(new MainActivity.ListScrollListener());
+        recyclerView.addOnScrollListener(new ListScrollListener((NavigationController) getActivity().findViewById(R.id.navigation_bottom)));
     }
 
     private List<Note> createPosts(){
         List<Note> list = new ArrayList<Note>();
         list.add(new Note("Ja pierdole XD 18 osób przede mną w kolejce do biedry. Za co XD ","moj stary"));
         list.add(new Note("Dlaczego w każdym sklepie w kraju ludzie robią normalne zakupy a w Biedrze jakby jutro ruscy mieli wbić z krymu? xD Come on 20 kilo cukru kurwa? XD", "ty"));
-        list.add(new Note("Stoisz i czekasz na tramwaj. Chcesz kupic bilet na przystanku i 10 osob kolejki. W tramwaju 5 xD Walić kupie ten miesięczny\n", "on"));
+        list.add(new Note("Stoisz i czekasz na tramwaj. Chcesz kupic bilet na przystanku i 10 osob kolejki. W tramwaju 5 xD Walić kupie ten miesięczny", "on"));
         list.add(new Note("kokaina","oe"));
         list.add(new Note("Dobra kurwa XD Miałem jechać autobusem 20 minut do domu i chcialem kupic bilet w autobusie. Czekałem na to jakies 16 minut i podbił do mnie kanar. Pomijając rozmowe powiedział mi, że i tak dostane mandat bo jebie go to ze nie zdazylem przez kolejke kupic biletów. Ja pierdole", "ja"));
         list.add(new Note("Jak mnie ten kraj wkurwia XD","oe"));

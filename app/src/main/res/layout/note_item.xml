@@ -5,49 +5,74 @@
                 android:layout_height="wrap_content"
                 android:focusable="true"
                 android:clickable="true"
-                android:background="?android:attr/selectableItemBackground"
->
+                android:layout_marginLeft="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                android:background="@drawable/box_content">
 
-    <TextView
-            android:id="@+id/movieName"
-            android:layout_width="wrap_content"
+
+    <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginLeft="17dp"
-            android:layout_marginStart="17dp"
-            android:layout_marginTop="13dp"
-            android:text="Movie Name"
-            android:textSize="18dp"
-            android:textColor="@color/colorPrimaryDark" />
+            android:background="?android:attr/selectableItemBackground">
 
-    <TextView
-            android:id="@+id/genre"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/movieName"
-            android:layout_alignStart="@+id/movieName"
-            android:layout_below="@+id/movieName"
-            android:text="Crime, Drama" android:visibility="invisible"/>
+        <TextView
+                android:id="@+id/note_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:text="Content"
+                android:textSize="18sp"
+                android:textColor="@color/colorPrimaryDark"
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginRight="12dp"
+                android:layout_marginEnd="12dp"/>
 
-    <ImageView
-            android:id="@+id/ratingImg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
 
-            android:layout_toLeftOf="@+id/rating"
-            android:layout_toStartOf="@+id/rating"
-            app:srcCompat="@android:drawable/btn_star_big_on" />
 
-    <TextView
-            android:id="@+id/rating"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:visibility="invisible"
-    />
+        <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/note_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginLeft="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginBottom="8dp">
+
+            <ImageView
+                    android:id="@+id/note_fire"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="32dp"
+                    android:minHeight="32dp"
+                    app:srcCompat="@drawable/ic_fire_red_24dp"/>
+
+            <TextView
+                    android:id="@+id/rating"
+                    android:text="1500"
+                    android:textSize="16sp"
+                    android:textAlignment="textStart"
+                    android:gravity="start"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@id/note_fire"
+                    android:layout_toEndOf="@id/note_fire"
+                    android:layout_marginLeft="1dp"
+                    android:layout_marginStart="1dp"/>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+
+
+
 
 </RelativeLayout>

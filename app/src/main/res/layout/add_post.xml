@@ -1,77 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<ScrollView
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-    <pl.itomaszjanik.test.NoTouchViewPager
-            android:id="@+id/viewPager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-    />
-
-    <EditText
-            android:id="@+id/add_content"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="128dp"
-            android:inputType="textMultiLine"
-            android:hint="@string/add_content_hint"
-            android:textAlignment="viewStart"
-            android:gravity="start"
-            android:ems="10"
-            android:background="@drawable/box_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="64dp" android:layout_marginEnd="8dp" android:layout_marginRight="8dp"
-            android:layout_marginStart="8dp" android:layout_marginLeft="8dp" android:padding="10dp"/>
-
-    <EditText
-            android:id="@+id/add_hashes"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/add_content"
-            android:inputType="textMultiLine"
-            android:hint="@string/add_hash_hint"
-            android:textAlignment="viewStart"
-            android:gravity="start"
-            android:ems="10"
-            android:background="@drawable/box_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="16dp" android:layout_marginEnd="8dp" android:layout_marginRight="8dp"
-            android:layout_marginStart="8dp" android:layout_marginLeft="8dp" android:padding="10dp"/>
+        android:layout_height="match_parent"
+        android:id="@+id/scroll_view"
+        android:clickable="true"
+        android:focusable="true">
 
     <RelativeLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/add_hashes"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="16dp"
+            android:id="@+id/layout"
+            android:focusableInTouchMode="true"
             android:clickable="true"
             android:focusable="true"
-            android:onClick="clickCommit"
-    >
+            android:background="#efefef">
 
-        <ImageButton
-                android:id="@+id/add_commit"
+        <pl.itomaszjanik.test.EditTextKeyboard
+                android:id="@+id/add_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="128dp"
+                android:inputType="textMultiLine"
+                android:hint="@string/add_content_hint"
+                android:textAlignment="viewStart"
+                android:gravity="start"
+                android:ems="10"
+                android:background="@drawable/box_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="64dp" android:layout_marginEnd="8dp" android:layout_marginRight="8dp"
+                android:layout_marginStart="8dp" android:layout_marginLeft="8dp" android:padding="10dp"/>
+
+        <pl.itomaszjanik.test.EditTextKeyboard
+                android:id="@+id/add_hashes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/add_content"
+                android:inputType="textMultiLine"
+                android:hint="@string/add_hash_hint"
+                android:textAlignment="viewStart"
+                android:gravity="start"
+                android:ems="10"
+                android:background="@drawable/box_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="16dp" android:layout_marginEnd="8dp" android:layout_marginRight="8dp"
+                android:layout_marginStart="8dp" android:layout_marginLeft="8dp" android:padding="10dp"/>
+
+        <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:src="@drawable/circle"
-                android:background="?android:selectableItemBackground"
-                android:clickable="false"
-        />
+                android:layout_below="@id/add_hashes"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="64dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:onClick="clickCommit"
+        >
 
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:textAlignment="center"
-                android:text="@string/add_commit"
-                android:clickable="false"
-        />
+            <ImageButton
+                    android:id="@+id/add_commit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/circle"
+                    android:background="?android:selectableItemBackground"
+                    android:clickable="false"
+            />
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:textAlignment="center"
+                    android:text="@string/add_commit"
+                    android:clickable="false"
+            />
+
+        </RelativeLayout>
 
     </RelativeLayout>
-
-
-</RelativeLayout>
+</ScrollView>

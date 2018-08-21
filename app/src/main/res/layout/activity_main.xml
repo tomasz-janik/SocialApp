@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
-             android:id="@+id/activity_material_design"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             tools:context=".MainActivity"
->
-    <LinearLayout
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/activity_material_design"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#efefef"
+        tools:context=".MainActivity">
+
+    <pl.itomaszjanik.test.NoTouchViewPager
+            android:id="@+id/viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+    />
+
+    <pl.itomaszjanik.test.NavigationController
             android:id="@+id/navigation_top"
             android:layout_width="match_parent"
             android:layout_height="56dp"
@@ -34,7 +43,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:src="@drawable/ic_restore_gray_24dp"
+                    android:src="@drawable/ic_fire_gray_24dp"
                     android:clickable="false"
             />
 
@@ -87,14 +96,15 @@
 
 
 
-    </LinearLayout>
+    </pl.itomaszjanik.test.NavigationController>
 
-    <LinearLayout
+    <pl.itomaszjanik.test.NavigationController
             android:id="@+id/navigation_bottom"
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:background="@drawable/bottom_background"
             android:layout_gravity="bottom"
+            android:layout_alignParentBottom="true"
             android:weightSum="100">
 
         <RelativeLayout
@@ -178,24 +188,6 @@
 
 
 
-    </LinearLayout>
+    </pl.itomaszjanik.test.NavigationController>
 
-    <me.majiajie.pagerbottomtabstrip.PageNavigationView
-            android:id="@+id/tab_top"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:background="@drawable/tab_background"
-            android:layout_gravity="top"
-            android:visibility="gone"
-    />
-
-    <me.majiajie.pagerbottomtabstrip.PageNavigationView
-            android:id="@+id/tab_bottom"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:background="@drawable/tab_background"
-            android:layout_gravity="bottom"
-            android:visibility="gone"
-    />
-
-</FrameLayout>
+</RelativeLayout>

@@ -1,22 +1,12 @@
 package pl.itomaszjanik.test;
 
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.TypedValue;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.*;
 
 import pl.itomaszjanik.test.Fragments.AddPost;
@@ -25,7 +15,7 @@ import pl.itomaszjanik.test.Fragments.Search;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static NavigationController mNavigationControllerBottom, mNavigationControllerTop;
+    private NavigationController mNavigationControllerBottom, mNavigationControllerTop;
     private TestViewPagerAdapter testViewPagerAdapter;
     private ViewPager viewPager;
     private ButtonLogic buttonLogic;
@@ -39,8 +29,8 @@ public class MainActivity extends AppCompatActivity {
         viewPager = (ViewPager) findViewById(R.id.viewPager);
         viewPager.setAdapter(testViewPagerAdapter);
 
-        mNavigationControllerTop = new NavigationController( (LinearLayout) findViewById(R.id.navigation_top));
-        mNavigationControllerBottom = new NavigationController( (LinearLayout) findViewById(R.id.navigation_bottom));
+        mNavigationControllerTop = (NavigationController) findViewById(R.id.navigation_top);
+        mNavigationControllerBottom = (NavigationController) findViewById(R.id.navigation_bottom);
 
         buttonLogic = new ButtonLogic();
         initImages();
@@ -49,11 +39,13 @@ public class MainActivity extends AppCompatActivity {
     private void initImages(){
         ((CustomImage) (findViewById(R.id.icon_feed))).init(R.drawable.ic_restore_red_24dp, R.drawable.ic_restore_gray_24dp);
         ((CustomImage) (findViewById(R.id.icon_feed))).changeState();
+
         ((CustomImage) (findViewById(R.id.icon_add))).init(R.drawable.ic_add_red_24dp, R.drawable.ic_add_gray_24dp);
         ((CustomImage) (findViewById(R.id.icon_search))).init(R.drawable.ic_nearby_red_24dp, R.drawable.ic_nearby_gray_24dp);
-        ((CustomImage) (findViewById(R.id.icon_top))).init(R.drawable.ic_restore_red_24dp, R.drawable.ic_restore_gray_24dp);
+        ((CustomImage) (findViewById(R.id.icon_top))).init(R.drawable.ic_fire_red_24dp, R.drawable.ic_fire_gray_24dp);
         ((CustomImage) (findViewById(R.id.icon_profile))).init(R.drawable.ic_restore_red_24dp, R.drawable.ic_restore_gray_24dp);
     }
+
 
     public void clickFeed(View view){
         buttonLogic.clickFeed();
@@ -72,23 +64,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public static class ListScrollListener extends RecyclerView.OnScrollListener{
-
-        @Override
-        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-            super.onScrolled(recyclerView, dx, dy);
-            if(dy > 8){
-                mNavigationControllerBottom.hideLayout();
-            } else if(dy < -6){
-                mNavigationControllerBottom.showLayout();
-            }
+    @Override
+    public void onBackPressed() {
+        Toast.makeText(this, "mhm",Toast.LENGTH_LONG).show();
+        if (viewPager.getCurrentItem() == Values.INDEX_ADD){
+            clickFeed(null);
         }
-
-        @Override
-        public void onScrollStateChanged (RecyclerView recyclerView, int newState){
-            super.onScrollStateChanged(recyclerView, newState);
-            if (newState == RecyclerView.SCROLL_STATE_IDLE)
-                mNavigationControllerBottom.showLayout();
+        else{
+            super.onBackPressed();
         }
     }
 
@@ -128,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
         ButtonLogic(){}
 
         public void clickFeed(){
+            showNavigation();
             updatePage();
             if (currentPage == Values.INDEX_FEED){
                 viewPager.scrollTo(viewPager.getScrollX(), 0);
@@ -136,18 +120,22 @@ public class MainActivity extends AppCompatActivity {
                 updateColors(currentPage, Values.INDEX_FEED);
                 viewPager.setCurrentItem(Values.INDEX_FEED, true);
             }
+            mNavigationControllerBottom.showLayout();
         }
 
         public void clickAdd(){
             updatePage();
+            showNavigation();
             if (currentPage != Values.INDEX_ADD){
                 updateColors(currentPage, Values.INDEX_ADD);
                 viewPager.setCurrentItem(Values.INDEX_ADD, true);
+                //mNavigationControllerBottom.hideLayout();
             }
         }
 
         public void clickSearch(){
             updatePage();
+            showNavigation();
             if (currentPage != Values.INDEX_SEARCH){
                 updateColors(currentPage, Values.INDEX_SEARCH);
                 viewPager.setCurrentItem(Values.INDEX_SEARCH, true);
@@ -156,6 +144,7 @@ public class MainActivity extends AppCompatActivity {
 
         public void clickTop(){
             updatePage();
+            showNavigation();
             if (currentPage != Values.INDEX_TOP){
                 updateColors(currentPage, Values.INDEX_TOP);
                 viewPager.setCurrentItem(Values.INDEX_TOP, true);
@@ -164,10 +153,15 @@ public class MainActivity extends AppCompatActivity {
 
         public void clickProfile(){
             updatePage();
+            showNavigation();
             if (currentPage != Values.INDEX_PROFILE){
                 updateColors(currentPage, Values.INDEX_PROFILE);
                 viewPager.setCurrentItem(Values.INDEX_PROFILE, true);
             }
+        }
+
+        private void showNavigation(){
+            mNavigationControllerBottom.showLayout();
         }
 
         private void updatePage(){
