@@ -37,13 +37,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initImages(){
-        ((CustomImage) (findViewById(R.id.icon_feed))).init(R.drawable.ic_restore_red_24dp, R.drawable.ic_restore_gray_24dp);
+        ((CustomImage) (findViewById(R.id.icon_feed))).init(R.drawable.icon_wall_active_24dp, R.drawable.icon_wall_inactive_24dp);
         ((CustomImage) (findViewById(R.id.icon_feed))).changeState();
 
-        ((CustomImage) (findViewById(R.id.icon_add))).init(R.drawable.ic_add_red_24dp, R.drawable.ic_add_gray_24dp);
-        ((CustomImage) (findViewById(R.id.icon_search))).init(R.drawable.ic_nearby_red_24dp, R.drawable.ic_nearby_gray_24dp);
-        ((CustomImage) (findViewById(R.id.icon_top))).init(R.drawable.ic_fire_red_24dp, R.drawable.ic_fire_gray_24dp);
-        ((CustomImage) (findViewById(R.id.icon_profile))).init(R.drawable.ic_restore_red_24dp, R.drawable.ic_restore_gray_24dp);
+        ((CustomImage) (findViewById(R.id.icon_add))).init(R.drawable.icon_add_24dp, R.drawable.icon_add_24dp);
+        ((CustomImage) (findViewById(R.id.icon_search))).init(R.drawable.icon_search_active_24dp, R.drawable.icon_search_inactive_24dp);
+        ((CustomImage) (findViewById(R.id.icon_top))).init(R.drawable.ic_fire_red_24dp, R.drawable.ic_fire_red_24dp);
+        ((CustomImage) (findViewById(R.id.icon_profile))).init(R.drawable.icon_profile_inactive_24dp, R.drawable.icon_profile_inactive_24dp);
     }
 
 
@@ -66,7 +66,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Toast.makeText(this, "mhm",Toast.LENGTH_LONG).show();
         if (viewPager.getCurrentItem() == Values.INDEX_ADD){
             clickFeed(null);
         }
