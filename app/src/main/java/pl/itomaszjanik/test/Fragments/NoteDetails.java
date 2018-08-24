@@ -34,16 +34,23 @@ public class NoteDetails extends Fragment {
 
         ((CustomImage) (view.findViewById(R.id.note_details_icon_back))).init(R.drawable.ic_arrow_black_24dp, R.drawable.ic_arrow_black_24dp);
 
+        initListeners(view);
+
+
         Bundle bundle = getArguments();
         if (bundle != null){
             content.setText(bundle.getString("content"));
             hashes.setText(bundle.getString("hashes"));
         }
-
     }
 
-    public void clickBack(View view){
-        getFragmentManager().popBackStackImmediate();
+    private void initListeners(View view){
+        view.findViewById(R.id.note_details_button_back).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getFragmentManager().popBackStackImmediate();
+            }
+        });
     }
 
     @Override

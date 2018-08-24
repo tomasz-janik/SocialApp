@@ -3,4 +3,10 @@
     <string name="add_content_hint">Co cie dziś zdenerwowało?</string>
     <string name="add_hash_hint">#Tagi</string>
     <string name="add_commit">Dodaj</string>
+    <string name="top_day">DZIENNIE</string>
+    <string name="top_week">TYGODNIOWO</string>
+    <string name="top_month">MIESIĘCZNIE</string>
+    <string name="top_all">ZAWSZE</string>
+    <string name="top_comments">KOMENTOWANE</string>
+    <string name="search_hint">Szukaj</string>
 </resources>

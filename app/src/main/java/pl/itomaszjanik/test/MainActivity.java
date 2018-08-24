@@ -12,6 +12,7 @@ import android.widget.*;
 import pl.itomaszjanik.test.Fragments.AddPost;
 import pl.itomaszjanik.test.Fragments.ItemFeed;
 import pl.itomaszjanik.test.Fragments.Search;
+import pl.itomaszjanik.test.Fragments.TopFeed;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -66,7 +67,16 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (viewPager.getCurrentItem() == Values.INDEX_ADD){
+        if (viewPager.getCurrentItem() == Values.INDEX_TOP){
+            Fragment noteFragment = getSupportFragmentManager().findFragmentByTag("Note");
+            if (noteFragment != null && noteFragment.isVisible()){
+                super.onBackPressed();
+            }
+            else{
+                clickFeed(null);
+            }
+        }
+        else if (viewPager.getCurrentItem() != Values.INDEX_FEED){
             clickFeed(null);
         }
         else{
@@ -90,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
                 case Values.INDEX_SEARCH:
                     return Search.newInstance();
                 case Values.INDEX_TOP:
-                    return Search.newInstance();
+                    return TopFeed.newInstance();
                 case Values.INDEX_PROFILE:
                     return Search.newInstance();
                 default:
@@ -112,10 +122,7 @@ public class MainActivity extends AppCompatActivity {
         public void clickFeed(){
             showNavigation();
             updatePage();
-            if (currentPage == Values.INDEX_FEED){
-                viewPager.scrollTo(viewPager.getScrollX(), 0);
-            }
-            else{
+            if (currentPage != Values.INDEX_FEED){
                 updateColors(currentPage, Values.INDEX_FEED);
                 viewPager.setCurrentItem(Values.INDEX_FEED, true);
             }

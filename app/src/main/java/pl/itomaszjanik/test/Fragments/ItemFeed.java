@@ -34,7 +34,7 @@ public class ItemFeed extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.recycler_view,container,false);
+        return inflater.inflate(R.layout.feed,container,false);
     }
 
     @Override
@@ -70,7 +70,7 @@ public class ItemFeed extends Fragment {
         int space = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 64, getResources().getDisplayMetrics());
         recyclerView.addItemDecoration(new SpacesItemDecoration(space));
 
-        recyclerView.addOnScrollListener(new ListScrollListener((NavigationController) getActivity().findViewById(R.id.navigation_bottom)));
+        recyclerView.addOnScrollListener(new ListScrollBottomListener((NavigationController) getActivity().findViewById(R.id.navigation_bottom)));
     }
 
     private List<Note> createPosts(){

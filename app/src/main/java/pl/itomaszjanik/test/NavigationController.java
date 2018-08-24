@@ -56,10 +56,36 @@ public class NavigationController extends LinearLayout {
         }
     }
 
+    public void hideLayoutTop() {
+        if(!hide){
+            hide = true;
+            getAnimatorTop().setDuration(300).start();
+        }
+    }
+
+    public void showLayoutTop() {
+        if(hide){
+            hide = false;
+            getAnimatorTop().setDuration(300).reverse();
+        }
+    }
+
     private ObjectAnimator getAnimator(){
 
         if (animator == null){
             animator = ObjectAnimator.ofFloat(this,"translationY",0,this.getHeight());
+
+            animator.setDuration(300);
+            animator.setInterpolator(new AccelerateDecelerateInterpolator());
+
+        }
+        return animator;
+    }
+
+    private ObjectAnimator getAnimatorTop(){
+
+        if (animator == null){
+            animator = ObjectAnimator.ofFloat(this,"translationY",0, -this.getHeight());
 
             animator.setDuration(300);
             animator.setInterpolator(new AccelerateDecelerateInterpolator());

@@ -8,7 +8,8 @@ import android.util.AttributeSet;
 import android.widget.Toast;
 
 public class CustomImage extends android.support.v7.widget.AppCompatImageView {
-    private Drawable drawableActive, drawableInactive;
+    //private Drawable drawableActive, drawableInactive;
+    private int drawableActive, drawableInactive;
     private boolean active = false;
 
     public CustomImage(Context context) {
@@ -23,14 +24,14 @@ public class CustomImage extends android.support.v7.widget.AppCompatImageView {
         super(context, attrs, defStyleAttr);
     }
 
-    public void init(Drawable active, Drawable inactive){
+    /*public void init(Drawable active, Drawable inactive){
         this.drawableActive = active;
         this.drawableInactive = inactive;
-    }
+    }*/
 
     public void init(int active, int inactive){
-        this.drawableActive = ResourcesCompat.getDrawable(getResources(), active, null);
-        this.drawableInactive = ResourcesCompat.getDrawable(getResources(), inactive, null);
+        this.drawableActive = active;
+        this.drawableInactive = inactive;
     }
 
     private void changeActive(){
@@ -39,8 +40,8 @@ public class CustomImage extends android.support.v7.widget.AppCompatImageView {
     }
 
     private void changeDrawable(){
-        if (active) setImageDrawable(drawableActive);
-        else setImageDrawable(drawableInactive);
+        if (active) setImageResource(drawableActive);
+        else setImageResource(drawableInactive);
     }
 
     public void changeState(){

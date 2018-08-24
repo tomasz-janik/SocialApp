@@ -25,7 +25,8 @@ dependencies {
     compile 'com.android.support:appcompat-v7:26.1.0'
     compile 'com.android.support.constraint:constraint-layout:1.1.2'
 
-    compile 'me.majiajie:pager-bottom-tab-strip:2.2.5'
+    compile 'com.github.tomasz-janik:MaterialSearchBar:0.7.7'
+    compile 'com.github.tomasz-janik:floatingsearchview:1.0.2'
 
     testCompile 'junit:junit:4.12'
     androidTestCompile('com.android.support.test.espresso:espresso-core:3.0.2', {
