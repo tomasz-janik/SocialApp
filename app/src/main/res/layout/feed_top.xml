@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <android.support.v7.widget.RecyclerView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/recycler_view_top"
+            android:layout_marginTop="56dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"/>
+
+    <pl.itomaszjanik.test.NavigationController
+            android:id="@+id/navigation_feed_top"
+            android:layout_width="match_parent"
+            android:layout_marginTop="56dp"
+            android:layout_height="46dp"
+            android:baselineAligned="false"
+            android:background="@drawable/top_background"
+            android:layout_gravity="top">
+
+        <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="46dp"
+                android:scrollbars="none">
+
+            <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                <RelativeLayout
+                        android:id="@+id/top_daily"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:paddingLeft="16dp"
+                        android:paddingStart="16dp"
+                        android:paddingRight="8dp"
+                        android:paddingEnd="8dp"
+                        android:clipToPadding="false"
+                        android:background="?android:selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                    <pl.itomaszjanik.test.TextViewClickable
+                            android:id="@+id/top_daily_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:text="@string/top_day"
+                            android:textAlignment="center"
+                            android:textColor="@color/colorTextActive"
+                            android:clickable="false"
+                    />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                        android:id="@+id/top_weekly"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="8dp"
+                        android:background="?android:selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                    <pl.itomaszjanik.test.TextViewClickable
+                            android:id="@+id/top_weekly_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:text="@string/top_week"
+                            android:textAlignment="center"
+                            android:textColor="@color/colorTextInactive"
+                            android:clickable="false"
+                    />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                        android:id="@+id/top_monthly"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="8dp"
+                        android:background="?android:selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                    <pl.itomaszjanik.test.TextViewClickable
+                            android:id="@+id/top_monthly_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:text="@string/top_month"
+                            android:textAlignment="center"
+                            android:textColor="@color/colorTextInactive"
+                            android:clickable="false"
+                    />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                        android:id="@+id/top_alltime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="8dp"
+                        android:background="?android:selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                    <pl.itomaszjanik.test.TextViewClickable
+                            android:id="@+id/top_alltime_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:text="@string/top_all"
+                            android:textAlignment="center"
+                            android:textColor="@color/colorTextInactive"
+                            android:clickable="false"
+                    />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                        android:id="@+id/top_commented"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:paddingLeft="8dp"
+                        android:paddingStart="8dp"
+                        android:paddingRight="16dp"
+                        android:paddingEnd="16dp"
+                        android:clipToPadding="false"
+                        android:background="?android:selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                    <ImageButton
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:clickable="false"
+                            android:visibility="invisible"/>
+
+                    <pl.itomaszjanik.test.TextViewClickable
+                            android:id="@+id/top_commented_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:text="@string/top_comments"
+                            android:textAlignment="center"
+                            android:textColor="@color/colorTextInactive"
+                            android:clickable="false"
+                    />
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+        </HorizontalScrollView>
+
+    </pl.itomaszjanik.test.NavigationController>
+
+</RelativeLayout>
+
