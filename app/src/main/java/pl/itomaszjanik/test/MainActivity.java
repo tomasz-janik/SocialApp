@@ -9,15 +9,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.*;
 
-import pl.itomaszjanik.test.Fragments.AddPost;
-import pl.itomaszjanik.test.Fragments.ItemFeed;
-import pl.itomaszjanik.test.Fragments.Search;
-import pl.itomaszjanik.test.Fragments.TopFeed;
+import com.arlib.floatingsearchview.FloatingSearchView;
+import pl.itomaszjanik.test.Fragments.*;
 
 public class MainActivity extends AppCompatActivity {
 
     private NavigationController mNavigationControllerBottom, mNavigationControllerTop;
     private TestViewPagerAdapter testViewPagerAdapter;
+    private FloatingSearchView searchView;
     private ViewPager viewPager;
     private ButtonLogic buttonLogic;
 
@@ -25,13 +24,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        testViewPagerAdapter = new TestViewPagerAdapter(getSupportFragmentManager());
 
+        testViewPagerAdapter = new TestViewPagerAdapter(getSupportFragmentManager());
         viewPager = (ViewPager) findViewById(R.id.viewPager);
         viewPager.setAdapter(testViewPagerAdapter);
 
         mNavigationControllerTop = (NavigationController) findViewById(R.id.navigation_top);
         mNavigationControllerBottom = (NavigationController) findViewById(R.id.navigation_bottom);
+        searchView = (FloatingSearchView) findViewById(R.id.floating_search_view);
 
         buttonLogic = new ButtonLogic();
         initImages();
@@ -76,6 +76,10 @@ public class MainActivity extends AppCompatActivity {
                 clickFeed(null);
             }
         }
+        else if (viewPager.getCurrentItem() == Values.INDEX_SEARCH){
+            searchView.setVisibility(View.GONE);
+            clickFeed(null);
+        }
         else if (viewPager.getCurrentItem() != Values.INDEX_FEED){
             clickFeed(null);
         }
@@ -102,11 +106,9 @@ public class MainActivity extends AppCompatActivity {
                 case Values.INDEX_TOP:
                     return TopFeed.newInstance();
                 case Values.INDEX_PROFILE:
-                    return Search.newInstance();
-                default:
-                    return ItemFeed.newInstance();
-
+                    return Profile.newInstance();
             }
+            return null;
         }
 
         @Override
@@ -125,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
             if (currentPage != Values.INDEX_FEED){
                 updateColors(currentPage, Values.INDEX_FEED);
                 viewPager.setCurrentItem(Values.INDEX_FEED, true);
+                searchView.setVisibility(View.GONE);
             }
             mNavigationControllerBottom.showLayout();
         }
@@ -135,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
             if (currentPage != Values.INDEX_ADD){
                 updateColors(currentPage, Values.INDEX_ADD);
                 viewPager.setCurrentItem(Values.INDEX_ADD, true);
+                searchView.setVisibility(View.GONE);
                 //mNavigationControllerBottom.hideLayout();
             }
         }
@@ -145,6 +149,7 @@ public class MainActivity extends AppCompatActivity {
             if (currentPage != Values.INDEX_SEARCH){
                 updateColors(currentPage, Values.INDEX_SEARCH);
                 viewPager.setCurrentItem(Values.INDEX_SEARCH, true);
+                searchView.setVisibility(View.VISIBLE);
             }
         }
 
@@ -154,6 +159,7 @@ public class MainActivity extends AppCompatActivity {
             if (currentPage != Values.INDEX_TOP){
                 updateColors(currentPage, Values.INDEX_TOP);
                 viewPager.setCurrentItem(Values.INDEX_TOP, true);
+                searchView.setVisibility(View.GONE);
             }
         }
 
@@ -163,6 +169,7 @@ public class MainActivity extends AppCompatActivity {
             if (currentPage != Values.INDEX_PROFILE){
                 updateColors(currentPage, Values.INDEX_PROFILE);
                 viewPager.setCurrentItem(Values.INDEX_PROFILE, true);
+                searchView.setVisibility(View.GONE);
             }
         }
 

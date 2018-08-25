@@ -47,7 +47,7 @@ public class AddPost extends Fragment {
     private void init(View view){
         initContent(view);
         initTags(view);
-        initScrollView(view);
+        initMainLayout(view);
     }
 
     private void initContent(View view){
@@ -108,10 +108,11 @@ public class AddPost extends Fragment {
         });
     }
 
-    private void initScrollView(View view){
-        RelativeLayout scrollView = (RelativeLayout) view.findViewById(R.id.layout);
+    private void initMainLayout(View view){
+        RelativeLayout mainLayout = (RelativeLayout) view.findViewById(R.id.add_main_layout);
+        mainLayout.requestFocusFromTouch();
 
-        scrollView.setOnClickListener(new View.OnClickListener() {
+        mainLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 hideSoftKeyboard(getActivity());
@@ -119,7 +120,7 @@ public class AddPost extends Fragment {
             }
         });
 
-        scrollView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        mainLayout.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
                 if (b){

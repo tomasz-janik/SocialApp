@@ -5,13 +5,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/scroll_view"
+        android:background="#efefef"
         android:clickable="true"
         android:focusable="true">
 
     <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/layout"
+            android:id="@+id/add_main_layout"
             android:focusableInTouchMode="true"
             android:clickable="true"
             android:focusable="true"
@@ -27,6 +28,7 @@
                 android:textAlignment="viewStart"
                 android:gravity="start"
                 android:ems="10"
+                android:imeOptions="flagNoFullscreen|flagNoExtractUi"
                 android:background="@drawable/box_content"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="64dp" android:layout_marginEnd="8dp" android:layout_marginRight="8dp"

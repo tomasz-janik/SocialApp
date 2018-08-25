@@ -11,6 +11,7 @@
 
 
     <RelativeLayout
+            android:background="#efefef"
             android:id="@+id/main_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -19,6 +20,7 @@
                 android:id="@+id/viewPager"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="#efefef"
         />
 
         <pl.itomaszjanik.test.NavigationController
@@ -202,6 +204,21 @@
 
 
     </pl.itomaszjanik.test.NavigationController>
+
+    <com.arlib.floatingsearchview.FloatingSearchView
+            android:id="@+id/floating_search_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="56dp"
+            android:visibility="gone"
+            app:floatingSearch_searchBarMarginLeft="0dp"
+            app:floatingSearch_searchBarMarginTop="0dp"
+            app:floatingSearch_searchBarMarginRight="0dp"
+            app:floatingSearch_searchHint="@string/search_hint"
+            app:floatingSearch_suggestionsListAnimDuration="250"
+            app:floatingSearch_showSearchKey="false"
+            app:floatingSearch_leftActionMode="showSearch"
+            app:floatingSearch_close_search_on_keyboard_dismiss="true"/>
 
 
 </RelativeLayout>
