@@ -48,7 +48,7 @@ public class AddedTagView extends FlexboxLayout {
             setClickListener(tag);
 
             this.addView(tag);
-            //this.
+            tag.fadeIn();
             addedTags.add(tag);
             noOfTags++;
         }
