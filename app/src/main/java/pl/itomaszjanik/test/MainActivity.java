@@ -12,6 +12,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 
 import com.arlib.floatingsearchview.FloatingSearchView;
+import net.danlew.android.joda.JodaTimeAndroid;
 import pl.itomaszjanik.test.Fragments.*;
 
 public class MainActivity extends AppCompatActivity {
@@ -26,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        JodaTimeAndroid.init(this);
 
         testViewPagerAdapter = new TestViewPagerAdapter(getSupportFragmentManager());
         viewPager = (ViewPager) findViewById(R.id.viewPager);
@@ -46,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
         ((CustomImage) (findViewById(R.id.icon_add))).init(R.drawable.icon_add_24dp, R.drawable.icon_add_24dp);
         ((CustomImage) (findViewById(R.id.icon_search))).init(R.drawable.icon_search_active_24dp, R.drawable.icon_search_inactive_24dp);
-        ((CustomImage) (findViewById(R.id.icon_top))).init(R.drawable.icon_top_active_24dp, R.drawable.icon_top_inactive_24dp);
+        ((CustomImage) (findViewById(R.id.icon_top))).init(R.drawable.icon_top_active_24dp, R.drawable.icon_top_active_24dp);
         ((CustomImage) (findViewById(R.id.icon_profile))).init(R.drawable.icon_profile_inactive_24dp, R.drawable.icon_profile_inactive_24dp);
     }
 

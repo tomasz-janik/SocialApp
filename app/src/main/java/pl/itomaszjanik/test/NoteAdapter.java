@@ -1,24 +1,17 @@
 package pl.itomaszjanik.test;
 
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
-import pl.itomaszjanik.test.Fragments.NoteDetails;
 
 import java.util.List;
 
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.CustomViewHolder>{
 
     private List<Note> notes;
-    ItemClickListener listener;
+    NoteClickListener listener;
 
     public class CustomViewHolder extends RecyclerView.ViewHolder{
         public TextView content, rating;
@@ -44,7 +37,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.CustomViewHold
         });
     }
 
-    public NoteAdapter(List<Note> notes, ItemClickListener listener){
+    public NoteAdapter(List<Note> notes, NoteClickListener listener){
         this.notes = notes;
         this.listener = listener;
     }

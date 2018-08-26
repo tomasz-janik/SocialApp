@@ -1,43 +1,54 @@
 package pl.itomaszjanik.test;
 
-import java.util.Date;
+import org.parceler.Parcel;
 
+import java.util.ArrayList;
+import java.util.List;
+
+@Parcel
 public class Note {
+    String content;
+    String author;
+    List<String> tags;
+    List<Comment> comments;
+    int noOfComments;
+    int rating;
 
-    private String content;
-    private String author;
-    private String hashes;
-    private Date date;
-    private int rating;
+    public Note() {}
 
-    public Note(String content, String author, String hashes, Date date){
+    public Note(String content, String author, List<String> tags, int rating) {
         this.content = content;
         this.author = author;
-        this.hashes = hashes;
-        this.date = date;
-        this.rating = 0;
+        this.tags = tags;
+        this.comments = new ArrayList<>();
+        this.noOfComments = 0;
+        this.rating = rating;
     }
 
-    public Note(String content, String author, String hashes){
+    public Note(String content, String author, List<String> tags, List<Comment> comments, int rating) {
         this.content = content;
         this.author = author;
-        this.hashes = hashes;
-        this.date = null;
-        this.rating = 0;
+        this.tags = tags;
+        this.comments = comments;
+        this.noOfComments = comments.size();
+        this.rating = rating;
     }
 
-    public String getContent(){
-        return content;
+    public String getContent() { return content; }
+
+    public String getAuthor() { return author; }
+
+    public List<String> getHashes() { return tags; }
+
+    public List<Comment> getComments() {
+        return comments;
     }
 
-    public String getAuthor(){
-        return author;
+    public int getNoOfComments() {
+        return noOfComments;
     }
-
-    public String getHashes(){ return hashes;}
 
     public int getRating(){
         return rating;
     }
-
 }

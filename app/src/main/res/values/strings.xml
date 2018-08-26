@@ -19,4 +19,8 @@
     <string name="tags_too_many">Nie możesz dodać więcej tagów</string>
     <string name="tags_duplicate"># jest już użyty</string>
     <string name="tags_invalid"># jest nieprawidłowy</string>
+
+    <string name="comment_one">KOMENTARZ</string>
+    <string name="comment_two">KOMENTARZE</string>
+    <string name="comment_five">KOMENTARZY</string>
 </resources>
