@@ -98,15 +98,12 @@ public class NoteDetails extends Fragment {
             public void onItemClick(View v, Comment comment) {
 
             }
-        });
+        }, getContext());
 
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(this.getActivity());
         recyclerView.setLayoutManager(mLayoutManager);
 
         recyclerView.setAdapter(adapter);
-
-        Toast.makeText(getContext(), "" + recyclerView.getAdapter().getItemCount(), Toast.LENGTH_SHORT).show();
-
 
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(view.getContext(), DividerItemDecoration.VERTICAL);
         Drawable divider = ResourcesCompat.getDrawable(getResources(), R.drawable.comments_divider, null);

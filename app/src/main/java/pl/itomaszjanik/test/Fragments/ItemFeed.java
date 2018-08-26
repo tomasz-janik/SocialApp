@@ -100,9 +100,15 @@ public class ItemFeed extends Fragment {
         tags04.add("kościół");
 
         List<Comment> comments = new ArrayList<>();
-        comments.add(new Comment("chuja sie pan zna, prosze pana", "staszek22", "08/26/2018 22:41:00"));
-        comments.add(new Comment("panie odpierdol sie pan", "mision69", "08/26/2018 20:41:00"));
-        comments.add(new Comment("nie rozumiem w czym problem", "heniek33", "08/25/2018 22:41:00"));
+        comments.add(new Comment("chuja sie pan zna, prosze pana", "staszek22", "26/08/2018 22:41:00"));
+        comments.add(new Comment("panie odpierdol sie pan", "misio69", "26/08/2018 22:12:00"));
+        comments.add(new Comment("nie rozumiem w czym problem", "heniek33", "25/08/2018 22:41:00"));
+        comments.add(new Comment("eskeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeetit", "lilPump", "25/08/2018 22:41:00"));
+        comments.add(new Comment("bez nas nie było by bułek w sklepie proszę to docenić", "bug12", "25/08/2018 22:41:00"));
+        comments.add(new Comment("proszę pana (specjalnie z małej litery), skończ pan pierdolić", "pomidor", "25/08/2018 22:41:00"));
+        comments.add(new Comment("hahahaah super bardzo śmieszne, leci plusik", "adam_guz", "25/08/2018 22:41:00"));
+        comments.add(new Comment("było już, na razie leci tylko warn, ale jeszcze raz i ban", "wpierdalator", "25/08/2018 22:41:00"));
+
 
         list.add(new Note("Ja pierdole XD 18 osób przede mną w kolejce do biedry. Za co XD ","moj stary", tags01,10));
         list.add(new Note("Dlaczego w każdym sklepie w kraju ludzie robią normalne zakupy a w Biedrze jakby jutro ruscy mieli wbić z krymu? xD Come on 20 kilo cukru kurwa? XD", "ty", tags04, comments, 89));

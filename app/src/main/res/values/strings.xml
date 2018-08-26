@@ -23,4 +23,30 @@
     <string name="comment_one">KOMENTARZ</string>
     <string name="comment_two">KOMENTARZE</string>
     <string name="comment_five">KOMENTARZY</string>
+
+    <string name="year_one">rok</string>
+    <string name="year_two">lata</string>
+    <string name="year_five">lat</string>
+
+    <string name="month_one">miesiąc</string>
+    <string name="month_two">miesiące</string>
+    <string name="month_five">miesięcy</string>
+
+    <string name="week_one">tydzień</string>
+    <string name="week_two">tygodnie</string>
+    <string name="week_five">tygodni</string>
+
+    <string name="day_one">dzień</string>
+    <string name="day_two">dni</string>
+
+    <string name="hour_one">godzinę</string>
+    <string name="hour_two">godziny</string>
+    <string name="hour_five">godzin</string>
+
+    <string name="minute_one">minutę</string>
+    <string name="minute_two">minuty</string>
+    <string name="minute_five">minut</string>
+
+    <string name="second">kilka sekund</string>
+
 </resources>
