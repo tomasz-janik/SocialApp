@@ -1,5 +1,6 @@
 package pl.itomaszjanik.test;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -7,6 +8,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 
 import com.arlib.floatingsearchview.FloatingSearchView;
@@ -28,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
         testViewPagerAdapter = new TestViewPagerAdapter(getSupportFragmentManager());
         viewPager = (ViewPager) findViewById(R.id.viewPager);
         viewPager.setAdapter(testViewPagerAdapter);
+        viewPager.setOffscreenPageLimit(4);
 
         mNavigationControllerTop = (NavigationController) findViewById(R.id.navigation_top);
         mNavigationControllerBottom = (NavigationController) findViewById(R.id.navigation_bottom);
@@ -157,6 +160,7 @@ public class MainActivity extends AppCompatActivity {
             updatePage();
             showNavigation();
             if (currentPage != Values.INDEX_TOP){
+                hideSoftKeyboard(MainActivity.this);
                 updateColors(currentPage, Values.INDEX_TOP);
                 viewPager.setCurrentItem(Values.INDEX_TOP, true);
                 searchView.setVisibility(View.GONE);
@@ -167,6 +171,7 @@ public class MainActivity extends AppCompatActivity {
             updatePage();
             showNavigation();
             if (currentPage != Values.INDEX_PROFILE){
+                hideSoftKeyboard(MainActivity.this);
                 updateColors(currentPage, Values.INDEX_PROFILE);
                 viewPager.setCurrentItem(Values.INDEX_PROFILE, true);
                 searchView.setVisibility(View.GONE);
@@ -202,5 +207,10 @@ public class MainActivity extends AppCompatActivity {
                     return findViewById(R.id.icon_profile);
             }
         }
+    }
+
+    private static void hideSoftKeyboard(Activity activity) {
+        InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
     }
 }

@@ -14,15 +14,23 @@ import java.util.List;
 
 public class AddedTagView extends FlexboxLayout {
 
-    private List<SingleAddedTag> addedTags = new ArrayList<>();
-    private int noOfTags = 0;
+    private List<SingleAddedTag> addedTags;
+    private int noOfTags;
 
     public AddedTagView(Context context) {
         super(context);
+        if (addedTags == null){
+            addedTags = new ArrayList<>();
+            noOfTags = 0;
+        }
     }
 
     public AddedTagView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        if (addedTags == null){
+            addedTags = new ArrayList<>();
+            noOfTags = 0;
+        }
     }
 
     public void addTag(String text){

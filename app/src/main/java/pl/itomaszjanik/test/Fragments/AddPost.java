@@ -136,6 +136,7 @@ public class AddPost extends Fragment {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    tags.clearFocus();
                     addedTagView.addTag(tags.getText().toString());
                     tags.setText("");
                 }
@@ -146,7 +147,6 @@ public class AddPost extends Fragment {
 
     private void initAddedTags(View view){
         addedTagView = (AddedTagView) view.findViewById(R.id.add_added_tag_view);
-
     }
 
     private void initMainLayout(View view){
@@ -191,9 +191,5 @@ public class AddPost extends Fragment {
     private static void hideSoftKeyboard(Activity activity) {
         InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
-    }
-
-    private void getContent(){
-
     }
 }
