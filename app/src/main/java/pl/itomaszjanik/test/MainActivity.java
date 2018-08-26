@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
         ((CustomImage) (findViewById(R.id.icon_add))).init(R.drawable.icon_add_24dp, R.drawable.icon_add_24dp);
         ((CustomImage) (findViewById(R.id.icon_search))).init(R.drawable.icon_search_active_24dp, R.drawable.icon_search_inactive_24dp);
-        ((CustomImage) (findViewById(R.id.icon_top))).init(R.drawable.ic_fire_red_24dp, R.drawable.ic_fire_red_24dp);
+        ((CustomImage) (findViewById(R.id.icon_top))).init(R.drawable.icon_top_active_24dp, R.drawable.icon_top_inactive_24dp);
         ((CustomImage) (findViewById(R.id.icon_profile))).init(R.drawable.icon_profile_inactive_24dp, R.drawable.icon_profile_inactive_24dp);
     }
 

@@ -60,5 +60,24 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.CustomViewHold
     public int getItemCount() {
         return notes.size();
     }
+
+    private String wrapper(String text, int wrapLength){
+        int toWrap = text.length();
+        int lineBreakIndex = text.indexOf('\n');
+
+        String output = text;
+
+        if (toWrap > wrapLength){
+            if (lineBreakIndex > wrapLength || lineBreakIndex < 0){
+                toWrap = wrapLength;
+            }
+            else {
+                toWrap = lineBreakIndex;
+            }
+            output = text.substring(0,toWrap) + "...";
+        }
+
+        return output;
+    }
 }
 

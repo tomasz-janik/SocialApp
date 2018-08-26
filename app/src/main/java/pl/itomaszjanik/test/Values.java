@@ -13,4 +13,6 @@ public class Values {
     public static final int MONTHLY = 2;
     public static final int ALLTIME = 3;
     public static final int COMMENTED = 4;
+
+    public static final int MAX_TAGS_NUMBER = 5;
 }

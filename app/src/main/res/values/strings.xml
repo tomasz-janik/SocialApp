@@ -1,12 +1,22 @@
 <resources>
     <string name="app_name">Narzekaj</string>
+
     <string name="add_content_hint">Co cie dziś zdenerwowało?</string>
     <string name="add_hash_hint">#Tagi</string>
+
     <string name="add_commit">Dodaj</string>
     <string name="top_day">DZIENNIE</string>
     <string name="top_week">TYGODNIOWO</string>
     <string name="top_month">MIESIĘCZNIE</string>
     <string name="top_all">ZAWSZE</string>
     <string name="top_comments">KOMENTOWANE</string>
+
     <string name="search_hint">Szukaj</string>
+
+    <string name="add_empty_content">Nie możesz dodać pustego postu</string>
+    <string name="add_empty_tags">Dodaj przynajmniej 1 tag</string>
+
+    <string name="tags_too_many">Nie możesz dodać więcej tagów</string>
+    <string name="tags_duplicate"># jest już użyty</string>
+    <string name="tags_invalid"># jest nieprawidłowy</string>
 </resources>

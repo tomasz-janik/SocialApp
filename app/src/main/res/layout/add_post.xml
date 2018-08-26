@@ -3,7 +3,7 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/scroll_view"
         android:background="#efefef"
         android:clickable="true"
@@ -39,7 +39,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/add_content"
-                android:inputType="textMultiLine"
+                android:inputType="text"
+                android:maxLength="20"
                 android:hint="@string/add_hash_hint"
                 android:textAlignment="viewStart"
                 android:gravity="start"
@@ -49,20 +50,33 @@
                 android:layout_marginTop="16dp" android:layout_marginEnd="8dp" android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp" android:layout_marginLeft="8dp" android:padding="10dp"/>
 
-        <RelativeLayout
-                android:layout_width="wrap_content"
+        <pl.itomaszjanik.test.AddPostTags.AddedTagView
+                android:id="@+id/add_added_tag_view"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/add_hashes"
+                app:flexWrap="wrap"
+                app:justifyContent="center"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginEnd="8dp">
+        </pl.itomaszjanik.test.AddPostTags.AddedTagView>
+
+
+        <RelativeLayout
+                android:id="@+id/add_commit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/add_added_tag_view"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="64dp"
                 android:clickable="true"
-                android:focusable="true"
-                android:onClick="clickCommit"
-        >
+                android:focusable="true">
 
-            <ImageButton
-                    android:id="@+id/add_commit"
+            <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"

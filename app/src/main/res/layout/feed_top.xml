@@ -25,6 +25,7 @@
             android:layout_gravity="top">
 
         <HorizontalScrollView
+                android:id="@+id/top_horizontal_scroll_view"
                 android:layout_width="match_parent"
                 android:layout_height="46dp"
                 android:scrollbars="none">
@@ -53,6 +54,7 @@
                             android:layout_centerInParent="true"
                             android:text="@string/top_day"
                             android:textAlignment="center"
+                            android:textSize="@dimen/top_category_text_size"
                             android:textColor="@color/colorTextActive"
                             android:clickable="false"
                     />
@@ -76,6 +78,7 @@
                             android:layout_centerInParent="true"
                             android:text="@string/top_week"
                             android:textAlignment="center"
+                            android:textSize="@dimen/top_category_text_size"
                             android:textColor="@color/colorTextInactive"
                             android:clickable="false"
                     />
@@ -99,6 +102,7 @@
                             android:layout_centerInParent="true"
                             android:text="@string/top_month"
                             android:textAlignment="center"
+                            android:textSize="@dimen/top_category_text_size"
                             android:textColor="@color/colorTextInactive"
                             android:clickable="false"
                     />
@@ -122,6 +126,7 @@
                             android:layout_centerInParent="true"
                             android:text="@string/top_all"
                             android:textAlignment="center"
+                            android:textSize="@dimen/top_category_text_size"
                             android:textColor="@color/colorTextInactive"
                             android:clickable="false"
                     />
@@ -154,6 +159,7 @@
                             android:layout_centerInParent="true"
                             android:text="@string/top_comments"
                             android:textAlignment="center"
+                            android:textSize="@dimen/top_category_text_size"
                             android:textColor="@color/colorTextInactive"
                             android:clickable="false"
                     />

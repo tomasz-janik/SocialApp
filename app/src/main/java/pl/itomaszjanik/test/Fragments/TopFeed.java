@@ -12,6 +12,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.HorizontalScrollView;
 import android.widget.TextView;
 import pl.itomaszjanik.test.*;
 
@@ -84,15 +85,12 @@ public class TopFeed extends Fragment {
         initListeners(view, R.id.top_commented);
     }
 
-    public boolean scrollMode(){
-        return true;
-    }
 
     private void initListeners(final View view, final int layout){
         view.findViewById(layout).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TextViewClickable textView = getTextView(getValue(layout), view);
+                final TextViewClickable textView = getTextView(getValue(layout), view);
                 if (currentClicked != textView){
                     currentClicked.changeState();
                     textView.changeState();

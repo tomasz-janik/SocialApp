@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="top_category_text_size">15sp</dimen>
+
+    <dimen name="hash_margin_left">8dp</dimen>
+</resources>

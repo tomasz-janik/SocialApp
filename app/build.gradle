@@ -27,6 +27,8 @@ dependencies {
 
     compile 'com.github.tomasz-janik:floatingsearchview:619fca1bc6'
     compile 'com.github.tomasz-janik:MaterialSearchBar:0.7.7'
+    compile 'com.google.android:flexbox:1.0.0'
+
 
     testCompile 'junit:junit:4.12'
     androidTestCompile('com.android.support.test.espresso:espresso-core:3.0.2', {

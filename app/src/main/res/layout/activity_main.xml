@@ -148,7 +148,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    app:srcCompat="@drawable/ic_fire_red_24dp"
+                    app:srcCompat="@drawable/icon_top_inactive_24dp"
                     android:clickable="false"
 
             />
