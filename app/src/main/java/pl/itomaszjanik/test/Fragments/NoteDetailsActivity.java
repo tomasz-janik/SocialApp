@@ -1,16 +1,13 @@
 package pl.itomaszjanik.test.Fragments;
 
+import android.app.Activity;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 import org.parceler.Parcels;
 import pl.itomaszjanik.test.*;
@@ -18,36 +15,24 @@ import pl.itomaszjanik.test.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NoteDetails extends Fragment {
+public class NoteDetailsActivity extends Activity {
 
     private Note note;
     private TextView content, hashes, date, rate;
-    private List<Comment> comments;
-
-
-    public NoteDetails() {
-    }
-
-    public static NoteDetails newInstance() {
-        return new NoteDetails();
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    }
+        setContentView(R.layout.note_details);
+        content = (TextView) findViewById(R.id.note_details_content);
+        hashes = (TextView) findViewById(R.id.note_details_hashes);
 
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        content = (TextView) view.findViewById(R.id.note_details_content);
-        hashes = (TextView) view.findViewById(R.id.note_details_hashes);
+        ((CustomImage) (findViewById(R.id.note_details_icon_back))).init(R.drawable.ic_arrow_black_24dp, R.drawable.ic_arrow_black_24dp);
 
-        //((CustomImage) (view.findViewById(R.id.note_details_icon_back))).init(R.drawable.ic_arrow_black_24dp, R.drawable.ic_arrow_black_24dp);
-
-        //initListeners(view);
+        initListeners();
 
 
-        Bundle bundle = getArguments();
+        Bundle bundle = getIntent().getExtras();
         if (bundle != null){
             note = Parcels.unwrap(bundle.getParcelable("note"));
             if (note == null){
@@ -78,16 +63,13 @@ public class NoteDetails extends Fragment {
             noOfCommentsString += getResources().getString(R.string.comment_five);
         }
 
-        //((TextView)(view.findViewById(R.id.note_details_comments_number))).setText(noOfCommentsString);
-        initRecyclerView(view);
+        ((TextView)(findViewById(R.id.note_details_comments_number))).setText(noOfCommentsString);
+        initRecyclerView();
     }
 
-    private void initRecyclerView(View view){
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.note_details_comments_recycler_view);
-      //  RecyclerView recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerView);
 
-
-
+    private void initRecyclerView(){
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.note_details_comments_recycler_view);
 
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
@@ -96,12 +78,11 @@ public class NoteDetails extends Fragment {
             public void onItemClick(View v, Comment comment) {
 
             }
-        }, getContext());
+        }, this);
 
-        Temp lm = new Temp(getContext(), LinearLayoutManager.VERTICAL,false);
+        Temp lm = new Temp(this, LinearLayoutManager.VERTICAL,false);
         lm.setScrollEnabled(false);
         recyclerView.setLayoutManager(lm);
-
         recyclerView.setNestedScrollingEnabled(false);
 
         recyclerView.setAdapter(adapter);
@@ -111,6 +92,12 @@ public class NoteDetails extends Fragment {
             CommentsDivider dividerItemDecoration = new CommentsDivider(divider);
             recyclerView.addItemDecoration(dividerItemDecoration);
         }
+    }
+
+    @Override
+    public void onBackPressed(){
+        super.onBackPressed();
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 
     private String prepareHashesText(List<String> list){
@@ -127,21 +114,15 @@ public class NoteDetails extends Fragment {
         return buffer.toString();
     }
 
-    private void initListeners(View view){
-        /*view.findViewById(R.id.note_details_button_back).setOnClickListener(new View.OnClickListener() {
+    private void initListeners(){
+        findViewById(R.id.note_details_button_back).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getFragmentManager().popBackStackImmediate();
+                finish();
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             }
-        });*/
+        });
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
 
-
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.note_details, container, false);
-    }
 }

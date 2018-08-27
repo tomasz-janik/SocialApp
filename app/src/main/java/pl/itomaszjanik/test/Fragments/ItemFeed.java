@@ -1,10 +1,10 @@
 package pl.itomaszjanik.test.Fragments;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
@@ -49,16 +49,13 @@ public class ItemFeed extends Fragment {
         recyclerView.setAdapter(new NoteAdapter(createPosts(), new NoteClickListener() {
             @Override
             public void onItemClick(View v, Note note) {
-                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                NoteDetails noteDetails = NoteDetails.newInstance();
-
                 Bundle data = new Bundle();
                 data.putParcelable("note", Parcels.wrap(note));
-                noteDetails.setArguments(data);
 
-                fragmentTransaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out);
-                fragmentTransaction.replace(R.id.activity_material_design, noteDetails,"Note");
-                fragmentTransaction.addToBackStack(null).commit();
+                Intent intent = new Intent(getActivity(), NoteDetailsActivity.class);
+                intent.putExtras(data);
+                startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             }
         }));
 

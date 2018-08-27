@@ -9,7 +9,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.*;
 
 import com.arlib.floatingsearchview.FloatingSearchView;
 import net.danlew.android.joda.JodaTimeAndroid;
