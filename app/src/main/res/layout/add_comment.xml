@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/scroll_view"
+        android:background="#efefef"
+        android:clickable="true"
+        android:focusable="true">
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/add_main_layout"
+            android:focusableInTouchMode="true"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="#efefef">
+
+        <EditText
+                android:id="@+id/add_comment_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="128dp"
+                android:inputType="textMultiLine"
+                android:hint="@string/add_comment_hint"
+                android:maxLength="2000"
+                android:textAlignment="viewStart"
+                android:gravity="start"
+                android:ems="10"
+                android:imeOptions="flagNoFullscreen|flagNoExtractUi"
+                android:background="@drawable/box_rounded"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="64dp" android:layout_marginEnd="8dp" android:layout_marginRight="8dp"
+                android:layout_marginStart="8dp" android:layout_marginLeft="8dp" android:padding="10dp"/>
+
+        <RelativeLayout
+                android:id="@+id/add_comment_commit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/add_comment_edit_text"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="64dp"
+                android:clickable="true"
+                android:focusable="true">
+
+            <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/circle"
+                    android:background="?android:selectableItemBackground"
+                    android:clickable="false"
+            />
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:textAlignment="center"
+                    android:text="@string/add_commit"
+                    android:clickable="false"
+            />
+
+        </RelativeLayout>
+
+        <pl.itomaszjanik.test.NavigationController
+                android:id="@+id/add_comment_navigation_top"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:baselineAligned="false"
+                android:background="@drawable/top_background"
+                android:layout_gravity="top"
+                android:weightSum="100">
+
+            <RelativeLayout
+                    android:id="@+id/add_comment_button_back"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="33"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                <ImageButton
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="?android:selectableItemBackground"
+                        android:clickable="false"
+                />
+
+                <pl.itomaszjanik.test.CustomImage
+                        android:id="@+id/add_comment_icon_back"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        app:srcCompat="@drawable/ic_arrow_black_24dp"
+                        android:clickable="false"
+                />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="33"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAlignment="center"
+                        android:layout_centerInParent="true"
+                        android:text="@string/app_name"
+                        android:textSize="24sp"
+                />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                    android:id="@+id/add_comment_commit_top"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="33"
+                    android:background="?android:selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                <pl.itomaszjanik.test.CustomImage
+                        android:id="@+id/add_comment_icon_add"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        app:srcCompat="@drawable/icon_add_24dp"
+                        android:clickable="false"
+                />
+
+            </RelativeLayout>
+
+        </pl.itomaszjanik.test.NavigationController>
+
+
+
+    </RelativeLayout>
+</ScrollView>

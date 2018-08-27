@@ -17,6 +17,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".Fragments.NoteDetailsActivity"/>
+        <activity android:name=".Fragments.AddCommentActivity"/>
     </application>
 
 </manifest>

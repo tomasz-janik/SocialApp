@@ -1,6 +1,7 @@
 package pl.itomaszjanik.test.Fragments;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.content.res.ResourcesCompat;
@@ -8,7 +9,9 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 import org.parceler.Parcels;
 import pl.itomaszjanik.test.*;
 
@@ -19,6 +22,7 @@ public class NoteDetailsActivity extends Activity {
 
     private Note note;
     private TextView content, hashes, date, rate;
+    private EditText input;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -26,6 +30,7 @@ public class NoteDetailsActivity extends Activity {
         setContentView(R.layout.note_details);
         content = (TextView) findViewById(R.id.note_details_content);
         hashes = (TextView) findViewById(R.id.note_details_hashes);
+        input = (EditText) findViewById(R.id.comment_insert_text);
 
         ((CustomImage) (findViewById(R.id.note_details_icon_back))).init(R.drawable.ic_arrow_black_24dp, R.drawable.ic_arrow_black_24dp);
 
@@ -43,9 +48,6 @@ public class NoteDetailsActivity extends Activity {
             }
             content.setText(note.getContent());
             hashes.setText(prepareHashesText(note.getHashes()));
-            //note = bundle.getSerializable("content");
-            //content.setText(bundle.getString("content"));
-            //hashes.setText(bundle.getString("hashes"));
         }
 
         int noOfComments = note.getNoOfComments();
@@ -122,6 +124,36 @@ public class NoteDetailsActivity extends Activity {
                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             }
         });
+        findViewById(R.id.comment_insert_fullscreen).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bundle data = new Bundle();
+                if (input != null){
+                    String inputText = input.getText().toString();
+                    if (!inputText.equals("")){
+                        data.putString("input", inputText);
+                    }
+                    input.setText("");
+                }
+
+                Intent intent = new Intent(getApplicationContext(), AddCommentActivity.class);
+                intent.putExtras(data);
+                startActivity(intent);
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+            }
+        });
+        findViewById(R.id.comment_insert_commit).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (input != null){
+                    if (Utilities.checkComment(input.getText().toString(), getApplicationContext())){
+
+                    }
+                }
+
+            }
+        });
+
     }
 
 

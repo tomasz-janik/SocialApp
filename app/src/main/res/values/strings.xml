@@ -22,6 +22,9 @@
 
     <string name="comment_refresh">ODŚWIEŻ KOMENTARZE</string>
     <string name="comment_hint">Skomentuj!</string>
+    <string name="add_comment_hint">Napisz co o tym myślisz</string>
+    <string name="comment_invalid">Nie możesz dodać pustego komentarza</string>
+    <string name="comment_too_long">Za długi komentarz</string>
 
     <string name="comment_one">KOMENTARZ</string>
     <string name="comment_two">KOMENTARZE</string>
