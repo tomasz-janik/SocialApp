@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import org.parceler.Parcels;
 import pl.itomaszjanik.test.*;
@@ -84,18 +85,19 @@ public class NoteDetails extends Fragment {
 
     private void initRecyclerView(View view){
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.note_details_comments_recycler_view);
-      //  RecyclerView recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerView);
-
-
-
-
+        
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
         CommentAdapter adapter = new CommentAdapter(note.getComments(), new CommentClickListener() {
             @Override
-            public void onItemClick(View v, Comment comment) {
+            public void onItemClick(View v, Comment comment) {}
 
-            }
+            @Override
+            public void onLikeClick(View v, RelativeLayout layout){}
+
+            @Override
+            public void onReplayClick(View v, Comment layout){}
+
         }, getContext());
 
         Temp lm = new Temp(getContext(), LinearLayoutManager.VERTICAL,false);

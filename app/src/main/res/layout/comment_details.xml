@@ -14,7 +14,7 @@
             android:layout_below="@+id/note_details_navigation_top"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:id="@+id/scroll_view_note"
+            android:id="@+id/scroll_view_comment_details"
             android:clickable="true"
             android:focusable="true"
             android:background="#efefef">
@@ -22,13 +22,13 @@
         <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/layout_note"
+                android:id="@+id/layout_comment_details"
                 android:focusableInTouchMode="true"
                 android:clickable="true"
                 android:focusable="true">
 
             <LinearLayout
-                    android:id="@+id/note_details_main_content"
+                    android:id="@+id/comment_details_main_content"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
@@ -38,7 +38,7 @@
                     android:background="@drawable/box_rounded">
 
                 <TextView
-                        android:id="@+id/note_details_content"
+                        android:id="@+id/comment_details_content"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Content"
@@ -54,7 +54,7 @@
                         android:background="#15000000" />
 
                 <TextView
-                        android:id="@+id/note_details_hashes"
+                        android:id="@+id/comment_details_hashes"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textAlignment="viewStart"
@@ -66,7 +66,7 @@
             <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/note_details_main_content"
+                    android:layout_below="@+id/comment_details_main_content"
                     android:orientation="vertical"
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="8dp" android:layout_marginRight="8dp"
@@ -90,7 +90,7 @@
                             android:layout_marginEnd="8dp"/>
 
                     <TextView
-                            android:id="@+id/note_details_comments_number"
+                            android:id="@+id/comment_details_comments_number"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"/>
@@ -103,7 +103,7 @@
                         android:background="#15000000" />
 
                 <android.support.v7.widget.RecyclerView
-                        android:id="@+id/note_details_comments_recycler_view"
+                        android:id="@+id/comment_details_comments_recycler_view"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"/>
 
@@ -150,7 +150,7 @@
     </android.support.v4.widget.NestedScrollView>
 
     <pl.itomaszjanik.test.NavigationController
-            android:id="@+id/note_details_navigation_top"
+            android:id="@+id/comment_details_navigation_top"
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:baselineAligned="false"
@@ -159,7 +159,7 @@
             android:weightSum="100">
 
         <RelativeLayout
-                android:id="@+id/note_details_button_back"
+                android:id="@+id/comment_details_button_back"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="33"
@@ -174,7 +174,7 @@
             />
 
             <pl.itomaszjanik.test.CustomImage
-                    android:id="@+id/note_details_icon_back"
+                    android:id="@+id/comment_details_icon_back"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"

@@ -2,14 +2,17 @@ package pl.itomaszjanik.test.Fragments;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.content.res.ResourcesCompat;
+import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import org.parceler.Parcels;
@@ -78,8 +81,31 @@ public class NoteDetailsActivity extends Activity {
         CommentAdapter adapter = new CommentAdapter(note.getComments(), new CommentClickListener() {
             @Override
             public void onItemClick(View v, Comment comment) {
+                Bundle data = new Bundle();
+                data.putParcelable("comment", Parcels.wrap(comment));
 
+                Intent intent = new Intent(getApplication(), CommentDetailsActivity.class);
+                intent.putExtras(data);
+                startActivity(intent);
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             }
+            @Override
+            public void onLikeClick(View v, RelativeLayout layout){
+                Toast.makeText(getApplicationContext(), getResources().getString(R.string.not_logged), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onReplayClick(View v, Comment comment){
+                Bundle data = new Bundle();
+                data.putParcelable("comment", Parcels.wrap(comment));
+                data.putBoolean("replay", true);
+
+                Intent intent = new Intent(getApplication(), CommentDetailsActivity.class);
+                intent.putExtras(data);
+                startActivity(intent);
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+            }
+
         }, this);
 
         Temp lm = new Temp(this, LinearLayoutManager.VERTICAL,false);
@@ -134,8 +160,8 @@ public class NoteDetailsActivity extends Activity {
                         data.putString("input", inputText);
                     }
                     input.setText("");
+                    input.clearFocus();
                 }
-
                 Intent intent = new Intent(getApplicationContext(), AddCommentActivity.class);
                 intent.putExtras(data);
                 startActivity(intent);

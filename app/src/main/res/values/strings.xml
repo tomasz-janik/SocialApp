@@ -21,17 +21,21 @@
     <string name="tags_invalid"># jest nieprawidłowy</string>
 
     <string name="comment_refresh">ODŚWIEŻ KOMENTARZE</string>
-    <string name="comment_hint">Skomentuj!</string>
+    <string name="comment_hint">Napisz komentarz&#8230;</string>
+    <string name="comment_details_hint">Napisz odpowiedź&#8230;</string>
     <string name="add_comment_hint">Napisz co o tym myślisz</string>
     <string name="comment_invalid">Nie możesz dodać pustego komentarza</string>
     <string name="comment_too_long">Za długi komentarz</string>
 
-    <string name="note_ellipsis">&#8230; </string>
+    <string name="note_ellipsis">&#8230;</string>
     <string name="note_continue_reading"><font fgcolor='#efefef'> (Zobacz więcej)</font></string>
 
     <string name="comment_one">KOMENTARZ</string>
     <string name="comment_two">KOMENTARZE</string>
     <string name="comment_five">KOMENTARZY</string>
+
+    <string name="replay_one">ODPOWIEDŹ</string>
+    <string name="replay_two">ODPOWIEDZI</string>
 
     <string name="year_one">rok</string>
     <string name="year_two">lata</string>
@@ -57,5 +61,7 @@
     <string name="minute_five">minut</string>
 
     <string name="second">kilka sekund</string>
+
+    <string name="not_logged">Musisz się zalogować</string>
 
 </resources>
