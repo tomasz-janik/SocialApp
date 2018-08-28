@@ -16,5 +16,6 @@ public class Values {
 
     public static final int MAX_TAGS_NUMBER = 5;
 
-    public static final int COMMENT_LIMIT = 2000;
+    public static final int COMMENT_LIMIT = 1000;
+    public static final int NOTE_VISIBLE_LIMIT = 300;
 }

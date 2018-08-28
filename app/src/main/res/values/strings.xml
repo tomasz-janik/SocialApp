@@ -26,6 +26,9 @@
     <string name="comment_invalid">Nie możesz dodać pustego komentarza</string>
     <string name="comment_too_long">Za długi komentarz</string>
 
+    <string name="note_ellipsis">&#8230; </string>
+    <string name="note_continue_reading"><font fgcolor='#efefef'> (Zobacz więcej)</font></string>
+
     <string name="comment_one">KOMENTARZ</string>
     <string name="comment_two">KOMENTARZE</string>
     <string name="comment_five">KOMENTARZY</string>

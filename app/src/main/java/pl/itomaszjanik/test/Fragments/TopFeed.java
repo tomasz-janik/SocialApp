@@ -59,7 +59,7 @@ public class TopFeed extends Fragment {
                 startActivity(intent);
                 getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             }
-        }));
+        }, getContext()));
 
 
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(view.getContext(), DividerItemDecoration.VERTICAL);
