@@ -1,25 +1,30 @@
 package pl.itomaszjanik.test.Fragments;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.TextUtils;
+import android.text.style.BackgroundColorSpan;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
-import org.parceler.Parcels;
 import pl.itomaszjanik.test.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class AddCommentActivity extends Activity {
+public class AddCommentActivity extends FragmentActivity implements ConfirmExitDialogFragment.NoticeDialogListener {
 
     private EditText input;
+    private int length;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -28,29 +33,84 @@ public class AddCommentActivity extends Activity {
         input = (EditText) findViewById(R.id.add_comment_edit_text);
 
         Bundle bundle = getIntent().getExtras();
-        String comment = "";
         if (bundle != null){
-            comment = bundle.getString("input");
+            String comment = bundle.getString("input", "");
+            length = bundle.getInt("name_length", 0);
+
+            Spannable spannable = new SpannableString(comment);
+            if (length > 0){
+                ((TextView)findViewById(R.id.add_comment_info)).setText(R.string.replay_comment_string);
+                spannable.setSpan(new BackgroundColorSpan(Color.parseColor("#22000000")),0, length - 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+            else{
+                ((TextView)findViewById(R.id.add_comment_info)).setText(R.string.add_comment_string);
+            }
+
+            input.setText(spannable);
+            input.setFocusableInTouchMode(true);
+            input.requestFocus();
+            input.setSelection(comment.length());
         }
 
-        input.setText(comment);
+        //input.setText(comment);
+        initInput();
         initListeners();
+    }
 
+    private void initInput(){
+        input.addTextChangedListener(new TextWatcherBackspace() {
+            @Override
+            public void afterTextChanged(Editable s, boolean backSpace) {
+                if (backSpace){
+                    if (s.toString().length() < length){
+                        input.setText("");
+                        length = 0;
+                    }
+                }
+            }
+        });
     }
 
     @Override
     public void onBackPressed(){
-        super.onBackPressed();
+        onExit();
+    }
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+        finish();
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 
+    private void onExit(){
+        String inputString = input.getText().toString();
+        if (inputString.equals("") || inputString.length() == length){
+            finish();
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        }
+        else{
+            DialogFragment exit_dialog = (DialogFragment) getSupportFragmentManager().findFragmentByTag("confirm_exit");
+            if (exit_dialog == null){
+                DialogFragment newFragment = new ConfirmExitDialogFragment();
+                newFragment.show(getSupportFragmentManager(), "confirm_exit");
+            }
+            else{
+                if (exit_dialog.isVisible()) {
+                    exit_dialog.dismiss();
+                }
+                else{
+                    finish();
+                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                }
+            }
+        }
+    }
 
     private void initListeners(){
         findViewById(R.id.add_comment_button_back).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish();
-                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                onExit();
             }
         });
 

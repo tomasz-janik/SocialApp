@@ -1,17 +1,25 @@
 package pl.itomaszjanik.test.Fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.BackgroundColorSpan;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import org.parceler.Parcels;
 import pl.itomaszjanik.test.*;
 
@@ -22,18 +30,15 @@ public class CommentDetailsActivity extends Activity {
 
     private Comment comment;
     private EditText input;
-    private TextView content;
+    private TextView username, date, content;
+    private int length;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.comment_details);
 
-        ((CustomImage) (findViewById(R.id.comment_details_icon_back))).init(R.drawable.ic_arrow_black_24dp, R.drawable.ic_arrow_black_24dp);
-
-        input = (EditText) findViewById(R.id.comment_insert_text);
-        input.setHint(getResources().getString(R.string.comment_details_hint));
-        content = (TextView) findViewById(R.id.comment_details_content);
+        findViews();
         initListeners();
 
 
@@ -43,13 +48,40 @@ public class CommentDetailsActivity extends Activity {
             if (comment == null){
                 comment = new Comment("TEST", "TEST", "26/08/2018 22:41:00", 0, 0);
             }
-            content.setText(comment.getContent());
-            if (bundle.getBoolean("replay", false)){
-                input.setFocusableInTouchMode(true);
-                input.requestFocus();
-            }
+            initMainContent(bundle.getBoolean("replay", false));
         }
 
+        initInput();
+        initCommentsNumber();
+        initRecyclerView();
+    }
+
+    private void findViews(){
+        ((CustomImage) (findViewById(R.id.comment_details_icon_back))).init(R.drawable.ic_arrow_black_24dp, R.drawable.ic_arrow_black_24dp);
+
+        input = (EditText) findViewById(R.id.comment_insert_text);
+        input.setHint(getResources().getString(R.string.comment_details_hint));
+
+        username = (TextView) findViewById(R.id.comment_username);
+        date = (TextView) findViewById(R.id.comment_date);
+        content = (TextView) findViewById(R.id.comment_content);
+    }
+
+    private void initInput(){
+        input.addTextChangedListener(new TextWatcherBackspace() {
+            @Override
+            public void afterTextChanged(Editable s, boolean backSpace) {
+                if (backSpace){
+                    if (s.toString().length() < length){
+                        input.setText("");
+                        length = 0;
+                    }
+                }
+            }
+        });
+    }
+
+    private void initCommentsNumber(){
         int noOfComments = comment.getNoOfReplays();
         String noOfCommentsString = noOfComments + " ";
         if (noOfComments == 1){
@@ -60,9 +92,17 @@ public class CommentDetailsActivity extends Activity {
         }
 
         ((TextView)(findViewById(R.id.comment_details_comments_number))).setText(noOfCommentsString);
+    }
 
-
-        initRecyclerView();
+    private void initMainContent(boolean replay){
+        username.setText(comment.getUsername());
+        date.setText(Utilities.decodeDate(comment.getDate(), getApplicationContext()));
+        content.setText(comment.getContent());
+        ((TextView)findViewById(R.id.comment_like_number)).setText(String.valueOf(comment.getLikes()));
+        if (replay){
+            input.setFocusableInTouchMode(true);
+            input.requestFocus();
+        }
     }
 
 
@@ -73,18 +113,35 @@ public class CommentDetailsActivity extends Activity {
 
         CommentAdapter adapter = new CommentAdapter(getComments(), new CommentClickListener() {
             @Override
-            public void onItemClick(View v, Comment comment) {}
+            public void onItemClick(View v, Comment comment){}
 
             @Override
-            public void onLikeClick(View v, RelativeLayout layout){}
+            public void onLikeClick(View v, RelativeLayout layout){
+                Toast.makeText(getApplicationContext(), getResources().getString(R.string.not_logged), Toast.LENGTH_SHORT).show();
+            }
 
             @Override
-            public void onReplayClick(View v, Comment comment){}
+            public void onReplayClick(View v, Comment comment){
+                String output = "@" + comment.getUsername() + " ";
+                Spannable spannable = new SpannableString(output);
+                spannable.setSpan(new BackgroundColorSpan(Color.parseColor("#22000000")),0, output.length() - 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                length = output.length();
+                input.setText("");
+                input.setText(spannable);
+                input.setFocusableInTouchMode(true);
+                input.requestFocus();
+                input.setSelection(output.length());
+
+
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT);
+            }
 
 
         }, this);
 
-        Temp lm = new Temp(this, LinearLayoutManager.VERTICAL,false);
+        LayoutManagerNoScroll lm = new LayoutManagerNoScroll(this, LinearLayoutManager.VERTICAL,false);
         lm.setScrollEnabled(false);
         recyclerView.setLayoutManager(lm);
         recyclerView.setNestedScrollingEnabled(false);
@@ -120,6 +177,7 @@ public class CommentDetailsActivity extends Activity {
                     String inputText = input.getText().toString();
                     if (!inputText.equals("")){
                         data.putString("input", inputText);
+                        data.putInt("name_length", length);
                     }
                     input.setText("");
                     input.clearFocus();
@@ -141,6 +199,24 @@ public class CommentDetailsActivity extends Activity {
 
             }
         });
+        findViewById(R.id.comment_like_it_layout).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(), getResources().getString(R.string.not_logged), Toast.LENGTH_SHORT).show();
+            }
+        });
+        findViewById(R.id.comment_replay_layout).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                input.setText("");
+                length = 0;
+                input.setFocusableInTouchMode(true);
+                input.requestFocus();
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT);
+            }
+        });
+
     }
 
     private List<Comment> getComments(){

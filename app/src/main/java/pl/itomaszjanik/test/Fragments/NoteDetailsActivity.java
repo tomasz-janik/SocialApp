@@ -2,11 +2,9 @@ package pl.itomaszjanik.test.Fragments;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.content.res.ResourcesCompat;
-import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -108,7 +106,7 @@ public class NoteDetailsActivity extends Activity {
 
         }, this);
 
-        Temp lm = new Temp(this, LinearLayoutManager.VERTICAL,false);
+        LayoutManagerNoScroll lm = new LayoutManagerNoScroll(this, LinearLayoutManager.VERTICAL,false);
         lm.setScrollEnabled(false);
         recyclerView.setLayoutManager(lm);
         recyclerView.setNestedScrollingEnabled(false);

@@ -85,7 +85,7 @@ public class NoteDetails extends Fragment {
 
     private void initRecyclerView(View view){
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.note_details_comments_recycler_view);
-        
+
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
         CommentAdapter adapter = new CommentAdapter(note.getComments(), new CommentClickListener() {
@@ -100,7 +100,7 @@ public class NoteDetails extends Fragment {
 
         }, getContext());
 
-        Temp lm = new Temp(getContext(), LinearLayoutManager.VERTICAL,false);
+        LayoutManagerNoScroll lm = new LayoutManagerNoScroll(getContext(), LinearLayoutManager.VERTICAL,false);
         lm.setScrollEnabled(false);
         recyclerView.setLayoutManager(lm);
 

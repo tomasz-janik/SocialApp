@@ -75,7 +75,8 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.CustomViewHold
                 output = output.substring(0, spaceIndex) + context.getResources().getString(R.string.note_ellipsis);
             }
 
-            textView.setText(output + next, TextView.BufferType.SPANNABLE);
+            String temp = output + next;
+            textView.setText(temp, TextView.BufferType.SPANNABLE);
             Spannable s = (Spannable) textView.getText();
             int start = output.length();
             int end = start + next.length();

@@ -32,7 +32,7 @@
 
 
 
-    <EditText
+    <pl.itomaszjanik.test.EditTextNoFocusOnBack
             android:id="@+id/comment_insert_text"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"

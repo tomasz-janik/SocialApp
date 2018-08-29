@@ -97,7 +97,7 @@ public class ItemFeed extends Fragment {
         tags04.add("kościół");
 
         List<Comment> comments = new ArrayList<>();
-        comments.add(new Comment("chuja sie pan zna, prosze pana", "staszek22", "26/08/2018 22:41:00"));
+        comments.add(new Comment("chuja sie pan zna, prosze pana", "staszek22", "26/08/2018 22:41:00", 2, 5));
         comments.add(new Comment("panie odpierdol sie pan", "misio69", "26/08/2018 22:12:00"));
         comments.add(new Comment("nie rozumiem w czym problem", "heniek33", "25/08/2018 22:41:00"));
         comments.add(new Comment("eskeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeetit", "lilPump", "25/08/2018 22:41:00"));

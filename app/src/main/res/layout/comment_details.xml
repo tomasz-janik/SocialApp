@@ -37,13 +37,18 @@
                     android:layout_marginStart="8dp" android:layout_marginLeft="8dp"
                     android:background="@drawable/box_rounded">
 
-                <TextView
+                <include
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    layout="@layout/comment_details_item"
+                />
+                <!-- <TextView
                         android:id="@+id/comment_details_content"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Content"
                         android:textSize="18sp"
-                        android:textColor="@color/colorPrimaryDark"
+                        android:textColor="#000000"
                         android:textAlignment="viewStart"
                         android:gravity="start"
                         android:padding="12dp"/>
@@ -59,7 +64,7 @@
                         android:layout_height="wrap_content"
                         android:textAlignment="viewStart"
                         android:gravity="start"
-                        android:padding="10dp"/>
+                        android:padding="10dp"/> -->
 
             </LinearLayout>
 
@@ -134,8 +139,6 @@
                 </RelativeLayout>
 
             </LinearLayout>
-
-
 
             <ProgressBar
                     style="?android:attr/progressBarStyle"

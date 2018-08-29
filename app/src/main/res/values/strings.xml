@@ -63,5 +63,14 @@
     <string name="second">kilka sekund</string>
 
     <string name="not_logged">Musisz się zalogować</string>
+    <string name="login">ZALOGUJ</string>
+
+    <string name="dialog_title">Anulować komentarz?</string>
+    <string name="dialog_content">Stracisz niezapisane dane!</string>
+    <string name="dialog_confirm">TAK</string>
+    <string name="dialog_cancel">NIE</string>
+
+    <string name="add_comment_string">Napisz nowy komentarz</string>
+    <string name="replay_comment_string">Odpowiedz na komentarz</string>
 
 </resources>

@@ -23,6 +23,7 @@
                 android:id="@+id/add_comment_edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/add_comment_info_layout"
                 android:minHeight="128dp"
                 android:inputType="textMultiLine"
                 android:hint="@string/add_comment_hint"
@@ -33,7 +34,7 @@
                 android:imeOptions="flagNoFullscreen|flagNoExtractUi"
                 android:background="@drawable/box_rounded"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="64dp" android:layout_marginEnd="8dp" android:layout_marginRight="8dp"
+                android:layout_marginTop="8dp" android:layout_marginEnd="8dp" android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp" android:layout_marginLeft="8dp" android:padding="10dp"/>
 
         <RelativeLayout
@@ -141,6 +142,26 @@
             </RelativeLayout>
 
         </pl.itomaszjanik.test.NavigationController>
+
+        <RelativeLayout
+                android:id="@+id/add_comment_info_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/add_comment_navigation_top"
+                android:background="@drawable/box_content">
+
+            <TextView
+                    android:id="@+id/add_comment_info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/add_comment_string"
+                    android:textAlignment="center"
+                    android:textSize="18sp"
+                    android:layout_margin="8dp"
+                    android:layout_centerInParent="true"/>
+
+
+        </RelativeLayout>
 
 
 
