@@ -47,7 +47,7 @@
                         android:clickable="true"
                         android:focusable="true">
 
-                    <pl.itomaszjanik.test.TextViewClickable
+                    <pl.itomaszjanik.test.ExtendedComponents.TextViewClickable
                             android:id="@+id/top_daily_text"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -71,7 +71,7 @@
                         android:clickable="true"
                         android:focusable="true">
 
-                    <pl.itomaszjanik.test.TextViewClickable
+                    <pl.itomaszjanik.test.ExtendedComponents.TextViewClickable
                             android:id="@+id/top_weekly_text"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -95,7 +95,7 @@
                         android:clickable="true"
                         android:focusable="true">
 
-                    <pl.itomaszjanik.test.TextViewClickable
+                    <pl.itomaszjanik.test.ExtendedComponents.TextViewClickable
                             android:id="@+id/top_monthly_text"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -119,7 +119,7 @@
                         android:clickable="true"
                         android:focusable="true">
 
-                    <pl.itomaszjanik.test.TextViewClickable
+                    <pl.itomaszjanik.test.ExtendedComponents.TextViewClickable
                             android:id="@+id/top_alltime_text"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -152,7 +152,7 @@
                             android:clickable="false"
                             android:visibility="invisible"/>
 
-                    <pl.itomaszjanik.test.TextViewClickable
+                    <pl.itomaszjanik.test.ExtendedComponents.TextViewClickable
                             android:id="@+id/top_commented_text"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"

@@ -15,6 +15,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import org.parceler.Parcels;
 import pl.itomaszjanik.test.*;
+import pl.itomaszjanik.test.ExtendedComponents.TextViewClickable;
+import pl.itomaszjanik.test.Note;
+import pl.itomaszjanik.test.Posts.NoteAdapter;
+import pl.itomaszjanik.test.Posts.NoteClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,6 +78,7 @@ public class TopFeed extends Fragment {
         recyclerView.addItemDecoration(new SpacesItemDecoration(space));
 
         recyclerView.addOnScrollListener(new ListScrollTopListener((NavigationController) getActivity().findViewById(R.id.navigation_feed_top)));
+        recyclerView.addOnScrollListener(new ListScrollBottomListener((NavigationController) getActivity().findViewById(R.id.navigation_bottom)));
 
         ((TextViewClickable) (view.findViewById(R.id.top_daily_text))).changeState();
         currentClicked = (TextViewClickable) view.findViewById(R.id.top_daily_text);

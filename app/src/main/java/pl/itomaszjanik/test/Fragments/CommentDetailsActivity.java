@@ -22,6 +22,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 import org.parceler.Parcels;
 import pl.itomaszjanik.test.*;
+import pl.itomaszjanik.test.BottomPopup.BottomPopup;
+import pl.itomaszjanik.test.Comments.CommentAdapter;
+import pl.itomaszjanik.test.Comments.CommentClickListener;
+import pl.itomaszjanik.test.Comments.CommentsDivider;
+import pl.itomaszjanik.test.ExtendedComponents.CustomImage;
+import pl.itomaszjanik.test.ExtendedComponents.LayoutManagerNoScroll;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +38,8 @@ public class CommentDetailsActivity extends Activity {
     private EditText input;
     private TextView username, date, content;
     private int length;
+    private boolean change;
+    private BottomPopup bottomPopup;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -73,8 +81,10 @@ public class CommentDetailsActivity extends Activity {
             public void afterTextChanged(Editable s, boolean backSpace) {
                 if (backSpace){
                     if (s.toString().length() < length){
-                        input.setText("");
-                        length = 0;
+                        if (!change){
+                            input.setText("");
+                            length = 0;
+                        }
                     }
                 }
             }
@@ -117,7 +127,7 @@ public class CommentDetailsActivity extends Activity {
 
             @Override
             public void onLikeClick(View v, RelativeLayout layout){
-                Toast.makeText(getApplicationContext(), getResources().getString(R.string.not_logged), Toast.LENGTH_SHORT).show();
+                bottomPopup = Utilities.getBottomPopupLogin(CommentDetailsActivity.this, R.layout.bottom_popup_login, bottomPopup);
             }
 
             @Override
@@ -126,12 +136,14 @@ public class CommentDetailsActivity extends Activity {
                 Spannable spannable = new SpannableString(output);
                 spannable.setSpan(new BackgroundColorSpan(Color.parseColor("#22000000")),0, output.length() - 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
+                change = true;
                 length = output.length();
                 input.setText("");
                 input.setText(spannable);
+                change = false;
                 input.setFocusableInTouchMode(true);
                 input.requestFocus();
-                input.setSelection(output.length());
+                input.setSelection(length);
 
 
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -188,12 +200,19 @@ public class CommentDetailsActivity extends Activity {
                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             }
         });
+
         findViewById(R.id.comment_insert_commit).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (input != null){
-                    if (Utilities.checkComment(input.getText().toString(), getApplicationContext())){
-
+                    input.clearFocus();
+                    Utilities.hideKeyboard(CommentDetailsActivity.this);
+                    int checkComment = Utilities.checkComment(input.getText().toString(), CommentDetailsActivity.this);
+                    if (checkComment > 0){
+                        bottomPopup = Utilities.getBottomPopupLogin(CommentDetailsActivity.this, R.layout.bottom_popup_login, bottomPopup);
+                    }
+                    else{
+                        bottomPopup = Utilities.errorComment(checkComment, CommentDetailsActivity.this, R.layout.bottom_popup_login, bottomPopup);
                     }
                 }
 
@@ -202,7 +221,7 @@ public class CommentDetailsActivity extends Activity {
         findViewById(R.id.comment_like_it_layout).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getApplicationContext(), getResources().getString(R.string.not_logged), Toast.LENGTH_SHORT).show();
+                bottomPopup = Utilities.getBottomPopupLogin(CommentDetailsActivity.this, R.layout.bottom_popup_text, bottomPopup);
             }
         });
         findViewById(R.id.comment_replay_layout).setOnClickListener(new View.OnClickListener() {

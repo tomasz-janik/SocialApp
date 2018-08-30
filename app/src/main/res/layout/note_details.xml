@@ -81,7 +81,7 @@
                         android:orientation="horizontal"
                         android:layout_gravity="end|top">
 
-                    <pl.itomaszjanik.test.CustomImage
+                    <pl.itomaszjanik.test.ExtendedComponents.CustomImage
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             app:srcCompat="@drawable/icon_comments_gray_24dp"
@@ -173,7 +173,7 @@
                     android:clickable="false"
             />
 
-            <pl.itomaszjanik.test.CustomImage
+            <pl.itomaszjanik.test.ExtendedComponents.CustomImage
                     android:id="@+id/note_details_icon_back"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

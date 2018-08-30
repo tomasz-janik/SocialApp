@@ -1,6 +1,7 @@
 package pl.itomaszjanik.test;
 
 import org.parceler.Parcel;
+import pl.itomaszjanik.test.Comment;
 
 import java.util.ArrayList;
 import java.util.List;

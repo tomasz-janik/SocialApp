@@ -1,4 +1,4 @@
-package pl.itomaszjanik.test;
+package pl.itomaszjanik.test.Comments;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -7,6 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import pl.itomaszjanik.test.Comment;
+import pl.itomaszjanik.test.R;
+import pl.itomaszjanik.test.Utilities;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package pl.itomaszjanik.test;
+package pl.itomaszjanik.test.Comments;
 
 import android.content.Context;
 import android.graphics.Canvas;

@@ -62,7 +62,7 @@
 
     <string name="second">kilka sekund</string>
 
-    <string name="not_logged">Musisz się zalogować</string>
+    <string name="not_logged">Musisz być zalogowany, aby\nmóc to zrobić</string>
     <string name="login">ZALOGUJ</string>
 
     <string name="dialog_title">Anulować komentarz?</string>

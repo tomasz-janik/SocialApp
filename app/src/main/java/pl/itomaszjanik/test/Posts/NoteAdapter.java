@@ -1,4 +1,4 @@
-package pl.itomaszjanik.test;
+package pl.itomaszjanik.test.Posts;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -9,6 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import pl.itomaszjanik.test.Note;
+import pl.itomaszjanik.test.R;
+import pl.itomaszjanik.test.Values;
 
 import java.util.List;
 

@@ -15,6 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import org.parceler.Parcels;
 import pl.itomaszjanik.test.*;
+import pl.itomaszjanik.test.Posts.NoteAdapter;
+import pl.itomaszjanik.test.Posts.NoteClickListener;
 
 import java.util.ArrayList;
 import java.util.List;

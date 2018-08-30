@@ -1,4 +1,4 @@
-package pl.itomaszjanik.test;
+package pl.itomaszjanik.test.Search;
 
 import android.os.Parcel;
 import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion;

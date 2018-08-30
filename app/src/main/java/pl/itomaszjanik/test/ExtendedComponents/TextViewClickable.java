@@ -1,9 +1,10 @@
-package pl.itomaszjanik.test;
+package pl.itomaszjanik.test.ExtendedComponents;
 
 import android.content.Context;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
+import pl.itomaszjanik.test.R;
 
 public class TextViewClickable extends AppCompatTextView {
 

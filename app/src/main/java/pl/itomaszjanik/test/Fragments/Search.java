@@ -14,7 +14,7 @@ import com.arlib.floatingsearchview.FloatingSearchView;
 import com.arlib.floatingsearchview.suggestions.SearchSuggestionsAdapter;
 import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion;
 import com.mancj.materialsearchbar.MaterialSearchBar;
-import pl.itomaszjanik.test.DataSuggestion;
+import pl.itomaszjanik.test.Search.DataSuggestion;
 import pl.itomaszjanik.test.NavigationController;
 import pl.itomaszjanik.test.R;
 

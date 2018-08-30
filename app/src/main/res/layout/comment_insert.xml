@@ -17,7 +17,7 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true">
 
-        <pl.itomaszjanik.test.CustomImage
+        <pl.itomaszjanik.test.ExtendedComponents.CustomImage
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="false"
@@ -32,7 +32,7 @@
 
 
 
-    <pl.itomaszjanik.test.EditTextNoFocusOnBack
+    <pl.itomaszjanik.test.ExtendedComponents.EditTextNoFocusOnBack
             android:id="@+id/comment_insert_text"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -63,16 +63,16 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true">
 
-            <pl.itomaszjanik.test.CustomImage
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/icon_add_24dp"
-                    android:clickable="false"
-                    android:layout_marginRight="20dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginStart="20dp"
-                    android:layout_centerInParent="true"/>
+        <pl.itomaszjanik.test.ExtendedComponents.CustomImage
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/icon_add_24dp"
+                android:clickable="false"
+                android:layout_marginRight="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginStart="20dp"
+                android:layout_centerInParent="true"/>
 
     </RelativeLayout>
 

@@ -12,6 +12,7 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.arlib.floatingsearchview.FloatingSearchView;
 import net.danlew.android.joda.JodaTimeAndroid;
+import pl.itomaszjanik.test.ExtendedComponents.CustomImage;
 import pl.itomaszjanik.test.Fragments.*;
 
 public class MainActivity extends AppCompatActivity {

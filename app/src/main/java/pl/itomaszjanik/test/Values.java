@@ -18,4 +18,8 @@ public class Values {
 
     public static final int COMMENT_LIMIT = 1000;
     public static final int NOTE_VISIBLE_LIMIT = 300;
+
+    public static final int COMMENT_EMPTY = -1;
+    public static final int COMMENT_TOO_LONG = -2;
+
 }

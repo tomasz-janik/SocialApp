@@ -15,6 +15,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 import org.parceler.Parcels;
 import pl.itomaszjanik.test.*;
+import pl.itomaszjanik.test.BottomPopup.BottomPopup;
+import pl.itomaszjanik.test.Comments.CommentAdapter;
+import pl.itomaszjanik.test.Comments.CommentClickListener;
+import pl.itomaszjanik.test.Comments.CommentsDivider;
+import pl.itomaszjanik.test.ExtendedComponents.CustomImage;
+import pl.itomaszjanik.test.ExtendedComponents.LayoutManagerNoScroll;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +30,7 @@ public class NoteDetailsActivity extends Activity {
     private Note note;
     private TextView content, hashes, date, rate;
     private EditText input;
+    private BottomPopup bottomPopup;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -89,7 +96,7 @@ public class NoteDetailsActivity extends Activity {
             }
             @Override
             public void onLikeClick(View v, RelativeLayout layout){
-                Toast.makeText(getApplicationContext(), getResources().getString(R.string.not_logged), Toast.LENGTH_SHORT).show();
+                bottomPopup = Utilities.getBottomPopupLogin(NoteDetailsActivity.this, R.layout.bottom_popup_login, bottomPopup);
             }
 
             @Override
@@ -166,12 +173,17 @@ public class NoteDetailsActivity extends Activity {
                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             }
         });
+
         findViewById(R.id.comment_insert_commit).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (input != null){
-                    if (Utilities.checkComment(input.getText().toString(), getApplicationContext())){
-
+                    int checkComment = Utilities.checkComment(input.getText().toString(), NoteDetailsActivity.this);
+                    if (checkComment > 0){
+                        bottomPopup = Utilities.getBottomPopupLogin(NoteDetailsActivity.this, R.layout.bottom_popup_login, bottomPopup);
+                    }
+                    else{
+                        bottomPopup = Utilities.errorComment(checkComment, NoteDetailsActivity.this, R.layout.bottom_popup_login, bottomPopup);
                     }
                 }
 

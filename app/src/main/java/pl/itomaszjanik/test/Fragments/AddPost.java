@@ -11,7 +11,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import pl.itomaszjanik.test.AddPostTags.AddedTagView;
-import pl.itomaszjanik.test.EditTextKeyboard;
+import pl.itomaszjanik.test.ExtendedComponents.EditTextKeyboard;
 import pl.itomaszjanik.test.NavigationController;
 import pl.itomaszjanik.test.R;
 

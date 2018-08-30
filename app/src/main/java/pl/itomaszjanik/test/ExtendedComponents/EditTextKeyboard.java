@@ -1,4 +1,4 @@
-package pl.itomaszjanik.test;
+package pl.itomaszjanik.test.ExtendedComponents;
 
 import android.app.Activity;
 import android.content.Context;

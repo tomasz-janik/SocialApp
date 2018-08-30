@@ -1,9 +1,10 @@
-package pl.itomaszjanik.test;
+package pl.itomaszjanik.test.Comments;
 
 import org.parceler.Parcel;
+import pl.itomaszjanik.test.Comment;
 
 @Parcel
-public class CommentWithReplays extends Comment{
+public class CommentWithReplays extends Comment {
 
     public int noOfReplays;
 

@@ -1,4 +1,4 @@
-package pl.itomaszjanik.test;
+package pl.itomaszjanik.test.ExtendedComponents;
 
 import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;

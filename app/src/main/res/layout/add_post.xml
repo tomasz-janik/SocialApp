@@ -18,7 +18,7 @@
             android:focusable="true"
             android:background="#efefef">
 
-        <pl.itomaszjanik.test.EditTextKeyboard
+        <pl.itomaszjanik.test.ExtendedComponents.EditTextKeyboard
                 android:id="@+id/add_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -34,7 +34,7 @@
                 android:layout_marginTop="64dp" android:layout_marginEnd="8dp" android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp" android:layout_marginLeft="8dp" android:padding="10dp"/>
 
-        <pl.itomaszjanik.test.EditTextKeyboard
+        <pl.itomaszjanik.test.ExtendedComponents.EditTextKeyboard
                 android:id="@+id/add_hashes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

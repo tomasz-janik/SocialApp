@@ -1,7 +1,8 @@
-package pl.itomaszjanik.test;
+package pl.itomaszjanik.test.Comments;
 
 import android.view.View;
 import android.widget.RelativeLayout;
+import pl.itomaszjanik.test.Comment;
 
 public interface CommentClickListener {
     public void onItemClick(View v, Comment comment);

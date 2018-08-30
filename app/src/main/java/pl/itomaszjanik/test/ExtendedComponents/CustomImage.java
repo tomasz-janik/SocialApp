@@ -1,4 +1,4 @@
-package pl.itomaszjanik.test;
+package pl.itomaszjanik.test.ExtendedComponents;
 
 
 import android.content.Context;
@@ -23,11 +23,6 @@ public class CustomImage extends android.support.v7.widget.AppCompatImageView {
     public CustomImage(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
-
-    /*public void init(Drawable active, Drawable inactive){
-        this.drawableActive = active;
-        this.drawableInactive = inactive;
-    }*/
 
     public void init(int active, int inactive){
         this.drawableActive = active;

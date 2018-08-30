@@ -68,7 +68,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true">
 
-            <pl.itomaszjanik.test.CustomImage
+            <pl.itomaszjanik.test.ExtendedComponents.CustomImage
                     android:id="@+id/comment_top_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -124,7 +124,7 @@
                 android:layout_centerVertical="true"
         >
 
-            <pl.itomaszjanik.test.CustomImage
+            <pl.itomaszjanik.test.ExtendedComponents.CustomImage
                     android:id="@+id/comment_comment_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

@@ -17,7 +17,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".Fragments.NoteDetailsActivity"/>
-        <activity android:name=".Fragments.AddCommentActivity"/>
+        <activity
+                android:name=".Fragments.AddCommentActivity"
+                android:windowSoftInputMode="adjustPan"
+        />
         <activity android:name=".Fragments.CommentDetailsActivity"/>
     </application>
 

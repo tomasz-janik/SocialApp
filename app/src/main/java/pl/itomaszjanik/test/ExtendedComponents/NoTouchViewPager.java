@@ -1,17 +1,17 @@
-package pl.itomaszjanik.test;
+package pl.itomaszjanik.test.ExtendedComponents;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
+import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
-public class NoTouchRecyclerView extends RecyclerView {
+public class NoTouchViewPager extends ViewPager{
 
-    public NoTouchRecyclerView(Context context) {
+    public NoTouchViewPager(Context context) {
         super(context);
     }
 
-    public NoTouchRecyclerView(Context context, AttributeSet attrs) {
+    public NoTouchViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
