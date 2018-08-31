@@ -21,6 +21,8 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
+            android:layout_toLeftOf="@+id/bottom_popup_login"
+            android:layout_toStartOf="@+id/bottom_popup_login"
     />
 
     <TextView
