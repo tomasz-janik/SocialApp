@@ -13,14 +13,14 @@ import pl.itomaszjanik.test.Utilities;
 
 import java.util.List;
 
-public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHolder>{
+public class CommentNoReplayAdapter extends RecyclerView.Adapter<CommentNoReplayAdapter.CommentViewHolder>{
 
     private List<Comment> comments;
     private CommentClickListener listener;
     private Context context;
 
     public class CommentViewHolder extends RecyclerView.ViewHolder{
-        public TextView username, date, content, like, replays;
+        public TextView username, date, content, like;
         public RelativeLayout likeLayout, replayLayout;
 
         public CommentViewHolder(View view) {
@@ -29,21 +29,19 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
             date = (TextView) view.findViewById(R.id.comment_date);
             content = (TextView) view.findViewById(R.id.comment_content);
             like = (TextView) view.findViewById(R.id.comment_like_number);
-            replays = (TextView) view.findViewById(R.id.comment_item_replays);
             likeLayout = (RelativeLayout) view.findViewById(R.id.comment_like_it_layout);
             replayLayout = (RelativeLayout) view.findViewById(R.id.comment_replay_layout);
         }
     }
 
     @Override
-    public void onBindViewHolder(final CommentAdapter.CommentViewHolder holder, int position) {
+    public void onBindViewHolder(final CommentNoReplayAdapter.CommentViewHolder holder, int position) {
         final Comment comment = comments.get(position);
 
         holder.username.setText(comment.getUsername());
         holder.date.setText(Utilities.decodeDate(comment.getDate(), context));
         holder.content.setText(comment.getContent());
         holder.like.setText(String.valueOf(comment.getLikes()));
-        holder.replays.setText(String.valueOf(comment.getNoOfReplays()));
 
         holder.likeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,7 +66,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     }
 
 
-    public CommentAdapter(List<Comment> comments, CommentClickListener listener, Context context){
+    public CommentNoReplayAdapter(List<Comment> comments, CommentClickListener listener, Context context){
         this.comments = comments;
         this.listener = listener;
         this.context = context;
@@ -77,7 +75,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
     @Override
     public CommentViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.comment_item_new, parent, false);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.comment_item_no_replays, parent, false);
         return new CommentViewHolder(itemView);
     }
 

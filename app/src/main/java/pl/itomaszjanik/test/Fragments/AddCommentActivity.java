@@ -44,11 +44,11 @@ public class AddCommentActivity extends FragmentActivity implements ConfirmExitD
             }
 
             input.setText(spannable);
+            input.setSelection(comment.length());
             input.setFocusableInTouchMode(true);
             input.requestFocus();
-            input.setSelection(comment.length());
         }
-
+        input.requestFocus();
         //input.setText(comment);
         initInput();
         initListeners();

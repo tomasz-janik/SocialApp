@@ -143,7 +143,7 @@ public class Utilities {
             }
             else{
                 output += days + " ";
-                output += context.getResources().getString(R.string.week_two);
+                output += context.getResources().getString(R.string.day_two);
             }
         }
         else if (duration.getStandardHours() >= 1){

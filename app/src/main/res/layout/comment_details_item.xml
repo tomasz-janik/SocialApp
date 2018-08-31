@@ -82,11 +82,12 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="4dp"
                     android:layout_marginStart="4dp"
-                    android:layout_marginRight="12dp"
-                    android:layout_marginEnd="12dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginEnd="8dp"
                     android:layout_toRightOf="@id/comment_top_icon"
                     android:layout_toEndOf="@id/comment_top_icon"
                     android:textSize="14sp"
+                    android:textColor="@color/black"
                     android:text="330"/>
 
         </RelativeLayout>
@@ -96,6 +97,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="?android:attr/selectableItemBackground"
+                android:layout_centerVertical="true"
                 android:layout_toRightOf="@id/comment_like_layout"
                 android:layout_toEndOf="@id/comment_like_layout">
 
@@ -103,10 +105,10 @@
                     android:id="@+id/comment_like_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="12dp"
-                    android:layout_marginStart="12dp"
-                    android:layout_marginRight="12dp"
-                    android:layout_marginEnd="12dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginEnd="8dp"
                     android:layout_marginBottom="8dp"
                     android:layout_marginTop="8dp"
                     android:textSize="14sp"
@@ -115,7 +117,7 @@
         </RelativeLayout>
 
         <RelativeLayout
-                android:id="@+id/comment_replay_layout"
+                android:id="@+id/comment_replay_number_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="?android:attr/selectableItemBackground"
@@ -128,27 +130,50 @@
                     android:id="@+id/comment_comment_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="12dp"
-                    android:layout_marginStart="12dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp"
                     android:layout_centerVertical="true"
                     app:srcCompat="@drawable/icon_comments_gray_12dp"
             />
 
             <TextView
-                    android:id="@+id/comment_comment"
+                    android:id="@+id/comment_details_replay_number"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
                     android:layout_marginLeft="4dp"
                     android:layout_marginStart="4dp"
-                    android:layout_marginRight="12dp"
-                    android:layout_marginEnd="12dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginEnd="8dp"
                     android:layout_toRightOf="@id/comment_comment_icon"
                     android:layout_toEndOf="@id/comment_comment_icon"
                     android:textSize="14sp"
-                    android:text="Odpowiedz"/>
+                    android:textColor="@color/black"
+                    android:text="10"/>
 
+        </RelativeLayout>
+
+        <RelativeLayout
+                android:id="@+id/comment_replay_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground"
+                android:layout_toRightOf="@id/comment_replay_number_layout"
+                android:layout_toEndOf="@id/comment_replay_number_layout"
+                android:layout_centerVertical="true">
+
+            <TextView
+                    android:id="@+id/comment_comment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="8dp"
+                    android:textSize="14sp"
+                    android:text="Odpowiedz"/>
 
 
         </RelativeLayout>

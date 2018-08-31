@@ -116,7 +116,7 @@
         </RelativeLayout>
 
         <RelativeLayout
-                android:id="@+id/comment_replay_number_layout"
+                android:id="@+id/comment_replay_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@id/comment_like_it_layout"
@@ -134,7 +134,7 @@
             />
 
             <TextView
-                    android:id="@+id/comment_item_replays"
+                    android:id="@+id/comment_comment"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="4dp"
@@ -146,32 +146,7 @@
                     android:layout_toRightOf="@id/comment_comment_icon"
                     android:layout_toEndOf="@id/comment_comment_icon"
                     android:textSize="14sp"
-                    android:text="33" android:textColor="@color/black"/>
-
-        </RelativeLayout>
-
-        <RelativeLayout
-                android:id="@+id/comment_replay_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="?android:attr/selectableItemBackground"
-                android:layout_toRightOf="@id/comment_replay_number_layout"
-                android:layout_toEndOf="@id/comment_replay_number_layout"
-                android:layout_centerVertical="true">
-
-            <TextView
-                    android:id="@+id/comment_comment"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginRight="4dp"
-                    android:layout_marginEnd="4dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:textSize="14sp"
                     android:text="Odpowiedz"/>
-
 
         </RelativeLayout>
 

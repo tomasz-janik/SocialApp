@@ -25,6 +25,7 @@ import pl.itomaszjanik.test.*;
 import pl.itomaszjanik.test.BottomPopup.BottomPopup;
 import pl.itomaszjanik.test.Comments.CommentAdapter;
 import pl.itomaszjanik.test.Comments.CommentClickListener;
+import pl.itomaszjanik.test.Comments.CommentNoReplayAdapter;
 import pl.itomaszjanik.test.Comments.CommentsDivider;
 import pl.itomaszjanik.test.ExtendedComponents.CustomImage;
 import pl.itomaszjanik.test.ExtendedComponents.LayoutManagerNoScroll;
@@ -102,12 +103,14 @@ public class CommentDetailsActivity extends Activity {
         }
 
         ((TextView)(findViewById(R.id.comment_details_comments_number))).setText(noOfCommentsString);
+        ((TextView)(findViewById(R.id.comment_item_replays))).setText(String.valueOf(comment.getNoOfReplays()));
     }
 
     private void initMainContent(boolean replay){
         username.setText(comment.getUsername());
         date.setText(Utilities.decodeDate(comment.getDate(), getApplicationContext()));
         content.setText(comment.getContent());
+
         ((TextView)findViewById(R.id.comment_like_number)).setText(String.valueOf(comment.getLikes()));
         if (replay){
             input.setFocusableInTouchMode(true);
@@ -121,7 +124,7 @@ public class CommentDetailsActivity extends Activity {
 
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        CommentAdapter adapter = new CommentAdapter(getComments(), new CommentClickListener() {
+        CommentNoReplayAdapter adapter = new CommentNoReplayAdapter(getComments(), new CommentClickListener() {
             @Override
             public void onItemClick(View v, Comment comment){}
 
@@ -192,7 +195,7 @@ public class CommentDetailsActivity extends Activity {
                         data.putInt("name_length", length);
                     }
                     input.setText("");
-                    input.clearFocus();
+                    //input.clearFocus();
                 }
                 Intent intent = new Intent(getApplicationContext(), AddCommentActivity.class);
                 intent.putExtras(data);
