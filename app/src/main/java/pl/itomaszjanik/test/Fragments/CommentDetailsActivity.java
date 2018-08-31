@@ -153,7 +153,10 @@ public class CommentDetailsActivity extends Activity {
                 imm.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT);
             }
 
+            @Override
+            public void onEllipsisClick(View v, Comment comment){
 
+            }
         }, this);
 
         LayoutManagerNoScroll lm = new LayoutManagerNoScroll(this, LinearLayoutManager.VERTICAL,false);
@@ -184,6 +187,7 @@ public class CommentDetailsActivity extends Activity {
                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             }
         });
+
         findViewById(R.id.comment_insert_fullscreen).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -221,12 +225,14 @@ public class CommentDetailsActivity extends Activity {
 
             }
         });
+
         findViewById(R.id.comment_like_it_layout).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 bottomPopup = Utilities.getBottomPopupLogin(CommentDetailsActivity.this, R.layout.bottom_popup_text, bottomPopup);
             }
         });
+
         findViewById(R.id.comment_replay_layout).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -239,6 +245,12 @@ public class CommentDetailsActivity extends Activity {
             }
         });
 
+        findViewById(R.id.comment_ellipsis_layout).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
     }
 
     private List<Comment> getComments(){

@@ -11,4 +11,6 @@ public interface CommentClickListener {
 
     public void onReplayClick(View v, Comment comment);
 
+    public void onEllipsisClick(View v, Comment comment);
+
 }

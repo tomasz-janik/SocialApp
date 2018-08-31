@@ -111,6 +111,11 @@ public class NoteDetailsActivity extends Activity {
                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             }
 
+            @Override
+            public void onEllipsisClick(View v, Comment comment){
+
+            }
+
         }, this);
 
         LayoutManagerNoScroll lm = new LayoutManagerNoScroll(this, LinearLayoutManager.VERTICAL,false);
@@ -155,6 +160,7 @@ public class NoteDetailsActivity extends Activity {
                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             }
         });
+
         findViewById(R.id.comment_insert_fullscreen).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
