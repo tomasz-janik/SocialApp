@@ -74,22 +74,9 @@ public class NoteDetailsActivity extends Activity {
             hashes.setText(prepareHashesText(note.getHashes()));
         }
 
-        int noOfComments = note.getNoOfComments();
-        String noOfCommentsString = noOfComments + " ";
-        if (noOfComments == 0){
-            noOfCommentsString += getResources().getString(R.string.comment_five);
-        }
-        else if (noOfComments == 1){
-            noOfCommentsString += getResources().getString(R.string.comment_one);
-        }
-        else if (noOfComments < 5){
-            noOfCommentsString += getResources().getString(R.string.comment_two);
-        }
-        else{
-            noOfCommentsString += getResources().getString(R.string.comment_five);
-        }
+        String noOfComments = Utilities.getCommentVariation(note.getNoOfComments(), NoteDetailsActivity.this);
 
-        ((TextView)(findViewById(R.id.note_details_comments_number))).setText(noOfCommentsString);
+        ((TextView)(findViewById(R.id.note_details_comments_number))).setText(noOfComments);
         initRecyclerView();
     }
 
@@ -104,6 +91,7 @@ public class NoteDetailsActivity extends Activity {
             public void onItemClick(View v, Comment comment) {
                 Bundle data = new Bundle();
                 data.putParcelable("comment", Parcels.wrap(comment));
+                data.putParcelable("note", Parcels.wrap(note));
 
                 Intent intent = new Intent(getApplication(), CommentDetailsActivity.class);
                 intent.putExtras(data);
@@ -119,6 +107,7 @@ public class NoteDetailsActivity extends Activity {
             public void onReplayClick(View v, Comment comment){
                 Bundle data = new Bundle();
                 data.putParcelable("comment", Parcels.wrap(comment));
+                data.putParcelable("note", Parcels.wrap(note));
                 data.putBoolean("replay", true);
 
                 Intent intent = new Intent(getApplication(), CommentDetailsActivity.class);
@@ -146,6 +135,8 @@ public class NoteDetailsActivity extends Activity {
 
             @Override
             public void onShareClick(View v, Comment comment){
+                bottomPopup = Utilities.getBottomPopupLoading(NoteDetailsActivity.this,
+                        R.layout.bottom_popup_loading, R.id.bottom_popup_text, getString(R.string.loading), bottomPopup);
                 Bitmap screenshot = Utilities.getBitmapComment(NoteDetailsActivity.this, note, comment);
                 Utilities.share(screenshot, NoteDetailsActivity.this);
             }

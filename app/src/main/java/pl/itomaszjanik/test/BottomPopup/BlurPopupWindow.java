@@ -43,6 +43,7 @@ public class BlurPopupWindow extends FrameLayout {
     protected FrameLayout mContentLayout;
     private boolean mAnimating;
     private boolean visible;
+    private boolean autoDismiss;
     private String text;
 
     private WindowManager mWindowManager;
@@ -228,7 +229,8 @@ public class BlurPopupWindow extends FrameLayout {
             showAnimator.start();
         }
         onShow();
-        autoDismiss();
+        if (autoDismiss)
+            autoDismiss();
     }
 
     private void autoDismiss(){
@@ -333,6 +335,10 @@ public class BlurPopupWindow extends FrameLayout {
         }
     }
 
+    public void setAutoDismiss(boolean autoDismiss){
+        this.autoDismiss = autoDismiss;
+    }
+
     public int getTintColor() {
         return mTintColor;
     }
@@ -413,6 +419,7 @@ public class BlurPopupWindow extends FrameLayout {
         private OnDismissListener mOnDismissListener;
         private String mText;
         private TextView mTextView;
+        private boolean autoDismiss;
 
         public Builder(Context context) {
             mContext = context;
@@ -439,6 +446,11 @@ public class BlurPopupWindow extends FrameLayout {
                 mText = string;
                 mTextView.setText(string);
             }
+            return this;
+        }
+
+        public Builder<T> setAutoDismiss(boolean autoDismiss){
+            this.autoDismiss = autoDismiss;
             return this;
         }
 
@@ -540,6 +552,7 @@ public class BlurPopupWindow extends FrameLayout {
             popupWindow.setDismissOnClickBack(mDismissOnClickBack);
             popupWindow.setOnDismissListener(mOnDismissListener);
             popupWindow.setText(mText, mTextView);
+            popupWindow.setAutoDismiss(autoDismiss);
 
             return popupWindow;
         }

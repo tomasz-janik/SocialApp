@@ -76,4 +76,6 @@
     <string name="report">Zgłoś</string>
     <string name="report_commited">Zgłoszenie zostało przyjęte, dziękujemy!</string>
 
+    <string name="loading">Przygotowujemy to dla ciebie</string>
+
 </resources>

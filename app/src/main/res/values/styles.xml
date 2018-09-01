@@ -18,5 +18,8 @@
         <item name="android:windowExitAnimation">@anim/slide_out</item>
     </style>
 
+    <style name="RedAccent" parent="ThemeOverlay.AppCompat.Light">
+        <item name="colorAccent">#EFEFEF</item>
+    </style>
 
 </resources>

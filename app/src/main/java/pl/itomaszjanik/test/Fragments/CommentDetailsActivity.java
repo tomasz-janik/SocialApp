@@ -35,6 +35,7 @@ import java.util.List;
 
 public class CommentDetailsActivity extends Activity {
 
+    private Note note;
     private Comment comment;
     private EditText input;
     private TextView username, date, content;
@@ -55,9 +56,17 @@ public class CommentDetailsActivity extends Activity {
         Bundle bundle = getIntent().getExtras();
         if (bundle != null){
             comment = Parcels.unwrap(bundle.getParcelable("comment"));
+            note = Parcels.unwrap(bundle.getParcelable("note"));
             if (comment == null){
                 comment = new Comment("TEST", "TEST", "26/08/2018 22:41:00", 0, 0);
             }
+            if (note == null){
+                ArrayList<String> list = new ArrayList<>();
+                list.add("TEST");
+                list.add("#TEST");
+                note = new Note("TEST", "TEST", list, 0);
+            }
+
             initMainContent(bundle.getBoolean("replay", false));
         }
 
@@ -171,9 +180,8 @@ public class CommentDetailsActivity extends Activity {
             }
 
             @Override
-            public void onShareClick(View v, Comment comment){
-                View rootView = getWindow().getDecorView().findViewById(android.R.id.content);
-                Bitmap screenshot = Utilities.getScreenshot(rootView);
+            public void onShareClick(View v, Comment replay){
+                Bitmap screenshot = Utilities.getBitmapReplay(CommentDetailsActivity.this, note, comment, replay);
                 Utilities.share(screenshot, CommentDetailsActivity.this);
             }
 

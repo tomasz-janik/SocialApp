@@ -83,6 +83,7 @@ public class Utilities {
                         }
                     }, R.id.bottom_popup_login)
                     .setGravity(Gravity.BOTTOM)
+                    .setAutoDismiss(true)
                     .build();
         }
 
@@ -91,10 +92,11 @@ public class Utilities {
     }
 
     public static BottomPopup getBottomPopupText(Context context, int layout, int textView, String text, BottomPopup popup){
-        if (popup == null || popup.getText() == null){
+        if (popup == null || popup.getText() == null || popup.getText().equals(context.getString(R.string.loading))){
             popup = new BottomPopup.Builder(context)
                     .setContentView(layout)
                     .setString(text, textView)
+                    .setAutoDismiss(true)
                     .setGravity(Gravity.BOTTOM)
                     .build();
         }
@@ -104,9 +106,21 @@ public class Utilities {
         popup.show();
 
         return popup;
-
     }
 
+    public static BottomPopup getBottomPopupLoading(Context context, int layout, int textView, String text, BottomPopup popup){
+        if (popup == null || popup.getText() == null || !popup.getText().equals(text)){
+            popup = new BottomPopup.Builder(context)
+                    .setContentView(layout)
+                    .setString(text, textView)
+                    .setAutoDismiss(true)
+                    .setGravity(Gravity.BOTTOM)
+                    .build();
+        }
+        popup.show();
+
+        return popup;
+    }
 
     public static String decodeDate(String date, Context context){
         DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
@@ -232,14 +246,6 @@ public class Utilities {
         }
     }
 
-    @MainThread
-    public static Bitmap getScreenshot(View v) {
-        Bitmap b = Bitmap.createBitmap(v.getWidth(), v.getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas c = new Canvas(b);
-        v.draw(c);
-        return b;
-    }
-
     public static Bitmap getBitmapNote(Activity activity, Note note){
         final View view = LayoutInflater.from(activity).inflate(R.layout.screenshoot_note, (ViewGroup) activity.findViewById(R.id.ide), false);
         ((TextView)(view.findViewById(R.id.note_details_content))).setText(note.getContent());
@@ -271,17 +277,48 @@ public class Utilities {
 
     public static Bitmap getBitmapComment(Activity activity, Note note, Comment comment){
         final View view = LayoutInflater.from(activity).inflate(R.layout.screenshoot_comment, (ViewGroup) activity.findViewById(R.id.ide), false);
-        ((TextView)(view.findViewById(R.id.note_details_content))).setText(note.getContent());
-        ((TextView)(view.findViewById(R.id.note_details_hashes))).setText(prepareHashesText(note.getHashes()));
 
+        setNoteDetails(view, note);
         ((TextView)(view.findViewById(R.id.note_details_comments_number))).setText(String.valueOf(note.getNoOfComments()));
 
-        ((TextView)(view.findViewById(R.id.comment_username))).setText(comment.getUsername());
-        ((TextView)(view.findViewById(R.id.comment_date))).setText(decodeDate(comment.getDate(), activity));
-        ((TextView)(view.findViewById(R.id.comment_content))).setText(comment.getContent());
+        RelativeLayout commentMain = ((RelativeLayout)view.findViewById(R.id.comment_main));
+        setCommentDetails(commentMain, comment, activity);
 
-        ((TextView)(view.findViewById(R.id.comment_like_number))).setText(String.valueOf(comment.getLikes()));
-        ((TextView)(view.findViewById(R.id.comment_details_replay_number))).setText(String.valueOf(comment.getNoOfReplays()));
+        View rootView = activity.getWindow().getDecorView().findViewById(android.R.id.content);
+        view.layout(0, 0, rootView.getWidth(), rootView.getHeight());
+
+        int width = view.getWidth();
+        int height = view.getHeight();
+
+        int measuredWidth = View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY);
+        int measuredHeight = View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.UNSPECIFIED);
+
+        //Cause the view to re-layout
+        view.measure(measuredWidth, measuredHeight);
+        //view.measure(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
+
+        //Create a bitmap backed Canvas to draw the view into
+        Bitmap b = Bitmap.createBitmap(width, view.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(b);
+
+        //Now that the view is laid out and we have a canvas, ask the view to draw itself into the canvas
+        view.draw(c);
+
+        return b;
+    }
+
+    public static Bitmap getBitmapReplay(Activity activity, Note note, Comment comment, Comment replay){
+        final View view = LayoutInflater.from(activity).inflate(R.layout.screenshoot_replay, (ViewGroup) activity.findViewById(R.id.ide), false);
+
+        setNoteDetails(view, note);
+        ((TextView)(view.findViewById(R.id.note_details_comments_number))).setText(String.valueOf(note.getNoOfComments()));
+
+        RelativeLayout commentMain = ((RelativeLayout)view.findViewById(R.id.comment_main));
+        setCommentDetails(commentMain, comment, activity);
+
+        RelativeLayout commentReplay = ((RelativeLayout)view.findViewById(R.id.comment_replay));
+        setReplayDetails(commentReplay, replay, activity);
 
 
 
@@ -307,7 +344,28 @@ public class Utilities {
         view.draw(c);
 
         return b;
+    }
 
+    private static void setNoteDetails(View view, Note note){
+        ((TextView)(view.findViewById(R.id.note_details_content))).setText(note.getContent());
+        ((TextView)(view.findViewById(R.id.note_details_hashes))).setText(prepareHashesText(note.getHashes()));
+    }
+
+    private static void setCommentDetails(RelativeLayout layout, Comment comment, Activity activity){
+        ((TextView)(layout.findViewById(R.id.comment_username))).setText(comment.getUsername());
+        ((TextView)(layout.findViewById(R.id.comment_date))).setText(decodeDate(comment.getDate(), activity));
+        ((TextView)(layout.findViewById(R.id.comment_content))).setText(comment.getContent());
+
+        ((TextView)(layout.findViewById(R.id.comment_like_number))).setText(String.valueOf(comment.getLikes()));
+        ((TextView)(layout.findViewById(R.id.comment_item_replays))).setText(String.valueOf(comment.getNoOfReplays()));
+    }
+
+    private static void setReplayDetails(RelativeLayout layout, Comment comment, Activity activity){
+        ((TextView)(layout.findViewById(R.id.comment_username))).setText(comment.getUsername());
+        ((TextView)(layout.findViewById(R.id.comment_date))).setText(decodeDate(comment.getDate(), activity));
+        ((TextView)(layout.findViewById(R.id.comment_content))).setText(comment.getContent());
+
+        ((TextView)(layout.findViewById(R.id.comment_like_number))).setText(String.valueOf(comment.getLikes()));
     }
 
 
@@ -325,5 +383,21 @@ public class Utilities {
         return buffer.toString();
     }
 
+    public static String getCommentVariation(int noOfComments, Context context){
+        String noOfCommentsString = noOfComments + " ";
+        if (noOfComments == 0){
+            noOfCommentsString += context.getString(R.string.comment_five);
+        }
+        else if (noOfComments == 1){
+            noOfCommentsString += context.getString(R.string.comment_one);
+        }
+        else if (noOfComments < 5){
+            noOfCommentsString += context.getString(R.string.comment_two);
+        }
+        else{
+            noOfCommentsString += context.getString(R.string.comment_five);
+        }
+        return noOfCommentsString;
+    }
 
 }
