@@ -12,13 +12,15 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+import com.labo.kaji.relativepopupwindow.RelativePopupWindow;
 import org.parceler.Parcels;
 import pl.itomaszjanik.test.*;
 import pl.itomaszjanik.test.BottomPopup.BottomPopup;
 import pl.itomaszjanik.test.Comments.CommentAdapter;
 import pl.itomaszjanik.test.Comments.CommentClickListener;
 import pl.itomaszjanik.test.Comments.CommentsDivider;
+import pl.itomaszjanik.test.EllipsisPopup.EllipsisPopup;
+import pl.itomaszjanik.test.EllipsisPopup.EllipsisPopupListener;
 import pl.itomaszjanik.test.ExtendedComponents.CustomImage;
 import pl.itomaszjanik.test.ExtendedComponents.LayoutManagerNoScroll;
 
@@ -31,6 +33,7 @@ public class NoteDetailsActivity extends Activity {
     private TextView content, hashes, date, rate;
     private EditText input;
     private BottomPopup bottomPopup;
+    private EllipsisPopup ellipsisPopup;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -112,7 +115,19 @@ public class NoteDetailsActivity extends Activity {
             }
 
             @Override
-            public void onEllipsisClick(View v, Comment comment){
+            public void onEllipsisClick(View v, RelativeLayout layout){
+                if (ellipsisPopup == null){
+                    ellipsisPopup = new EllipsisPopup(v.getContext(), new EllipsisPopupListener(){
+                        @Override
+                        public void onClick(View view){
+                            bottomPopup = Utilities.getBottomPopupText(NoteDetailsActivity.this,
+                                    R.layout.bottom_popup_text, R.id.bottom_popup_text,
+                                    getString(R.string.report_commited), bottomPopup);
+                        }
+                    });
+                }
+                ellipsisPopup.showOnAnchor(layout.findViewById(R.id.comment_ellipsis_icon),
+                        RelativePopupWindow.VerticalPosition.ABOVE, RelativePopupWindow.HorizontalPosition.ALIGN_RIGHT, true);
 
             }
 

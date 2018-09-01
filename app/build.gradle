@@ -29,6 +29,8 @@ dependencies {
     compile 'com.github.tomasz-janik:MaterialSearchBar:0.7.7'
     compile 'com.google.android:flexbox:1.0.0'
     compile 'net.danlew:android.joda:2.9.9.4'
+    compile 'com.labo.kaji:relativepopupwindow:0.3.1'
+
 
     compile 'org.parceler:parceler-api:1.1.11'
     annotationProcessor 'org.parceler:parceler:1.1.11'

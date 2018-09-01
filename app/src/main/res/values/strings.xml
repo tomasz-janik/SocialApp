@@ -73,4 +73,7 @@
     <string name="add_comment_string">Napisz nowy komentarz</string>
     <string name="replay_comment_string">Odpowiedz na komentarz</string>
 
+    <string name="report">Zgłoś</string>
+    <string name="report_commited">Zgłoszenie zostało przyjęte, dziękujemy!</string>
+
 </resources>

@@ -16,17 +16,16 @@ import android.text.SpannableString;
 import android.text.style.BackgroundColorSpan;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
+import com.labo.kaji.relativepopupwindow.RelativePopupWindow;
 import org.parceler.Parcels;
 import pl.itomaszjanik.test.*;
 import pl.itomaszjanik.test.BottomPopup.BottomPopup;
-import pl.itomaszjanik.test.Comments.CommentAdapter;
 import pl.itomaszjanik.test.Comments.CommentClickListener;
 import pl.itomaszjanik.test.Comments.CommentNoReplayAdapter;
 import pl.itomaszjanik.test.Comments.CommentsDivider;
+import pl.itomaszjanik.test.EllipsisPopup.EllipsisPopup;
+import pl.itomaszjanik.test.EllipsisPopup.EllipsisPopupListener;
 import pl.itomaszjanik.test.ExtendedComponents.CustomImage;
 import pl.itomaszjanik.test.ExtendedComponents.LayoutManagerNoScroll;
 
@@ -41,6 +40,7 @@ public class CommentDetailsActivity extends Activity {
     private int length;
     private boolean change;
     private BottomPopup bottomPopup;
+    private EllipsisPopup ellipsisPopup;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -154,8 +154,19 @@ public class CommentDetailsActivity extends Activity {
             }
 
             @Override
-            public void onEllipsisClick(View v, Comment comment){
-
+            public void onEllipsisClick(View v, RelativeLayout layout){
+                if (ellipsisPopup == null){
+                    ellipsisPopup = new EllipsisPopup(v.getContext(), new EllipsisPopupListener() {
+                        @Override
+                        public void onClick(View v) {
+                            bottomPopup = Utilities.getBottomPopupText(CommentDetailsActivity.this,
+                                    R.layout.bottom_popup_text, R.id.bottom_popup_text,
+                                    getString(R.string.report_commited), bottomPopup);
+                        }
+                    });
+                }
+                ellipsisPopup.showOnAnchor(layout.findViewById(R.id.comment_ellipsis_icon),
+                        RelativePopupWindow.VerticalPosition.ABOVE, RelativePopupWindow.HorizontalPosition.ALIGN_RIGHT, true);
             }
         }, this);
 
@@ -248,7 +259,18 @@ public class CommentDetailsActivity extends Activity {
         findViewById(R.id.comment_ellipsis_layout).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                if (ellipsisPopup == null){
+                    ellipsisPopup = new EllipsisPopup(view.getContext(), new EllipsisPopupListener() {
+                        @Override
+                        public void onClick(View v) {
+                            bottomPopup = Utilities.getBottomPopupText(CommentDetailsActivity.this,
+                                    R.layout.bottom_popup_text, R.id.bottom_popup_text,
+                                    getString(R.string.report_commited), bottomPopup);
+                        }
+                    });
+                }
+                ellipsisPopup.showOnAnchor(findViewById(R.id.comment_ellipsis_icon),
+                        RelativePopupWindow.VerticalPosition.ABOVE, RelativePopupWindow.HorizontalPosition.ALIGN_RIGHT, true);
             }
         });
     }

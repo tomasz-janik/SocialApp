@@ -63,7 +63,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         holder.ellipsisLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.onEllipsisClick(v, comment);
+                listener.onEllipsisClick(v, holder.ellipsisLayout);
             }
         });
 

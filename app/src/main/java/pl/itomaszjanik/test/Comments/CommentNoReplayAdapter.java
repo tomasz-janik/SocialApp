@@ -61,7 +61,7 @@ public class CommentNoReplayAdapter extends RecyclerView.Adapter<CommentNoReplay
         holder.ellipsisLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.onEllipsisClick(v, comment);
+                listener.onEllipsisClick(v, holder.ellipsisLayout);
             }
         });
 
