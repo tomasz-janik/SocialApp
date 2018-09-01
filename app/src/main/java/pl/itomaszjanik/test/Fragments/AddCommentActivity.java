@@ -66,6 +66,7 @@ public class AddCommentActivity extends FragmentActivity implements ConfirmExitD
                 }
             }
         });
+        Utilities.showKeyboard(this);
     }
 
     @Override

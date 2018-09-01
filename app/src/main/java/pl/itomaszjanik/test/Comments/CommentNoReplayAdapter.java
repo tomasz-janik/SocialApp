@@ -21,7 +21,7 @@ public class CommentNoReplayAdapter extends RecyclerView.Adapter<CommentNoReplay
 
     public class CommentViewHolder extends RecyclerView.ViewHolder{
         public TextView username, date, content, like;
-        public RelativeLayout likeLayout, replayLayout, ellipsisLayout;
+        public RelativeLayout likeLayout, replayLayout, ellipsisLayout, shareLayout;
 
         public CommentViewHolder(View view) {
             super(view);
@@ -32,6 +32,7 @@ public class CommentNoReplayAdapter extends RecyclerView.Adapter<CommentNoReplay
             likeLayout = (RelativeLayout) view.findViewById(R.id.comment_like_it_layout);
             replayLayout = (RelativeLayout) view.findViewById(R.id.comment_replay_layout);
             ellipsisLayout = (RelativeLayout) view.findViewById(R.id.comment_ellipsis_layout);
+            shareLayout = (RelativeLayout) view.findViewById(R.id.comment_share_layout);
         }
     }
 
@@ -62,6 +63,13 @@ public class CommentNoReplayAdapter extends RecyclerView.Adapter<CommentNoReplay
             @Override
             public void onClick(View v) {
                 listener.onEllipsisClick(v, holder.ellipsisLayout);
+            }
+        });
+
+        holder.shareLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onShareClick(v, comment);
             }
         });
 

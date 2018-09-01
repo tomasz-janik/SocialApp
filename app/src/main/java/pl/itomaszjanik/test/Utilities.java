@@ -1,11 +1,23 @@
 package pl.itomaszjanik.test;
 
 import android.app.Activity;
+import android.app.Application;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.net.Uri;
 import android.os.Handler;
+import android.support.annotation.MainThread;
+import android.support.v4.content.FileProvider;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
@@ -15,6 +27,10 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import pl.itomaszjanik.test.BottomPopup.BlurPopupWindow;
 import pl.itomaszjanik.test.BottomPopup.BottomPopup;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.List;
 
 public class Utilities {
 
@@ -49,6 +65,11 @@ public class Utilities {
             view = new View(activity);
         }
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    public static void showKeyboard(Activity activity){
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT,0);
     }
 
     public static BottomPopup getBottomPopupLogin(Context context, int layout, BottomPopup popup){
@@ -178,6 +199,89 @@ public class Utilities {
             output += context.getResources().getString(R.string.second);
         }
         return (output + " temu");
+    }
+
+    public static void share(Bitmap bitmap, Activity activity) {
+        String fileName = "share.png";
+        File dir = new File(activity.getCacheDir(), "images");
+        dir.mkdirs();
+        File file = new File(dir, fileName);
+        try {
+            FileOutputStream fOut = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fOut);
+            fOut.flush();
+            fOut.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Uri uri = FileProvider.getUriForFile(activity, activity.getPackageName()+".provider", file);
+
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_SEND);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.setType("image/*");
+        intent.setDataAndType(uri, activity.getContentResolver().getType(uri));
+        intent.putExtra(Intent.EXTRA_SUBJECT, "");
+        //intent.putExtra(Intent.EXTRA_TEXT, "");
+        intent.putExtra(Intent.EXTRA_STREAM, uri);
+
+        try {
+            activity.startActivity(Intent.createChooser(intent, "Share Image"));
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(activity, "No App Available", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @MainThread
+    public static Bitmap getScreenshot(View v) {
+        Bitmap b = Bitmap.createBitmap(v.getWidth(), v.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(b);
+        v.draw(c);
+        return b;
+    }
+
+    public static Bitmap getBitmapNote(Activity activity, Note note){
+        final View view = LayoutInflater.from(activity).inflate(R.layout.screenshoot_note, (ViewGroup) activity.findViewById(R.id.ide), false);
+        ((TextView)(view.findViewById(R.id.note_details_content))).setText(note.getContent());
+        ((TextView)(view.findViewById(R.id.note_details_hashes))).setText(prepareHashesText(note.getHashes()));
+
+        View rootView = activity.getWindow().getDecorView().findViewById(android.R.id.content);
+        view.layout(0, 0, rootView.getWidth(), rootView.getHeight());
+
+        int width = view.getWidth();
+        int height = view.getHeight();
+
+        int measuredWidth = View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY);
+        int measuredHeight = View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.UNSPECIFIED);
+
+        //Cause the view to re-layout
+        view.measure(measuredWidth, measuredHeight);
+        //view.measure(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
+
+        //Create a bitmap backed Canvas to draw the view into
+        Bitmap b = Bitmap.createBitmap(width, view.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(b);
+
+        //Now that the view is laid out and we have a canvas, ask the view to draw itself into the canvas
+        view.draw(c);
+
+        return b;
+
+    }
+
+    public static String prepareHashesText(List<String> list){
+        StringBuilder buffer = new StringBuilder();
+        for (String temp: list) {
+            if (temp.startsWith("#")){
+                temp = temp + " ";
+            }
+            else{
+                temp = "#" + temp + " ";
+            }
+            buffer.append(temp);
+        }
+        return buffer.toString();
     }
 
 

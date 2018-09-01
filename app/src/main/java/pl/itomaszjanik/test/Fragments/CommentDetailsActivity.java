@@ -3,6 +3,7 @@ package pl.itomaszjanik.test.Fragments;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -168,6 +169,14 @@ public class CommentDetailsActivity extends Activity {
                 ellipsisPopup.showOnAnchor(layout.findViewById(R.id.comment_ellipsis_icon),
                         RelativePopupWindow.VerticalPosition.ABOVE, RelativePopupWindow.HorizontalPosition.ALIGN_RIGHT, true);
             }
+
+            @Override
+            public void onShareClick(View v, Comment comment){
+                View rootView = getWindow().getDecorView().findViewById(android.R.id.content);
+                Bitmap screenshot = Utilities.getScreenshot(rootView);
+                Utilities.share(screenshot, CommentDetailsActivity.this);
+            }
+
         }, this);
 
         LayoutManagerNoScroll lm = new LayoutManagerNoScroll(this, LinearLayoutManager.VERTICAL,false);

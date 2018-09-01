@@ -1,17 +1,26 @@
 package pl.itomaszjanik.test.Fragments;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Point;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.MainThread;
+import android.support.v4.content.FileProvider;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
+import android.view.*;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.labo.kaji.relativepopupwindow.RelativePopupWindow;
 import org.parceler.Parcels;
 import pl.itomaszjanik.test.*;
@@ -24,8 +33,12 @@ import pl.itomaszjanik.test.EllipsisPopup.EllipsisPopupListener;
 import pl.itomaszjanik.test.ExtendedComponents.CustomImage;
 import pl.itomaszjanik.test.ExtendedComponents.LayoutManagerNoScroll;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import static pl.itomaszjanik.test.Utilities.prepareHashesText;
 
 public class NoteDetailsActivity extends Activity {
 
@@ -131,6 +144,12 @@ public class NoteDetailsActivity extends Activity {
 
             }
 
+            @Override
+            public void onShareClick(View v, Comment comment){
+                Bitmap screenshot = Utilities.getBitmapNote(NoteDetailsActivity.this, note);
+                Utilities.share(screenshot, NoteDetailsActivity.this);
+            }
+
         }, this);
 
         LayoutManagerNoScroll lm = new LayoutManagerNoScroll(this, LinearLayoutManager.VERTICAL,false);
@@ -153,19 +172,7 @@ public class NoteDetailsActivity extends Activity {
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 
-    private String prepareHashesText(List<String> list){
-        StringBuilder buffer = new StringBuilder();
-        for (String temp: list) {
-            if (temp.startsWith("#")){
-                temp = temp + " ";
-            }
-            else{
-                temp = "#" + temp + " ";
-            }
-            buffer.append(temp);
-        }
-        return buffer.toString();
-    }
+
 
     private void initListeners(){
         findViewById(R.id.note_details_button_back).setOnClickListener(new View.OnClickListener() {
@@ -210,8 +217,5 @@ public class NoteDetailsActivity extends Activity {
 
             }
         });
-
     }
-
-
 }

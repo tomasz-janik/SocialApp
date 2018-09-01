@@ -13,4 +13,6 @@ public interface CommentClickListener {
 
     public void onEllipsisClick(View v, RelativeLayout layout);
 
+    public void onShareClick(View v, Comment comment);
+
 }
