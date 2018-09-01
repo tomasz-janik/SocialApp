@@ -267,8 +267,49 @@ public class Utilities {
         view.draw(c);
 
         return b;
+    }
+
+    public static Bitmap getBitmapComment(Activity activity, Note note, Comment comment){
+        final View view = LayoutInflater.from(activity).inflate(R.layout.screenshoot_comment, (ViewGroup) activity.findViewById(R.id.ide), false);
+        ((TextView)(view.findViewById(R.id.note_details_content))).setText(note.getContent());
+        ((TextView)(view.findViewById(R.id.note_details_hashes))).setText(prepareHashesText(note.getHashes()));
+
+        ((TextView)(view.findViewById(R.id.note_details_comments_number))).setText(String.valueOf(note.getNoOfComments()));
+
+        ((TextView)(view.findViewById(R.id.comment_username))).setText(comment.getUsername());
+        ((TextView)(view.findViewById(R.id.comment_date))).setText(decodeDate(comment.getDate(), activity));
+        ((TextView)(view.findViewById(R.id.comment_content))).setText(comment.getContent());
+
+        ((TextView)(view.findViewById(R.id.comment_like_number))).setText(String.valueOf(comment.getLikes()));
+        ((TextView)(view.findViewById(R.id.comment_details_replay_number))).setText(String.valueOf(comment.getNoOfReplays()));
+
+
+
+        View rootView = activity.getWindow().getDecorView().findViewById(android.R.id.content);
+        view.layout(0, 0, rootView.getWidth(), rootView.getHeight());
+
+        int width = view.getWidth();
+        int height = view.getHeight();
+
+        int measuredWidth = View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY);
+        int measuredHeight = View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.UNSPECIFIED);
+
+        //Cause the view to re-layout
+        view.measure(measuredWidth, measuredHeight);
+        //view.measure(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
+
+        //Create a bitmap backed Canvas to draw the view into
+        Bitmap b = Bitmap.createBitmap(width, view.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(b);
+
+        //Now that the view is laid out and we have a canvas, ask the view to draw itself into the canvas
+        view.draw(c);
+
+        return b;
 
     }
+
 
     public static String prepareHashesText(List<String> list){
         StringBuilder buffer = new StringBuilder();

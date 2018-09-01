@@ -146,7 +146,7 @@ public class NoteDetailsActivity extends Activity {
 
             @Override
             public void onShareClick(View v, Comment comment){
-                Bitmap screenshot = Utilities.getBitmapNote(NoteDetailsActivity.this, note);
+                Bitmap screenshot = Utilities.getBitmapComment(NoteDetailsActivity.this, note, comment);
                 Utilities.share(screenshot, NoteDetailsActivity.this);
             }
 
