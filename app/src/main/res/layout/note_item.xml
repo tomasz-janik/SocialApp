@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:layout_width="match_parent"
+                xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:focusable="true"
                 android:clickable="true"
@@ -18,91 +18,192 @@
             android:background="?android:attr/selectableItemBackground">
 
         <TextView
-                android:id="@+id/note_content"
+                android:id="@+id/note_username"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
-                android:text="Content"
-                android:textSize="18sp"
-                android:textColor="@color/colorPrimaryDark"
-                android:layout_marginTop="8dp"
+                android:text="Username"
+                android:textStyle="bold"
+                android:textColor="#BB000000"
                 android:layout_marginLeft="12dp"
                 android:layout_marginStart="12dp"
                 android:layout_marginRight="12dp"
-                android:layout_marginEnd="12dp" android:layout_marginBottom="8dp"/>
+                android:layout_marginEnd="12dp" android:layout_marginTop="8dp" android:visibility="gone"/>
+
+        <TextView
+                android:id="@+id/note_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                android:text="Date"
+                android:layout_marginLeft="12dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginRight="12dp"
+                android:layout_marginEnd="12dp" android:layout_marginTop="8dp"
+                android:visibility="gone"/>
+
+        <TextView
+                android:id="@+id/note_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:text="Content"
+                android:textSize="18sp"
+                android:textColor="#EE3F51B5"
+                android:layout_marginLeft="18dp"
+                android:layout_marginStart="18dp"
+                android:layout_marginRight="18dp"
+                android:layout_marginEnd="18dp"
+                android:layout_alignParentRight="true" android:layout_alignParentEnd="true"
+                android:layout_centerVertical="false" android:layout_centerInParent="false"
+                android:layout_marginTop="8dp" android:layout_marginBottom="8dp"/>
+
+        <RelativeLayout
+                android:id="@+id/note_likes-comments"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/note_content">
+
+        </RelativeLayout>
+
 
         <View
                 android:id="@+id/note_divider"
                 android:layout_width="match_parent"
                 android:layout_height="1.5dp"
                 android:background="#15000000"
-                android:layout_below="@id/note_content"/>
+                android:layout_below="@id/note_likes-comments"
+                android:visibility="visible" android:layout_marginLeft="12dp" android:layout_marginRight="12dp"/>
 
-
-        <RelativeLayout
-                android:layout_width="wrap_content"
+        <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/note_divider"
+                android:weightSum="100"
+                android:orientation="horizontal"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_marginTop="8dp"
-                android:layout_marginLeft="12dp"
-                android:layout_marginStart="12dp"
-                android:layout_marginRight="12dp"
-                android:layout_marginEnd="12dp"
-                android:layout_marginBottom="8dp">
+                android:layout_alignParentStart="true" android:gravity="center_vertical">
 
-            <ImageView
-                    android:id="@+id/note_fire"
-                    android:layout_width="wrap_content"
+            <RelativeLayout
+                    android:id="@+id/note_like_layout"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:minWidth="19.55dp"
-                    android:minHeight="24dp"
-                    app:srcCompat="@drawable/icon_top_active_24dp"/>
+                    android:layout_weight="50"
+                    android:background="?android:attr/selectableItemBackground">
 
-            <TextView
-                    android:id="@+id/rating"
-                    android:text="1500"
-                    android:textSize="16sp"
-                    android:textAlignment="textStart"
-                    android:gravity="start"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_toRightOf="@id/note_fire"
-                    android:layout_toEndOf="@id/note_fire"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginStart="4dp"/>
+                <ImageView
+                        android:id="@+id/note_fire"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="12dp"
+                        android:layout_marginStart="12dp"
+                        app:srcCompat="@drawable/icon_top_active_16dp" android:layout_centerVertical="true"
+                        android:layout_marginBottom="8dp" android:layout_marginTop="8dp"/>
 
-            <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/icon_comments_gray_24dp"
+                <TextView
+                        android:id="@+id/rating"
+                        android:text="1500"
+                        android:textSize="16sp"
+                        android:textAlignment="textStart"
+                        android:gravity="start"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@id/note_fire"
+                        android:layout_toEndOf="@id/note_fire"
+                        android:textColor="@color/black"
+                        android:layout_marginLeft="4dp"
+                        android:layout_marginStart="4dp" android:layout_marginBottom="8dp"
+                        android:layout_marginTop="8dp"/>
+
+
+                <TextView
+                        android:id="@+id/comment_like_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@+id/rating"
+                        android:layout_toEndOf="@+id/rating"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginStart="16dp"
+                        android:textSize="18sp"
+                        android:text="Lubię to!"
+                        android:layout_alignParentRight="true" android:layout_alignParentEnd="true"
+                        android:layout_marginRight="16dp" android:layout_marginEnd="16dp"
+                        android:gravity="left|center_vertical" android:layout_marginBottom="8dp"
+                        android:layout_centerVertical="true" android:layout_marginTop="8dp"/>
+
+            </RelativeLayout>
+
+            <View
+                    android:layout_width="1.5dp"
+                    android:layout_height="match_parent"
+                    android:background="#15000000"
                     android:layout_gravity="center_vertical"
-                    android:layout_toLeftOf="@+id/note_item_comments_number"
-                    android:layout_toStartOf="@+id/note_item_comments_number"
-                    android:minWidth="24dp"
-                    android:minHeight="24dp"/>
+                    android:visibility="gone"/>
 
-            <TextView
-                    android:id="@+id/note_item_comments_number"
-                    android:text="1500"
-                    android:textSize="16sp"
-                    android:textAlignment="textStart"
-                    android:gravity="start"
-                    android:layout_width="wrap_content"
+            <RelativeLayout
+                    android:id="@+id/note_comments_layout"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginStart="4dp"/>
+                    android:layout_weight="50">
 
-        </RelativeLayout>
+                <TextView
+                        android:id="@+id/note_comments_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginRight="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:text="@string/comment"
+                        android:visibility="gone"/>
+
+                <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toLeftOf="@+id/note_item_comments_number"
+                        android:layout_toStartOf="@+id/note_item_comments_number"
+                        app:srcCompat="@drawable/icon_comments_gray_16dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="4dp"
+                        android:layout_marginStart="4dp"
+                        android:id="@+id/note_comments_icon"
+                        android:layout_marginRight="4dp" android:layout_marginEnd="4dp"
+                        android:layout_centerVertical="true" android:layout_centerInParent="false"
+                        android:layout_marginBottom="8dp" android:layout_marginTop="8dp"/>
+
+                <TextView
+                        android:id="@+id/note_item_comments_number"
+                        android:text="1500"
+                        android:textSize="16sp"
+                        android:textAlignment="textStart"
+                        android:textColor="@color/black"
+                        android:gravity="start"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="12dp" android:layout_marginEnd="12dp"
+                        android:layout_centerInParent="false"
+                        android:layout_marginBottom="8dp" android:layout_marginTop="8dp"/>
+
+            </RelativeLayout>
+
+        </LinearLayout>
 
     </RelativeLayout>
 

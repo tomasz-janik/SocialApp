@@ -64,7 +64,7 @@ public class CommentDetailsActivity extends Activity {
                 ArrayList<String> list = new ArrayList<>();
                 list.add("TEST");
                 list.add("#TEST");
-                note = new Note("TEST", "TEST", list, 0);
+                note = new Note("TEST", "TEST", "26/08/2018 22:41:00", list, 0);
             }
 
             initMainContent(bundle.getBoolean("replay", false));

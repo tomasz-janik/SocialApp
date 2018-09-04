@@ -10,6 +10,7 @@ import java.util.List;
 public class Note {
     String content;
     String author;
+    String date;
     List<String> tags;
     List<Comment> comments;
     int noOfComments;
@@ -17,18 +18,20 @@ public class Note {
 
     public Note() {}
 
-    public Note(String content, String author, List<String> tags, int rating) {
+    public Note(String content, String author, String date, List<String> tags, int rating) {
         this.content = content;
         this.author = author;
+        this.date = date;
         this.tags = tags;
         this.comments = new ArrayList<>();
         this.noOfComments = 0;
         this.rating = rating;
     }
 
-    public Note(String content, String author, List<String> tags, List<Comment> comments, int rating) {
+    public Note(String content, String author, String date, List<String> tags, List<Comment> comments, int rating) {
         this.content = content;
         this.author = author;
+        this.date = date;
         this.tags = tags;
         this.comments = comments;
         this.noOfComments = comments.size();
@@ -38,6 +41,10 @@ public class Note {
     public String getContent() { return content; }
 
     public String getAuthor() { return author; }
+
+    public String getDate() {
+        return date;
+    }
 
     public List<String> getHashes() { return tags; }
 

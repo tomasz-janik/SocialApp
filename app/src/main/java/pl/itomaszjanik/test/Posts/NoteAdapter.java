@@ -8,9 +8,11 @@ import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import pl.itomaszjanik.test.Note;
 import pl.itomaszjanik.test.R;
+import pl.itomaszjanik.test.Utilities;
 import pl.itomaszjanik.test.Values;
 
 import java.util.List;
@@ -22,13 +24,18 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.CustomViewHold
     Context context;
 
     public class CustomViewHolder extends RecyclerView.ViewHolder{
-        public TextView content, rating, noOfComments;
+        public TextView username, date, content, rating, noOfComments;
+        public RelativeLayout likeLayout, commentLayout;
 
         public CustomViewHolder(View view) {
             super(view);
+            username = (TextView) view.findViewById(R.id.note_username);
+            date = (TextView) view.findViewById(R.id.note_date);
             content = (TextView) view.findViewById(R.id.note_content);
             rating = (TextView) view.findViewById(R.id.rating);
             noOfComments = (TextView) view.findViewById(R.id.note_item_comments_number);
+            likeLayout = (RelativeLayout) view.findViewById(R.id.note_like_layout);
+            commentLayout = (RelativeLayout) view.findViewById(R.id.note_comments_layout);
         }
     }
 
@@ -36,9 +43,26 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.CustomViewHold
     public void onBindViewHolder(final NoteAdapter.CustomViewHolder holder, int position) {
         final Note note = notes.get(position);
 
+        holder.username.setText(note.getAuthor());
+        holder.date.setText(Utilities.decodeDate(note.getDate(), context));
         wrapper(note.getContent(), Values.NOTE_VISIBLE_LIMIT, context, holder.content);
         holder.rating.setText(String.valueOf(note.getRating()));
         holder.noOfComments.setText(String.valueOf(note.getNoOfComments()));
+
+        holder.likeLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onLikeClick(v, note);
+            }
+        });
+
+       /* holder.commentLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onCommentClick(v, note);
+            }
+        });
+*/
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
