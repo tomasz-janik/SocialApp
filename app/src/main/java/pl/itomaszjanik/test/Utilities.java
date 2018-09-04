@@ -248,8 +248,7 @@ public class Utilities {
 
     public static Bitmap getBitmapNote(Activity activity, Note note){
         final View view = LayoutInflater.from(activity).inflate(R.layout.screenshoot_note, (ViewGroup) activity.findViewById(R.id.ide), false);
-        ((TextView)(view.findViewById(R.id.note_details_content))).setText(note.getContent());
-        ((TextView)(view.findViewById(R.id.note_details_hashes))).setText(prepareHashesText(note.getHashes()));
+        setNoteDetails(view, note);
 
         View rootView = activity.getWindow().getDecorView().findViewById(android.R.id.content);
         view.layout(0, 0, rootView.getWidth(), rootView.getHeight());
@@ -349,6 +348,10 @@ public class Utilities {
     private static void setNoteDetails(View view, Note note){
         ((TextView)(view.findViewById(R.id.note_details_content))).setText(note.getContent());
         ((TextView)(view.findViewById(R.id.note_details_hashes))).setText(prepareHashesText(note.getHashes()));
+
+        ((TextView)view.findViewById(R.id.note_details_user)).setText(note.getAuthor());
+        ((TextView)view.findViewById(R.id.note_details_date)).setText(Utilities.decodeDate(note.getDate(), view.getContext()));
+        ((TextView)view.findViewById(R.id.note_details_like_number)).setText(String.valueOf(note.getRating()));
     }
 
     private static void setCommentDetails(RelativeLayout layout, Comment comment, Activity activity){
