@@ -52,14 +52,6 @@ public class NoteDetailsActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.note_details);
-        content = (TextView) findViewById(R.id.note_details_content);
-        hashes = (TextView) findViewById(R.id.note_details_hashes);
-        input = (EditText) findViewById(R.id.comment_insert_text);
-
-        ((CustomImage) (findViewById(R.id.note_details_icon_back))).init(R.drawable.ic_arrow_black_24dp, R.drawable.ic_arrow_black_24dp);
-
-        initListeners();
-
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null){
@@ -70,14 +62,28 @@ public class NoteDetailsActivity extends Activity {
                 list.add("#TEST");
                 note = new Note("TEST", "TEST", "26/08/2018 22:41:00", list, 0);
             }
-            content.setText(note.getContent());
-            hashes.setText(prepareHashesText(note.getHashes()));
         }
 
-        String noOfComments = Utilities.getCommentVariation(note.getNoOfComments(), NoteDetailsActivity.this);
-
-        ((TextView)(findViewById(R.id.note_details_comments_number))).setText(noOfComments);
+        prepareView();
+        initListeners();
         initRecyclerView();
+    }
+
+    private void prepareView(){
+        content = (TextView) findViewById(R.id.note_details_content);
+        hashes = (TextView) findViewById(R.id.note_details_hashes);
+        input = (EditText) findViewById(R.id.comment_insert_text);
+        ((CustomImage) (findViewById(R.id.note_details_icon_back))).init(R.drawable.ic_arrow_black_24dp, R.drawable.ic_arrow_black_24dp);
+
+        content.setText(note.getContent());
+        hashes.setText(prepareHashesText(note.getHashes()));
+
+        ((TextView)findViewById(R.id.note_details_user)).setText(note.getAuthor());
+        ((TextView)findViewById(R.id.note_details_date)).setText(Utilities.decodeDate(note.getDate(), NoteDetailsActivity.this));
+        ((TextView)findViewById(R.id.note_details_like_number)).setText(String.valueOf(note.getRating()));
+
+        String noOfComments = Utilities.getCommentVariation(note.getNoOfComments(), NoteDetailsActivity.this);
+        ((TextView)(findViewById(R.id.note_details_comments_number))).setText(noOfComments);
     }
 
 
@@ -166,6 +172,50 @@ public class NoteDetailsActivity extends Activity {
 
 
     private void initListeners(){
+        findViewById(R.id.note_details_like_it_layout).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        findViewById(R.id.note_details_replay_layout).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                input.setFocusableInTouchMode(true);
+                input.requestFocus();
+                Utilities.showKeyboard(NoteDetailsActivity.this);
+            }
+        });
+
+        findViewById(R.id.note_details_ellipsis_layout).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (ellipsisPopup == null){
+                    ellipsisPopup = new EllipsisPopup(view.getContext(), new EllipsisPopupListener(){
+                        @Override
+                        public void onClick(View view){
+                            bottomPopup = Utilities.getBottomPopupText(NoteDetailsActivity.this,
+                                    R.layout.bottom_popup_text, R.id.bottom_popup_text,
+                                    getString(R.string.report_commited), bottomPopup);
+                        }
+                    });
+                }
+                ellipsisPopup.showOnAnchor(findViewById(R.id.note_details_ellipsis_icon),
+                        RelativePopupWindow.VerticalPosition.ABOVE, RelativePopupWindow.HorizontalPosition.ALIGN_RIGHT, true);
+            }
+        });
+
+        findViewById(R.id.note_details_share_layout).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bottomPopup = Utilities.getBottomPopupLoading(NoteDetailsActivity.this,
+                        R.layout.bottom_popup_loading, R.id.bottom_popup_text, getString(R.string.loading), bottomPopup);
+                Bitmap screenshot = Utilities.getBitmapNote(NoteDetailsActivity.this, note);
+                Utilities.share(screenshot, NoteDetailsActivity.this);
+            }
+        });
+
         findViewById(R.id.note_details_button_back).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
