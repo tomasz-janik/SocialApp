@@ -9,29 +9,40 @@
         android:fitsSystemWindows="true"
         android:background="#efefef" xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <EditText
-            android:id="@+id/add_comment_edit_text"
+    <android.support.v7.widget.CardView
+            android:id="@+id/add_comment_edit_text_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/add_comment_info_layout"
-            android:minHeight="128dp"
-            android:maxLines="10"
-            android:inputType="textMultiLine"
-            android:hint="@string/add_comment_hint"
-            android:maxLength="2000"
-            android:textAlignment="viewStart"
-            android:gravity="start"
-            android:ems="10"
-            android:background="@drawable/box_rounded"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="8dp" android:layout_marginEnd="8dp" android:layout_marginRight="8dp"
-            android:layout_marginStart="8dp" android:layout_marginLeft="8dp" android:padding="10dp"/>
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp" android:layout_marginRight="8dp"
+            android:layout_marginStart="8dp" android:layout_marginLeft="8dp"
+            app:cardElevation="4dp"
+            app:cardCornerRadius="10dp">
+
+        <EditText
+                android:id="@+id/add_comment_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="128dp"
+                android:maxLines="10"
+                android:inputType="textMultiLine"
+                android:hint="@string/add_comment_hint"
+                android:maxLength="2000"
+                android:textAlignment="viewStart"
+                android:gravity="start"
+                android:ems="10"
+                android:background="@android:color/transparent"
+                android:layout_centerHorizontal="true"
+                android:padding="10dp"/>
+
+    </android.support.v7.widget.CardView>
 
     <RelativeLayout
             android:id="@+id/add_comment_commit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/add_comment_edit_text"
+            android:layout_below="@id/add_comment_edit_text_card"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="64dp"
