@@ -181,6 +181,8 @@ public class CommentDetailsActivity extends Activity {
 
             @Override
             public void onShareClick(View v, Comment replay){
+                bottomPopup = Utilities.getBottomPopupLoading(CommentDetailsActivity.this,
+                        R.layout.bottom_popup_loading, R.id.bottom_popup_text, getString(R.string.loading), bottomPopup);
                 Bitmap screenshot = Utilities.getBitmapReplay(CommentDetailsActivity.this, note, comment, replay);
                 Utilities.share(screenshot, CommentDetailsActivity.this);
             }
