@@ -10,12 +10,20 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
+import org.joda.time.DateTime;
+import org.joda.time.Instant;
+import org.joda.time.Interval;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import pl.itomaszjanik.test.*;
 import pl.itomaszjanik.test.AddPostTags.AddedTagView;
 import pl.itomaszjanik.test.BottomPopup.BottomPopup;
 import pl.itomaszjanik.test.ExtendedComponents.EditTextKeyboard;
-import pl.itomaszjanik.test.NavigationController;
-import pl.itomaszjanik.test.R;
-import pl.itomaszjanik.test.Utilities;
+import pl.itomaszjanik.test.Remote.NoteService;
+import pl.itomaszjanik.test.Remote.PostService;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class AddPost extends Fragment {
 
@@ -24,6 +32,7 @@ public class AddPost extends Fragment {
     private EditTextKeyboard content, tags;
     private AddedTagView addedTagView;
     private BottomPopup bottomPopup;
+    private PostService postService;
 
     public AddPost() { }
 
@@ -56,6 +65,7 @@ public class AddPost extends Fragment {
         initAddedTags(view);
         initMainLayout(view);
         initAdd(view);
+        postService = RetrofitClient.getClient(Values.URL).create(PostService.class);
     }
 
     private void initContent(final View view){
@@ -186,10 +196,18 @@ public class AddPost extends Fragment {
                             R.layout.bottom_popup_text, R.id.bottom_popup_text,
                             getString(R.string.add_empty_content), bottomPopup);
                 }
-                else if (tags.getText().toString().equals("")){
+                else if (addedTagView.getTags().equals("")){
                     bottomPopup = Utilities.getBottomPopupText(getContext(),
                             R.layout.bottom_popup_text, R.id.bottom_popup_text,
                             getString(R.string.add_empty_tags), bottomPopup);
+                }
+                else{
+                    Instant now = new Instant();
+                    DateTime dateTime = new DateTime();
+                    String time = dateTime.toString("yyyy/MM/dd HH:mm:ss");
+                    String hashesh = addedTagView.getTags();
+
+                    sendPost("admin", time, content.getText().toString(), hashesh, 0);
                 }
             }
         });
@@ -199,4 +217,24 @@ public class AddPost extends Fragment {
         InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
     }
+
+    private void sendPost(String username, String date, String content, String hashesh, int comment) {
+        bottomPopup = Utilities.getBottomPopupLoading(false, getContext(),
+                R.layout.bottom_popup_loading, R.id.bottom_popup_text, getString(R.string.adding_post), bottomPopup);
+
+        postService.savePost(username, date, content, hashesh, comment).enqueue(new Callback<Note>() {
+            @Override
+            public void onResponse(Call<Note> call, Response<Note> response) {
+                //Toast.makeText(getContext(), ":)", Toast.LENGTH_SHORT).show();
+                bottomPopup.dismiss();
+            }
+
+            @Override
+            public void onFailure(Call<Note> call, Throwable t) {
+                //Toast.makeText(getContext(), ":(\n"+t, Toast.LENGTH_SHORT).show();
+                bottomPopup.dismiss();
+            }
+        });
+    }
+
 }

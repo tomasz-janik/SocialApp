@@ -296,8 +296,8 @@ public class CommentDetailsActivity extends Activity {
 
     private List<Comment> getComments(){
         List<Comment> comments = new ArrayList<>();
-        comments.add(new Comment("niech mnie pan zostawi", "misio69", "26/08/2018 22:41:00"));
-        comments.add(new Comment("a chuj z toba", "stachuBachu", "26/08/2018 22:12:00"));
+        comments.add(new Comment("niech mnie pan zostawi", "misio69", "2018/08/26 22:41:00"));
+        comments.add(new Comment("a chuj z toba", "stachuBachu", "2018/08/26 22:12:00"));
         return comments;
     }
 

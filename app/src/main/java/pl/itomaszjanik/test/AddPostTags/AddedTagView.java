@@ -7,6 +7,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 import com.google.android.flexbox.FlexboxLayout;
 import pl.itomaszjanik.test.R;
+import pl.itomaszjanik.test.Utilities;
 import pl.itomaszjanik.test.Values;
 
 import java.util.ArrayList;
@@ -31,6 +32,10 @@ public class AddedTagView extends FlexboxLayout {
             addedTags = new ArrayList<>();
             noOfTags = 0;
         }
+    }
+
+    public String getTags(){
+        return Utilities.prepareHashesText2(addedTags);
     }
 
     public void addTag(String text){

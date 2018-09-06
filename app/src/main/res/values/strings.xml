@@ -77,6 +77,7 @@
     <string name="report_commited">Zgłoszenie zostało przyjęte, dziękujemy!</string>
 
     <string name="loading">Przygotowujemy to dla ciebie</string>
+    <string name="adding_post">Twój post jest dodawany!</string>
     <string name="comment">Skomentuj</string>
 
 </resources>

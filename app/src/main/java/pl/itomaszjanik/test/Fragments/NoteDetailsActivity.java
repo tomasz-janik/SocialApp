@@ -60,7 +60,7 @@ public class NoteDetailsActivity extends Activity {
                 ArrayList<String> list = new ArrayList<>();
                 list.add("TEST");
                 list.add("#TEST");
-                note = new Note(0,"TEST", "26.08.2018 22:41:00", "TEST", "#TEST", 0, 0, 0);
+                note = new Note(0,"TEST", "26/08/2018 22:41:00", "TEST", "#TEST", 0, 0, 0);
             }
         }
 
@@ -93,14 +93,14 @@ public class NoteDetailsActivity extends Activity {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
         List<Comment> comments = new ArrayList<>();
-        comments.add(new Comment("chuja sie pan zna, prosze pana", "staszek22", "26.08.2018 22:41:00", 2, 5));
-        comments.add(new Comment("panie odpierdol sie pan", "misio69", "26.08.2018 22:12:00"));
-        comments.add(new Comment("nie rozumiem w czym problem", "heniek33", "25.08.2018 22:41:00"));
-        comments.add(new Comment("eskeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeetit", "lilPump", "25.08.2018 22:41:00"));
-        comments.add(new Comment("bez nas nie było by bułek w sklepie proszę to docenić", "bug12", "25.08.2018 22:41:00"));
-        comments.add(new Comment("proszę pana (specjalnie z małej litery), skończ pan pierdolić", "pomidor", "25.08.2018 22:41:00"));
-        comments.add(new Comment("hahahaah super bardzo śmieszne, leci plusik", "adam_guz", "25.08.2018 22:41:00"));
-        comments.add(new Comment("było już, na razie leci tylko warn, ale jeszcze raz i ban", "wpierdalator", "25.08.2018 22:41:00"));
+        comments.add(new Comment("chuja sie pan zna, prosze pana", "staszek22", "2018/08/26 22:41:00", 2, 5));
+        comments.add(new Comment("panie odpierdol sie pan", "misio69", "2018/08/26 22:12:00"));
+        comments.add(new Comment("nie rozumiem w czym problem", "heniek33", "2018/08/26 22:41:00"));
+        comments.add(new Comment("eskeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeetit", "lilPump", "2018/08/26 22:41:00"));
+        comments.add(new Comment("bez nas nie było by bułek w sklepie proszę to docenić", "bug12", "2018/08/26 22:41:00"));
+        comments.add(new Comment("proszę pana (specjalnie z małej litery), skończ pan pierdolić", "pomidor", "2018/08/26 22:41:00"));
+        comments.add(new Comment("hahahaah super bardzo śmieszne, leci plusik", "adam_guz", "2018/08/26 22:41:00"));
+        comments.add(new Comment("było już, na razie leci tylko warn, ale jeszcze raz i ban", "wpierdalator", "2018/08/26 22:41:00"));
 
 
         CommentAdapter adapter = new CommentAdapter(comments, new CommentClickListener() {

@@ -10,6 +10,7 @@ import android.graphics.Canvas;
 import android.net.Uri;
 import android.os.Handler;
 import android.support.annotation.MainThread;
+import android.support.annotation.NonNull;
 import android.support.v4.content.FileProvider;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -25,6 +26,8 @@ import org.joda.time.Instant;
 import org.joda.time.Interval;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import pl.itomaszjanik.test.AddPostTags.AddedTagView;
+import pl.itomaszjanik.test.AddPostTags.SingleAddedTag;
 import pl.itomaszjanik.test.BottomPopup.BlurPopupWindow;
 import pl.itomaszjanik.test.BottomPopup.BottomPopup;
 import pl.itomaszjanik.test.Remote.NoteService;
@@ -35,7 +38,7 @@ import java.io.FileOutputStream;
 import java.util.List;
 
 public class Utilities {
-    
+
     public static int checkComment(String string, Context context){
         if (string == null || string.equals("")){
             return Values.COMMENT_EMPTY;
@@ -124,8 +127,22 @@ public class Utilities {
         return popup;
     }
 
+    public static BottomPopup getBottomPopupLoading(boolean dismiss, Context context, int layout, int textView, String text, BottomPopup popup){
+        if (popup == null || popup.getText() == null || !popup.getText().equals(text)){
+            popup = new BottomPopup.Builder(context)
+                    .setContentView(layout)
+                    .setString(text, textView)
+                    .setAutoDismiss(dismiss)
+                    .setGravity(Gravity.BOTTOM)
+                    .build();
+        }
+        popup.show();
+
+        return popup;
+    }
+
     public static String decodeDate(String date, Context context){
-        DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("dd.MM.yyyy HH:mm:ss");
+        DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("yyyy/MM/dd HH:mm:ss");
         DateTime creationTime = dateTimeFormatter.parseDateTime(date);
 
         Interval interval = new Interval(creationTime, new Instant());
@@ -388,6 +405,23 @@ public class Utilities {
                 temp = "#" + temp + " ";
             }
             buffer.append(temp);
+        }
+        return buffer.toString();
+    }
+
+    public static String prepareHashesText2(List<SingleAddedTag> list){
+        StringBuilder buffer = new StringBuilder();
+        for (int i = 0; i < list.size(); i++){
+            String temp = list.get(i).getText();
+            if (temp != null){
+                if (temp.startsWith("#")){
+                    temp = temp + " ";
+                }
+                else{
+                    temp = "#" + temp + " ";
+                }
+                buffer.append(temp);
+            }
         }
         return buffer.toString();
     }
