@@ -15,6 +15,10 @@ import java.util.List;
 
 public class AddedTagView extends FlexboxLayout {
 
+    public static final int INVALID = 1;
+    public static final int DUPLICATE = 2;
+    public static final int LIMIT = 3;
+
     private List<SingleAddedTag> addedTags;
     private int noOfTags;
 
@@ -37,12 +41,12 @@ public class AddedTagView extends FlexboxLayout {
     public int addTag(String text){
         if (noOfTags < Values.MAX_TAGS_NUMBER){
             if (text == null || text.equals("")){
-                Toast.makeText(getContext(), getResources().getString(R.string.tags_invalid), Toast.LENGTH_SHORT).show();
-                return 1;
+                //Toast.makeText(getContext(), getResources().getString(R.string.tags_invalid), Toast.LENGTH_SHORT).show();
+                return INVALID;
             }
             if (checkDuplicate(text)){
-                Toast.makeText(getContext(), getResources().getString(R.string.tags_duplicate), Toast.LENGTH_SHORT).show();
-                return 2;
+                //Toast.makeText(getContext(), getResources().getString(R.string.tags_duplicate), Toast.LENGTH_SHORT).show();
+                return DUPLICATE;
             }
             SingleAddedTag tag = new SingleAddedTag(getContext());
             int format = tag.setText(text);
@@ -55,8 +59,8 @@ public class AddedTagView extends FlexboxLayout {
             return format;
         }
         else{
-            Toast.makeText(getContext(), getResources().getString(R.string.tags_too_many), Toast.LENGTH_LONG).show();
-            return 3;
+            //Toast.makeText(getContext(), getResources().getString(R.string.tags_too_many), Toast.LENGTH_LONG).show();
+            return LIMIT;
         }
     }
 

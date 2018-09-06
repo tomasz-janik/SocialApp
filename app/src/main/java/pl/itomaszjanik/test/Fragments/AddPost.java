@@ -152,11 +152,32 @@ public class AddPost extends Fragment {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     tags.clearFocus();
                     int respond = addedTagView.addTag(tags.getText().toString());
-                    if (respond == 0) {
-                        hashesh += " " + tags.getText().toString();
+                    if (respond > 0){
+                        switch (respond){
+                            case AddedTagView.INVALID:
+                                bottomPopup = Utilities.getBottomPopupText(getContext(),
+                                        R.layout.bottom_popup_text, R.id.bottom_popup_text,
+                                        getString(R.string.tags_invalid), bottomPopup);
+                                break;
+                            case AddedTagView.DUPLICATE:
+                                bottomPopup = Utilities.getBottomPopupText(getContext(),
+                                        R.layout.bottom_popup_text, R.id.bottom_popup_text,
+                                        getString(R.string.tags_duplicate), bottomPopup);
+                                break;
+                            case AddedTagView.LIMIT:
+                                bottomPopup = Utilities.getBottomPopupText(getContext(),
+                                        R.layout.bottom_popup_text, R.id.bottom_popup_text,
+                                        getString(R.string.tags_too_many), bottomPopup);
+                                break;
+                        }
                     }
-                    else if (respond == -1){
-                        hashesh += " #" + tags.getText().toString();
+                    else{
+                        if (respond == 0) {
+                            hashesh += " " + tags.getText().toString();
+                        }
+                        else if (respond == -1){
+                            hashesh += " #" + tags.getText().toString();
+                        }
                     }
                     tags.setText("");
                 }
