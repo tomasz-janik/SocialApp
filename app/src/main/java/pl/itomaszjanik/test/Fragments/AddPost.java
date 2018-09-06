@@ -11,9 +11,11 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import pl.itomaszjanik.test.AddPostTags.AddedTagView;
+import pl.itomaszjanik.test.BottomPopup.BottomPopup;
 import pl.itomaszjanik.test.ExtendedComponents.EditTextKeyboard;
 import pl.itomaszjanik.test.NavigationController;
 import pl.itomaszjanik.test.R;
+import pl.itomaszjanik.test.Utilities;
 
 public class AddPost extends Fragment {
 
@@ -21,6 +23,7 @@ public class AddPost extends Fragment {
     private ScrollView scrollView;
     private EditTextKeyboard content, tags;
     private AddedTagView addedTagView;
+    private BottomPopup bottomPopup;
 
     public AddPost() { }
 
@@ -179,10 +182,14 @@ public class AddPost extends Fragment {
             @Override
             public void onClick(View view) {
                 if (content.getText().toString().equals("")){
-                    Toast.makeText(getContext(), getResources().getText(R.string.add_empty_content), Toast.LENGTH_LONG).show();
+                    bottomPopup = Utilities.getBottomPopupText(getContext(),
+                            R.layout.bottom_popup_text, R.id.bottom_popup_text,
+                            getString(R.string.add_empty_content), bottomPopup);
                 }
                 else if (tags.getText().toString().equals("")){
-                    Toast.makeText(getContext(), getResources().getText(R.string.add_empty_tags), Toast.LENGTH_LONG).show();
+                    bottomPopup = Utilities.getBottomPopupText(getContext(),
+                            R.layout.bottom_popup_text, R.id.bottom_popup_text,
+                            getString(R.string.add_empty_tags), bottomPopup);
                 }
             }
         });

@@ -60,7 +60,7 @@ public class NoteDetailsActivity extends Activity {
                 ArrayList<String> list = new ArrayList<>();
                 list.add("TEST");
                 list.add("#TEST");
-                note = new Note("TEST", "TEST", "26/08/2018 22:41:00", list, 0);
+                note = new Note(0,"TEST", "26.08.2018 22:41:00", "TEST", "#TEST", 0, 0, 0);
             }
         }
 
@@ -76,13 +76,13 @@ public class NoteDetailsActivity extends Activity {
         ((CustomImage) (findViewById(R.id.note_details_icon_back))).init(R.drawable.ic_arrow_black_24dp, R.drawable.ic_arrow_black_24dp);
 
         content.setText(note.getContent());
-        hashes.setText(prepareHashesText(note.getHashes()));
+        hashes.setText(Utilities.prepareHasheshText(note.getHashesh()));
 
-        ((TextView)findViewById(R.id.note_details_user)).setText(note.getAuthor());
+        ((TextView)findViewById(R.id.note_details_user)).setText(note.getUsername());
         ((TextView)findViewById(R.id.note_details_date)).setText(Utilities.decodeDate(note.getDate(), NoteDetailsActivity.this));
-        ((TextView)findViewById(R.id.note_details_like_number)).setText(String.valueOf(note.getRating()));
+        ((TextView)findViewById(R.id.note_details_like_number)).setText(String.valueOf(note.getLikes()));
 
-        String noOfComments = Utilities.getCommentVariation(note.getNoOfComments(), NoteDetailsActivity.this);
+        String noOfComments = Utilities.getCommentVariation(note.getComments(), NoteDetailsActivity.this);
         ((TextView)(findViewById(R.id.note_details_comments_number))).setText(noOfComments);
     }
 
@@ -92,7 +92,18 @@ public class NoteDetailsActivity extends Activity {
 
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        CommentAdapter adapter = new CommentAdapter(note.getComments(), new CommentClickListener() {
+        List<Comment> comments = new ArrayList<>();
+        comments.add(new Comment("chuja sie pan zna, prosze pana", "staszek22", "26.08.2018 22:41:00", 2, 5));
+        comments.add(new Comment("panie odpierdol sie pan", "misio69", "26.08.2018 22:12:00"));
+        comments.add(new Comment("nie rozumiem w czym problem", "heniek33", "25.08.2018 22:41:00"));
+        comments.add(new Comment("eskeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeetit", "lilPump", "25.08.2018 22:41:00"));
+        comments.add(new Comment("bez nas nie było by bułek w sklepie proszę to docenić", "bug12", "25.08.2018 22:41:00"));
+        comments.add(new Comment("proszę pana (specjalnie z małej litery), skończ pan pierdolić", "pomidor", "25.08.2018 22:41:00"));
+        comments.add(new Comment("hahahaah super bardzo śmieszne, leci plusik", "adam_guz", "25.08.2018 22:41:00"));
+        comments.add(new Comment("było już, na razie leci tylko warn, ale jeszcze raz i ban", "wpierdalator", "25.08.2018 22:41:00"));
+
+
+        CommentAdapter adapter = new CommentAdapter(comments, new CommentClickListener() {
             @Override
             public void onItemClick(View v, Comment comment) {
                 Bundle data = new Bundle();

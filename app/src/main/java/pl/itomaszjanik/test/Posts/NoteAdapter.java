@@ -10,10 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import pl.itomaszjanik.test.Note;
-import pl.itomaszjanik.test.R;
-import pl.itomaszjanik.test.Utilities;
-import pl.itomaszjanik.test.Values;
+import pl.itomaszjanik.test.*;
 
 import java.util.List;
 
@@ -43,11 +40,11 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.CustomViewHold
     public void onBindViewHolder(final NoteAdapter.CustomViewHolder holder, int position) {
         final Note note = notes.get(position);
 
-        holder.username.setText(note.getAuthor());
-        holder.date.setText(Utilities.decodeDate(note.getDate(), context));
+        holder.username.setText(note.getUsername());
+        //holder.date.setText(Utilities.decodeDate(note.getDate(), context));
         wrapper(note.getContent(), Values.NOTE_VISIBLE_LIMIT, context, holder.content);
-        holder.rating.setText(String.valueOf(note.getRating()));
-        holder.noOfComments.setText(String.valueOf(note.getNoOfComments()));
+        holder.rating.setText(String.valueOf(note.getLikes()));
+        holder.noOfComments.setText(String.valueOf(note.getComments()));
 
         holder.likeLayout.setOnClickListener(new View.OnClickListener() {
             @Override

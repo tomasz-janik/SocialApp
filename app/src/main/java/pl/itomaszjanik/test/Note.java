@@ -1,62 +1,112 @@
 package pl.itomaszjanik.test;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 import org.parceler.Parcel;
-import pl.itomaszjanik.test.Comment;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Parcel
 public class Note {
-    String content;
-    String author;
+
+    @SerializedName("ID")
+    @Expose
+    Integer id;
+    @SerializedName("USERNAME")
+    @Expose
+    String username;
+    @SerializedName("DATE")
+    @Expose
     String date;
-    List<String> tags;
-    List<Comment> comments;
-    int noOfComments;
-    int rating;
+    @SerializedName("CONTENT")
+    @Expose
+    String content;
+    @SerializedName("HASHESH")
+    @Expose
+    String hashesh;
+    @SerializedName("LIKES")
+    @Expose
+    Integer likes;
+    @SerializedName("COMMENTS")
+    @Expose
+    Integer comments;
+    @SerializedName("COMMENT")
+    @Expose
+    Integer comment;
 
-    public Note() {}
+    public Note(){}
 
-    public Note(String content, String author, String date, List<String> tags, int rating) {
-        this.content = content;
-        this.author = author;
+    public Note(int id, String username, String date, String content, String hashesh, int likes, int comments, int comment){
+        this.id = id;
+        this.username = username;
         this.date = date;
-        this.tags = tags;
-        this.comments = new ArrayList<>();
-        this.noOfComments = 0;
-        this.rating = rating;
-    }
-
-    public Note(String content, String author, String date, List<String> tags, List<Comment> comments, int rating) {
         this.content = content;
-        this.author = author;
-        this.date = date;
-        this.tags = tags;
+        this.hashesh = hashesh;
+        this.likes = likes;
         this.comments = comments;
-        this.noOfComments = comments.size();
-        this.rating = rating;
+        this.comment = comment;
     }
 
-    public String getContent() { return content; }
+    public Integer getId() {
+        return id;
+    }
 
-    public String getAuthor() { return author; }
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
     public String getDate() {
         return date;
     }
 
-    public List<String> getHashes() { return tags; }
+    public void setDate(String date) {
+        this.date = date;
+    }
 
-    public List<Comment> getComments() {
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public String getHashesh() {
+        return hashesh;
+    }
+
+    public void setHashesh(String hashesh) {
+        this.hashesh = hashesh;
+    }
+
+    public Integer getLikes() {
+        return likes;
+    }
+
+    public void setLikes(Integer likes) {
+        this.likes = likes;
+    }
+
+    public Integer getComments() {
         return comments;
     }
 
-    public int getNoOfComments() {
-        return noOfComments;
+    public void setComments(Integer comments) {
+        this.comments = comments;
     }
 
-    public int getRating(){
-        return rating;
+    public Integer getComment() {
+        return comment;
     }
+
+    public void setComment(Integer comment) {
+        this.comment = comment;
+    }
+
 }

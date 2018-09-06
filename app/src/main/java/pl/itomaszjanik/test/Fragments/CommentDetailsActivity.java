@@ -58,13 +58,13 @@ public class CommentDetailsActivity extends Activity {
             comment = Parcels.unwrap(bundle.getParcelable("comment"));
             note = Parcels.unwrap(bundle.getParcelable("note"));
             if (comment == null){
-                comment = new Comment("TEST", "TEST", "26/08/2018 22:41:00", 0, 0);
+                comment = new Comment("TEST", "TEST", "26.08.2018 22:41:00", 0, 0);
             }
             if (note == null){
                 ArrayList<String> list = new ArrayList<>();
                 list.add("TEST");
                 list.add("#TEST");
-                note = new Note("TEST", "TEST", "26/08/2018 22:41:00", list, 0);
+                note = new Note(0,"TEST", "26.08.2018 22:41:00", "TEST", "#TEST", 0, 0, 0);
             }
 
             initMainContent(bundle.getBoolean("replay", false));

@@ -13,15 +13,23 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 import org.parceler.Parcels;
 import pl.itomaszjanik.test.*;
 import pl.itomaszjanik.test.Posts.NoteAdapter;
 import pl.itomaszjanik.test.Posts.NoteClickListener;
+import pl.itomaszjanik.test.Remote.NoteService;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ItemFeed extends Fragment {
+
+    List<Note> posts = new ArrayList<>();
+    RecyclerView recyclerView;
 
     public ItemFeed(){
     }
@@ -43,12 +51,32 @@ public class ItemFeed extends Fragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        final RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+        recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+        createPosts();
+    }
 
 
+    private void createPosts(){
+        NoteService service = RetrofitClient.getClient(Values.URL).create(NoteService.class);
+        Call<List<Note>> call = service.getNote();
+        call.enqueue(new Callback<List<Note>>() {
+            @Override
+            public void onResponse(Call<List<Note>> call, Response<List<Note>> response) {
+                posts = response.body();
+                recyclerAdapter();
+            }
+
+            @Override
+            public void onFailure(Call<List<Note>> call, Throwable t) {
+                Toast.makeText(getContext(), ":(", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void recyclerAdapter(){
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        recyclerView.setAdapter(new NoteAdapter(createPosts(), new NoteClickListener() {
+        recyclerView.setAdapter(new NoteAdapter(posts, new NoteClickListener() {
             @Override
             public void onItemClick(View v, Note note) {
                 Bundle data = new Bundle();
@@ -78,7 +106,7 @@ public class ItemFeed extends Fragment {
         }, getContext()));
 
 
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(view.getContext(), DividerItemDecoration.VERTICAL);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
         Drawable divider = ResourcesCompat.getDrawable(getResources(), R.drawable.item_separator, null);
         if (divider != null)
             dividerItemDecoration.setDrawable(divider);
@@ -90,9 +118,10 @@ public class ItemFeed extends Fragment {
         recyclerView.addItemDecoration(new SpacesItemDecoration(space));
 
         recyclerView.addOnScrollListener(new ListScrollBottomListener((NavigationController) getActivity().findViewById(R.id.navigation_bottom)));
+
     }
 
-    private List<Note> createPosts(){
+    /*private List<Note> createPos2ts(){
         List<Note> list = new ArrayList<>();
         List<String> tags01 = new ArrayList<>();
         tags01.add("kraków");
@@ -125,7 +154,7 @@ public class ItemFeed extends Fragment {
         comments.add(new Comment("było już, na razie leci tylko warn, ale jeszcze raz i ban", "wpierdalator", "25/08/2018 22:41:00"));
 
 
-        list.add(new Note("Ja pierdole XD 18 osób przede mną w kolejce do biedry. Za co XD ","moj stary", "26/08/2018 22:41:00",tags01,10));
+        list.add(new Note("Ja pierdole XD 18 osób przede mną w kolejce do biedry. Za co XD","moj stary", "26/08/2018 22:41:00",tags01,10));
         list.add(new Note("Dlaczego w każdym sklepie w kraju ludzie robią normalne zakupy a w Biedrze jakby jutro ruscy mieli wbić z krymu? xD Come on 20 kilo cukru kurwa? XD", "ty", "26/08/2018 22:41:00", tags04, comments, 89));
         list.add(new Note("Stoisz i czekasz na tramwaj. Chcesz kupic bilet na przystanku i 10 osob kolejki. W tramwaju 5 xD Walić kupie ten miesięczny", "on", "26/08/2018 22:41:00", tags02,666));
         list.add(new Note("kokaina","randomek33", "26/08/2018 22:41:00", tags03,123));
@@ -148,5 +177,5 @@ public class ItemFeed extends Fragment {
         list.add(new Note("Czwartą noc z rzędu tuż przed zasnięciem swędzi mnie najmniejszy palec u nogi i wybudza. Ty mały skurwysynie xD","randomek33", "26/08/2018 22:41:00", tags04, 100));
 
         return list;
-    }
+    }*/
 }

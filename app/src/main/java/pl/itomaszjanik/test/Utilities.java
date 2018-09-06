@@ -27,13 +27,15 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import pl.itomaszjanik.test.BottomPopup.BlurPopupWindow;
 import pl.itomaszjanik.test.BottomPopup.BottomPopup;
+import pl.itomaszjanik.test.Remote.NoteService;
+import pl.itomaszjanik.test.Remote.RetrofitClient;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.List;
 
 public class Utilities {
-
+    
     public static int checkComment(String string, Context context){
         if (string == null || string.equals("")){
             return Values.COMMENT_EMPTY;
@@ -123,7 +125,7 @@ public class Utilities {
     }
 
     public static String decodeDate(String date, Context context){
-        DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
+        DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("dd.MM.yyyy HH:mm:ss");
         DateTime creationTime = dateTimeFormatter.parseDateTime(date);
 
         Interval interval = new Interval(creationTime, new Instant());
@@ -278,7 +280,7 @@ public class Utilities {
         final View view = LayoutInflater.from(activity).inflate(R.layout.screenshoot_comment, (ViewGroup) activity.findViewById(R.id.ide), false);
 
         setNoteDetails(view, note);
-        ((TextView)(view.findViewById(R.id.note_details_comments_number))).setText(String.valueOf(note.getNoOfComments()));
+        ((TextView)(view.findViewById(R.id.note_details_comments_number))).setText(String.valueOf(note.getComments()));
 
         RelativeLayout commentMain = ((RelativeLayout)view.findViewById(R.id.comment_main));
         setCommentDetails(commentMain, comment, activity);
@@ -311,7 +313,7 @@ public class Utilities {
         final View view = LayoutInflater.from(activity).inflate(R.layout.screenshoot_replay, (ViewGroup) activity.findViewById(R.id.ide), false);
 
         setNoteDetails(view, note);
-        ((TextView)(view.findViewById(R.id.note_details_comments_number))).setText(String.valueOf(note.getNoOfComments()));
+        ((TextView)(view.findViewById(R.id.note_details_comments_number))).setText(String.valueOf(note.getComments()));
 
         RelativeLayout commentMain = ((RelativeLayout)view.findViewById(R.id.comment_main));
         setCommentDetails(commentMain, comment, activity);
@@ -347,11 +349,11 @@ public class Utilities {
 
     private static void setNoteDetails(View view, Note note){
         ((TextView)(view.findViewById(R.id.note_details_content))).setText(note.getContent());
-        ((TextView)(view.findViewById(R.id.note_details_hashes))).setText(prepareHashesText(note.getHashes()));
+        ((TextView)(view.findViewById(R.id.note_details_hashes))).setText(prepareHasheshText(note.getHashesh()));
 
-        ((TextView)view.findViewById(R.id.note_details_user)).setText(note.getAuthor());
+        ((TextView)view.findViewById(R.id.note_details_user)).setText(note.getUsername());
         ((TextView)view.findViewById(R.id.note_details_date)).setText(Utilities.decodeDate(note.getDate(), view.getContext()));
-        ((TextView)view.findViewById(R.id.note_details_like_number)).setText(String.valueOf(note.getRating()));
+        ((TextView)view.findViewById(R.id.note_details_like_number)).setText(String.valueOf(note.getLikes()));
     }
 
     private static void setCommentDetails(RelativeLayout layout, Comment comment, Activity activity){
@@ -369,6 +371,10 @@ public class Utilities {
         ((TextView)(layout.findViewById(R.id.comment_content))).setText(comment.getContent());
 
         ((TextView)(layout.findViewById(R.id.comment_like_number))).setText(String.valueOf(comment.getLikes()));
+    }
+
+    public static String prepareHasheshText(String string){
+        return string;
     }
 
 
