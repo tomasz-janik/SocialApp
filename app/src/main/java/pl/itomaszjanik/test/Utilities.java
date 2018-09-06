@@ -409,23 +409,6 @@ public class Utilities {
         return buffer.toString();
     }
 
-    public static String prepareHashesText2(List<SingleAddedTag> list){
-        StringBuilder buffer = new StringBuilder();
-        for (int i = 0; i < list.size(); i++){
-            String temp = list.get(i).getText();
-            if (temp != null){
-                if (temp.startsWith("#")){
-                    temp = temp + " ";
-                }
-                else{
-                    temp = "#" + temp + " ";
-                }
-                buffer.append(temp);
-            }
-        }
-        return buffer.toString();
-    }
-
     public static String getCommentVariation(int noOfComments, Context context){
         String noOfCommentsString = noOfComments + " ";
         if (noOfComments == 0){

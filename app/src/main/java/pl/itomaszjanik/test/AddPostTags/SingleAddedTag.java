@@ -44,13 +44,19 @@ public class SingleAddedTag extends LinearLayout {
         //this.setAlpha(0);
     }
 
-    public void setText(String text){
+    public int setText(String text){
+        int format = -2;
         if (textView != null){
             if (!text.startsWith("#")){
                 text = "#" + text;
+                format = -1;
+            }
+            else{
+                format = 0;
             }
             textView.setText(text);
         }
+        return format;
     }
 
     @Nullable

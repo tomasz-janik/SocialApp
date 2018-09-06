@@ -34,31 +34,29 @@ public class AddedTagView extends FlexboxLayout {
         }
     }
 
-    public String getTags(){
-        return Utilities.prepareHashesText2(addedTags);
-    }
-
-    public void addTag(String text){
+    public int addTag(String text){
         if (noOfTags < Values.MAX_TAGS_NUMBER){
             if (text == null || text.equals("")){
                 Toast.makeText(getContext(), getResources().getString(R.string.tags_invalid), Toast.LENGTH_SHORT).show();
-                return;
+                return 1;
             }
             if (checkDuplicate(text)){
                 Toast.makeText(getContext(), getResources().getString(R.string.tags_duplicate), Toast.LENGTH_SHORT).show();
-                return;
+                return 2;
             }
             SingleAddedTag tag = new SingleAddedTag(getContext());
-            tag.setText(text);
+            int format = tag.setText(text);
             setClickListener(tag);
-
             this.addView(tag);
             tag.fadeIn();
             addedTags.add(tag);
             noOfTags++;
+
+            return format;
         }
         else{
             Toast.makeText(getContext(), getResources().getString(R.string.tags_too_many), Toast.LENGTH_LONG).show();
+            return 3;
         }
     }
 

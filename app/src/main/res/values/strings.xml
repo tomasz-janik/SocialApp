@@ -78,6 +78,9 @@
 
     <string name="loading">Przygotowujemy to dla ciebie</string>
     <string name="adding_post">Twój post jest dodawany!</string>
+    <string name="added_post">Twój post został dodany!</string>
+    <string name="couldnt_add_post">Nie udało się dodać postu\nSpróbuj ponownie później!</string>
+    <string name="no_internet">Musisz być połączony z internetem</string>
     <string name="comment">Skomentuj</string>
 
 </resources>

@@ -29,10 +29,11 @@ public class AddPost extends Fragment {
 
     private NavigationController mNavigationControllerBottom;
     private ScrollView scrollView;
-    private EditTextKeyboard content, tags;
+    private EditTextKeyboard mContent, tags;
     private AddedTagView addedTagView;
     private BottomPopup bottomPopup;
     private PostService postService;
+    private String hashesh = "";
 
     public AddPost() { }
 
@@ -69,16 +70,16 @@ public class AddPost extends Fragment {
     }
 
     private void initContent(final View view){
-        content = (EditTextKeyboard) view.findViewById(R.id.add_content);
+        mContent = (EditTextKeyboard) view.findViewById(R.id.add_content);
 
-        content.setOnClickListener(new View.OnClickListener() {
+        mContent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mNavigationControllerBottom.hideLayoutInstant();
             }
         });
 
-        content.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        mContent.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
                 if (b){
@@ -87,17 +88,17 @@ public class AddPost extends Fragment {
             }
         });
 
-        content.setKeyImeChangeListener(new EditTextKeyboard.KeyImeChange() {
+        mContent.setKeyImeChangeListener(new EditTextKeyboard.KeyImeChange() {
             @Override
             public void onKeyIme(int keyCode, KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_BACK) {
                     mNavigationControllerBottom.showLayoutInstant();
-                    content.clearFocus();
+                    mContent.clearFocus();
                     view.findViewById(R.id.add_main_layout).requestFocus();
                     scrollView.post(new Runnable() {
                         @Override
                         public void run() {
-                            scrollView.smoothScrollTo(0,content.getBottom());
+                            scrollView.smoothScrollTo(0,mContent.getBottom());
                         }
                     });
                 }
@@ -150,7 +151,13 @@ public class AddPost extends Fragment {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     tags.clearFocus();
-                    addedTagView.addTag(tags.getText().toString());
+                    int respond = addedTagView.addTag(tags.getText().toString());
+                    if (respond == 0) {
+                        hashesh += " " + tags.getText().toString();
+                    }
+                    else if (respond == -1){
+                        hashesh += " #" + tags.getText().toString();
+                    }
                     tags.setText("");
                 }
                 return false;
@@ -191,12 +198,12 @@ public class AddPost extends Fragment {
         addPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (content.getText().toString().equals("")){
+                if (mContent.getText().toString().equals("")){
                     bottomPopup = Utilities.getBottomPopupText(getContext(),
                             R.layout.bottom_popup_text, R.id.bottom_popup_text,
                             getString(R.string.add_empty_content), bottomPopup);
                 }
-                else if (addedTagView.getTags().equals("")){
+                else if (hashesh.equals("")){
                     bottomPopup = Utilities.getBottomPopupText(getContext(),
                             R.layout.bottom_popup_text, R.id.bottom_popup_text,
                             getString(R.string.add_empty_tags), bottomPopup);
@@ -205,9 +212,9 @@ public class AddPost extends Fragment {
                     Instant now = new Instant();
                     DateTime dateTime = new DateTime();
                     String time = dateTime.toString("yyyy/MM/dd HH:mm:ss");
-                    String hashesh = addedTagView.getTags();
+                    //String hashesh = addedTagView.getTags();
 
-                    sendPost("admin", time, content.getText().toString(), hashesh, 0);
+                    sendPost("admin", time, mContent.getText().toString(), hashesh, 0);
                 }
             }
         });
@@ -219,20 +226,23 @@ public class AddPost extends Fragment {
     }
 
     private void sendPost(String username, String date, String content, String hashesh, int comment) {
-        bottomPopup = Utilities.getBottomPopupLoading(false, getContext(),
-                R.layout.bottom_popup_loading, R.id.bottom_popup_text, getString(R.string.adding_post), bottomPopup);
-
         postService.savePost(username, date, content, hashesh, comment).enqueue(new Callback<Note>() {
             @Override
             public void onResponse(Call<Note> call, Response<Note> response) {
                 //Toast.makeText(getContext(), ":)", Toast.LENGTH_SHORT).show();
-                bottomPopup.dismiss();
+                bottomPopup = Utilities.getBottomPopupText(getContext(),
+                        R.layout.bottom_popup_text, R.id.bottom_popup_text,
+                        getString(R.string.added_post), bottomPopup);
+                mContent.setText("");
+
             }
 
             @Override
             public void onFailure(Call<Note> call, Throwable t) {
                 //Toast.makeText(getContext(), ":(\n"+t, Toast.LENGTH_SHORT).show();
-                bottomPopup.dismiss();
+                bottomPopup = Utilities.getBottomPopupText(getContext(),
+                        R.layout.bottom_popup_text, R.id.bottom_popup_text,
+                        getString(R.string.couldnt_add_post), bottomPopup);
             }
         });
     }
