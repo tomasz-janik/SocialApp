@@ -1,7 +1,6 @@
 package pl.itomaszjanik.test;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -11,9 +10,6 @@ import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.Handler;
-import android.support.annotation.MainThread;
-import android.support.annotation.NonNull;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.Gravity;
@@ -31,12 +27,8 @@ import org.joda.time.Instant;
 import org.joda.time.Interval;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import pl.itomaszjanik.test.AddPostTags.AddedTagView;
-import pl.itomaszjanik.test.AddPostTags.SingleAddedTag;
-import pl.itomaszjanik.test.BottomPopup.BlurPopupWindow;
 import pl.itomaszjanik.test.BottomPopup.BottomPopup;
 import pl.itomaszjanik.test.Remote.FailedCallback;
-import pl.itomaszjanik.test.Remote.NoteService;
 import pl.itomaszjanik.test.Remote.PostService;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -48,15 +40,34 @@ import java.util.List;
 
 public class Utilities {
 
-    public static void likePost(final FailedCallback failedCallback, final Note note, final View view){
-        reactPostCall(true, failedCallback, note, view);
+    public static BottomPopup onLikePostClick(Context context, FailedCallback callback, Note note, View view,
+                                              BottomPopup bottomPopup, int textID, int numberID){
+        if (isNetworkAvailable(context)){
+            if (note.getLiked()){
+                Utilities.unlikePost(callback, note, view, textID, numberID);
+            }
+            else{
+                Utilities.likePost(callback, note, view, textID, numberID);
+            }
+        }
+        else{
+            bottomPopup = getBottomPopupText(context,
+                    R.layout.bottom_popup_text, R.id.bottom_popup_text,
+                    context.getString(R.string.no_internet), bottomPopup);
+        }
+        return bottomPopup;
     }
 
-    public static void unlikePost(final FailedCallback failedCallback, final Note note, final View view){
-        reactPostCall(false, failedCallback, note, view);
+    public static void likePost(FailedCallback failedCallback, Note note, View view, int textID, int numberID){
+        reactPostCall(true, failedCallback, note, view, textID, numberID);
     }
 
-    private static void reactPostCall(final boolean like, final FailedCallback failedCallback, final Note note, final View view){
+    public static void unlikePost(FailedCallback failedCallback, Note note, View view, int textID, int numberID){
+        reactPostCall(false, failedCallback, note, view, textID, numberID);
+    }
+
+    private static void reactPostCall(final boolean like, final FailedCallback failedCallback, final Note note,
+                                      final View view, final int textID, final int numberID){
         PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
         Call<ResponseBody> call;
         if (like){
@@ -69,10 +80,10 @@ public class Utilities {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (like){
-                    likeResponse(note, view, response.body());
+                    likeResponse(note, view, response.body(), textID, numberID);
                 }
                 else{
-                    unlikeResponse(note, view, response.body());
+                    unlikeResponse(note, view, response.body(), textID, numberID);
                 }
             }
 
@@ -88,15 +99,18 @@ public class Utilities {
         });
     }
 
-    private static void likeResponse(Note note, View view, ResponseBody response){
+    private static void likeResponse(Note note, View view, ResponseBody response, int textID, int numberID){
         note.setLiked(true);
         try{
             if (response != null){
                 String output = response.string();
                 if (output.equals("yes")){
-                    TextView likes_number = view.findViewById(R.id.rating);
-                    likes_number.setText(String.valueOf(Integer.valueOf(likes_number.getText().toString()) + 1));
-                    ((TextView)(view.findViewById(R.id.comment_like_text))).setTextColor(Color.BLUE);
+                    TextView likes_number = view.findViewById(numberID);
+                    int likesNo = Integer.valueOf(likes_number.getText().toString()) + 1;
+                    likes_number.setText(String.valueOf(likesNo));
+                    ((TextView)(view.findViewById(textID))).setTextColor(Color.BLUE);
+                    note.setLikes(likesNo);
+                    note.setLiked(true);
                 }
             }
         } catch (Exception e){
@@ -104,15 +118,18 @@ public class Utilities {
         }
     }
 
-    private static void unlikeResponse(Note note, View view, ResponseBody response){
+    private static void unlikeResponse(Note note, View view, ResponseBody response, int textID, int numberID){
         note.setLiked(false);
         try{
             if (response != null){
                 String output = response.string();
                 if (output.equals("yes")){
-                    TextView likes_number = view.findViewById(R.id.rating);
-                    likes_number.setText(String.valueOf(Integer.valueOf(likes_number.getText().toString()) - 1));
-                    ((TextView)(view.findViewById(R.id.comment_like_text))).setTextColor(Color.parseColor("#747474"));
+                    TextView likes_number = view.findViewById(numberID);
+                    int likesNo = Integer.valueOf(likes_number.getText().toString()) - 1;
+                    likes_number.setText(String.valueOf(likesNo));
+                    ((TextView)(view.findViewById(textID))).setTextColor(Color.parseColor("#747474"));
+                    note.setLikes(likesNo);
+                    note.setLiked(false);
                 }
             }
         } catch (Exception e){

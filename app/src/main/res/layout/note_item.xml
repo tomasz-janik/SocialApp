@@ -110,7 +110,7 @@
                         android:layout_marginBottom="8dp" android:layout_marginTop="8dp"/>
 
                 <TextView
-                        android:id="@+id/rating"
+                        android:id="@+id/note_like_number"
                         android:text="1500"
                         android:textSize="16sp"
                         android:textAlignment="textStart"
@@ -127,11 +127,11 @@
 
 
                 <TextView
-                        android:id="@+id/comment_like_text"
+                        android:id="@+id/note_like_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_toRightOf="@+id/rating"
-                        android:layout_toEndOf="@+id/rating"
+                        android:layout_toRightOf="@+id/note_like_number"
+                        android:layout_toEndOf="@+id/note_like_number"
                         android:layout_marginLeft="16dp"
                         android:layout_marginStart="16dp"
                         android:textSize="18sp"

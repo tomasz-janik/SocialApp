@@ -1,9 +1,11 @@
 package pl.itomaszjanik.test.Fragments;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
@@ -40,9 +42,14 @@ public class ItemFeed extends Fragment implements SwipeRefreshLayout.OnRefreshLi
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private List<Note> posts = new ArrayList<>();
+
+    private Note currentNote;
+    private View currentView;
+
     private RecyclerView recyclerView;
     private RelativeLayout refreshLayout;
     private BottomPopup bottomPopup;
+    private SharedPreferences preferences;
 
     public ItemFeed(){
     }
@@ -54,6 +61,7 @@ public class ItemFeed extends Fragment implements SwipeRefreshLayout.OnRefreshLi
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
     }
 
     @Nullable
@@ -118,6 +126,31 @@ public class ItemFeed extends Fragment implements SwipeRefreshLayout.OnRefreshLi
     }
 
     @Override
+    public void onResume(){
+        super.onResume();
+        if (currentNote != null && currentView != null){
+            boolean current = currentNote.getLiked();
+            if (preferences.getBoolean("currentNote", true) != current){
+                int newLikes;
+                if (current){
+                    TextView likes_number = currentView.findViewById(R.id.note_like_number);
+                    newLikes = Integer.valueOf(likes_number.getText().toString()) - 1;
+                    likes_number.setText(String.valueOf(newLikes));
+                    ((TextView)(currentView.findViewById(R.id.note_like_text))).setTextColor(Color.parseColor("#747474"));
+                }
+                else{
+                    TextView likes_number = currentView.findViewById(R.id.note_like_number);
+                    newLikes = Integer.valueOf(likes_number.getText().toString()) + 1;
+                    likes_number.setText(String.valueOf(newLikes));
+                    ((TextView)(currentView.findViewById(R.id.note_like_text))).setTextColor(Color.BLUE);
+                }
+                currentNote.setLiked(!current);
+                currentNote.setLikes(newLikes);
+            }
+        }
+    }
+
+    @Override
     public void onRefresh() {
         createPosts();
     }
@@ -177,6 +210,12 @@ public class ItemFeed extends Fragment implements SwipeRefreshLayout.OnRefreshLi
             public void onItemClick(View v, Note note) {
                 Bundle data = new Bundle();
                 data.putParcelable("note", Parcels.wrap(note));
+                //NoteAdapter.CustomViewHolder lol =
+                currentNote = note;
+                currentView = v;
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putBoolean("currentNote", note.getLiked());
+                editor.apply();
 
                 Intent intent = new Intent(getActivity(), NoteDetailsActivity.class);
                 intent.putExtras(data);
@@ -185,21 +224,9 @@ public class ItemFeed extends Fragment implements SwipeRefreshLayout.OnRefreshLi
             }
 
             @Override
-            public void onLikeClick(View v, Note note){
-                if (Utilities.isNetworkAvailable(getContext())){
-                    if (note.getLiked()){
-                        Utilities.unlikePost(ItemFeed.this, note, v);
-                    }
-                    else{
-                        Utilities.likePost(ItemFeed.this, note, v);
-                    }
-                }
-                else{
-                    bottomPopup = Utilities.getBottomPopupText(getContext(),
-                            R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                            getString(R.string.no_internet), bottomPopup);
-                    mSwipeRefreshLayout.setRefreshing(false);
-                }
+            public void onLikeClick(View view, Note note){
+                Utilities.onLikePostClick(getContext(), ItemFeed.this, note, view,
+                        bottomPopup, R.id.note_like_text, R.id.note_like_number);
             }
 
             @Override

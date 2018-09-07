@@ -4,12 +4,15 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.MainThread;
 import android.support.v4.content.FileProvider;
 import android.support.v4.content.res.ResourcesCompat;
@@ -32,6 +35,7 @@ import pl.itomaszjanik.test.EllipsisPopup.EllipsisPopup;
 import pl.itomaszjanik.test.EllipsisPopup.EllipsisPopupListener;
 import pl.itomaszjanik.test.ExtendedComponents.CustomImage;
 import pl.itomaszjanik.test.ExtendedComponents.LayoutManagerNoScroll;
+import pl.itomaszjanik.test.Remote.FailedCallback;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -40,18 +44,20 @@ import java.util.List;
 
 import static pl.itomaszjanik.test.Utilities.prepareHashesText;
 
-public class NoteDetailsActivity extends Activity {
+public class NoteDetailsActivity extends Activity implements FailedCallback {
 
     private Note note;
     private TextView content, hashes, date, rate;
     private EditText input;
     private BottomPopup bottomPopup;
     private EllipsisPopup ellipsisPopup;
+    private SharedPreferences preferences;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.note_details);
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null){
@@ -69,6 +75,26 @@ public class NoteDetailsActivity extends Activity {
         initRecyclerView();
     }
 
+    @Override
+    public void onBackPressed(){
+        super.onBackPressed();
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+    }
+
+    @Override
+    public void likeFailed(){
+        bottomPopup = Utilities.getBottomPopupText(this,
+                R.layout.bottom_popup_text, R.id.bottom_popup_text,
+                getString(R.string.couldnt_like_post), bottomPopup);
+    }
+
+    @Override
+    public void unlikeFailed(){
+        bottomPopup = Utilities.getBottomPopupText(this,
+                R.layout.bottom_popup_text, R.id.bottom_popup_text,
+                getString(R.string.couldnt_unlike_post), bottomPopup);
+    }
+
     private void prepareView(){
         content = (TextView) findViewById(R.id.note_details_content);
         hashes = (TextView) findViewById(R.id.note_details_hashes);
@@ -81,6 +107,10 @@ public class NoteDetailsActivity extends Activity {
         ((TextView)findViewById(R.id.note_details_user)).setText(note.getUsername());
         ((TextView)findViewById(R.id.note_details_date)).setText(Utilities.decodeDate(note.getDate(), NoteDetailsActivity.this));
         ((TextView)findViewById(R.id.note_details_like_number)).setText(String.valueOf(note.getLikes()));
+
+        if (note.getLiked()){
+            ((TextView)findViewById(R.id.note_details_like_text)).setTextColor(Color.BLUE);
+        }
 
         String noOfComments = Utilities.getCommentVariation(note.getComments(), NoteDetailsActivity.this);
         ((TextView)(findViewById(R.id.note_details_comments_number))).setText(noOfComments);
@@ -174,19 +204,16 @@ public class NoteDetailsActivity extends Activity {
         }
     }
 
-    @Override
-    public void onBackPressed(){
-        super.onBackPressed();
-        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-    }
-
-
-
     private void initListeners(){
         findViewById(R.id.note_details_like_it_layout).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putBoolean("currentNote", !note.getLiked());
+                editor.apply();
+                bottomPopup = Utilities.onLikePostClick(NoteDetailsActivity.this,
+                        NoteDetailsActivity.this, note, view, bottomPopup,
+                        R.id.note_details_like_text, R.id.note_details_like_number);
             }
         });
 

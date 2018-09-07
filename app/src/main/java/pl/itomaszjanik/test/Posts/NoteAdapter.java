@@ -29,8 +29,8 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.CustomViewHold
             username = (TextView) view.findViewById(R.id.note_username);
             date = (TextView) view.findViewById(R.id.note_date);
             content = (TextView) view.findViewById(R.id.note_content);
-            likes = (TextView) view.findViewById(R.id.rating);
-            likedText = (TextView) view.findViewById(R.id.comment_like_text);
+            likes = (TextView) view.findViewById(R.id.note_like_number);
+            likedText = (TextView) view.findViewById(R.id.note_like_text);
             noOfComments = (TextView) view.findViewById(R.id.note_item_comments_number);
             likeLayout = (RelativeLayout) view.findViewById(R.id.note_like_layout);
             commentLayout = (RelativeLayout) view.findViewById(R.id.note_comments_layout);
