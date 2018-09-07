@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import org.parceler.Parcel;
 
 @Parcel
-public class Note {
+public class Note02 {
 
     @SerializedName("ID")
     @Expose
@@ -35,9 +35,9 @@ public class Note {
     @Expose
     Boolean liked;
 
-    public Note(){}
+    public Note02(){}
 
-    public Note(int id, String username, String date, String content, String hashesh, int likes, int comments, int comment, boolean liked){
+    public Note02(int id, String username, String date, String content, String hashesh, int likes, int comments, int comment, boolean liked){
         this.id = id;
         this.username = username;
         this.date = date;

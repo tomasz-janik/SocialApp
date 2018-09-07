@@ -1,24 +1,33 @@
 package pl.itomaszjanik.test.Fragments;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
+import okhttp3.ResponseBody;
 import org.parceler.Parcels;
+import org.w3c.dom.Text;
 import pl.itomaszjanik.test.*;
+import pl.itomaszjanik.test.BottomPopup.BottomPopup;
 import pl.itomaszjanik.test.Posts.NoteAdapter;
 import pl.itomaszjanik.test.Posts.NoteClickListener;
 import pl.itomaszjanik.test.Remote.NoteService;
+import pl.itomaszjanik.test.Remote.PostService;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -26,10 +35,13 @@ import retrofit2.Response;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ItemFeed extends Fragment {
+public class ItemFeed extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
 
-    List<Note> posts = new ArrayList<>();
-    RecyclerView recyclerView;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private List<Note> posts = new ArrayList<>();
+    private RecyclerView recyclerView;
+    private RelativeLayout refreshLayout;
+    private BottomPopup bottomPopup;
 
     public ItemFeed(){
     }
@@ -46,36 +58,164 @@ public class ItemFeed extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.feed, container,false);
+        View rootView = inflater.inflate(R.layout.feed, container,false);
+
+        refreshLayout = (RelativeLayout) rootView.findViewById(R.id.feed_refresh_layout);
+        refreshLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mSwipeRefreshLayout.setRefreshing(true);
+                createPosts();
+            }
+        });
+
+        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_container);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary,
+                android.R.color.holo_green_dark,
+                android.R.color.holo_orange_dark,
+                android.R.color.holo_blue_dark);
+        mSwipeRefreshLayout.setProgressViewOffset(false,
+                getResources().getDimensionPixelSize(R.dimen.refresher_offset),
+                getResources().getDimensionPixelSize(R.dimen.refresher_offset_end));
+
+        /**
+         * Showing Swipe Refresh animation on activity create
+         * As animation won't start on onCreate, post runnable is used
+         */
+        mSwipeRefreshLayout.post(new Runnable() {
+
+            @Override
+            public void run() {
+
+                mSwipeRefreshLayout.setRefreshing(true);
+                createPosts();
+            }
+        });
+        return rootView;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
+        Drawable divider = ResourcesCompat.getDrawable(getResources(), R.drawable.item_separator, null);
+        if (divider != null)
+            dividerItemDecoration.setDrawable(divider);
+
+        //recyclerView.addItemDecoration(new DividerItemDecoration(view.getContext(), R.drawable.item_separator));
+        recyclerView.addItemDecoration(dividerItemDecoration);
+
+        int space = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 64, getResources().getDisplayMetrics());
+        recyclerView.addItemDecoration(new SpacesItemDecoration(space));
+
+        recyclerView.addOnScrollListener(new ListScrollBottomListener((NavigationController) getActivity().findViewById(R.id.navigation_bottom)));
+
+        createPosts();
+    }
+
+    @Override
+    public void onRefresh() {
         createPosts();
     }
 
 
     private void createPosts(){
-        NoteService service = RetrofitClient.getClient(Values.URL).create(NoteService.class);
-        Call<List<Note>> call = service.getNote();
+        if (!Utilities.isNetworkAvailable(getContext())){
+            bottomPopup = Utilities.getBottomPopupText(getContext(),
+                    R.layout.bottom_popup_text, R.id.bottom_popup_text,
+                    getString(R.string.no_internet), bottomPopup);
+            mSwipeRefreshLayout.setRefreshing(false);
+            return;
+        }
+        PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
+        Call<List<Note>> call = service.getPosts(1);
         call.enqueue(new Callback<List<Note>>() {
             @Override
             public void onResponse(Call<List<Note>> call, Response<List<Note>> response) {
                 posts = response.body();
+                if (bottomPopup != null)
+                    bottomPopup.dismiss();
+                refreshLayout.setVisibility(View.GONE);
                 recyclerAdapter();
+                mSwipeRefreshLayout.setRefreshing(false);
             }
 
             @Override
             public void onFailure(Call<List<Note>> call, Throwable t) {
-                Toast.makeText(getContext(), ":(", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getContext(), ":(", Toast.LENGTH_SHORT).show();
+                mSwipeRefreshLayout.setRefreshing(false);
+                bottomPopup = Utilities.getBottomPopupText(getContext(),
+                        R.layout.bottom_popup_text, R.id.bottom_popup_text,
+                        getString(R.string.couldnt_refresh), bottomPopup);
+                if (recyclerView == null){
+                    refreshLayout.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+    }
+
+    private void unlikePost(Note note, final View view){
+        PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
+        Call<ResponseBody> call = service.unlikePost(note.getId(), 1);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                try{
+                    if (response.body() != null){
+                        String output = response.body().string();
+                        if (output.equals("yes")){
+                            TextView likes_number = view.findViewById(R.id.rating);
+                            likes_number.setText(String.valueOf(likes_number.getText().toString()));
+                            ((TextView)(view.findViewById(R.id.comment_like_text))).setTextColor(Color.parseColor("#747474"));
+                        }
+                    }
+                } catch (Exception e){
+                    Log.e(":(",":(");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                bottomPopup = Utilities.getBottomPopupText(getContext(),
+                        R.layout.bottom_popup_text, R.id.bottom_popup_text,
+                        getString(R.string.couldnt_like_post), bottomPopup);
+            }
+        });
+    }
+
+    private void likePost(Note note, final View view){
+        PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
+        Call<ResponseBody> call = service.likePost(note.getId(), 1);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                try{
+                    if (response.body() != null){
+                        String output = response.body().string();
+                        if (output.equals("yes")){
+                            TextView likes_number = view.findViewById(R.id.rating);
+                            likes_number.setText(String.valueOf(likes_number.getText().toString()));
+                            ((TextView)(view.findViewById(R.id.comment_like_text))).setTextColor(Color.BLUE);
+                        }
+                    }
+                } catch (Exception e){
+                    Log.e(":(",":(");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                bottomPopup = Utilities.getBottomPopupText(getContext(),
+                        R.layout.bottom_popup_text, R.id.bottom_popup_text,
+                        getString(R.string.couldnt_like_post), bottomPopup);
             }
         });
     }
 
     private void recyclerAdapter(){
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-
         recyclerView.setAdapter(new NoteAdapter(posts, new NoteClickListener() {
             @Override
             public void onItemClick(View v, Note note) {
@@ -90,7 +230,12 @@ public class ItemFeed extends Fragment {
 
             @Override
             public void onLikeClick(View v, Note note){
-
+                if (note.getLiked()){
+                    unlikePost(note, v);
+                }
+                else{
+                    likePost(note, v);
+                }
             }
 
             @Override
@@ -104,21 +249,6 @@ public class ItemFeed extends Fragment {
                 getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             }
         }, getContext()));
-
-
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
-        Drawable divider = ResourcesCompat.getDrawable(getResources(), R.drawable.item_separator, null);
-        if (divider != null)
-            dividerItemDecoration.setDrawable(divider);
-
-        //recyclerView.addItemDecoration(new DividerItemDecoration(view.getContext(), R.drawable.item_separator));
-        recyclerView.addItemDecoration(dividerItemDecoration);
-
-        int space = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 64, getResources().getDisplayMetrics());
-        recyclerView.addItemDecoration(new SpacesItemDecoration(space));
-
-        recyclerView.addOnScrollListener(new ListScrollBottomListener((NavigationController) getActivity().findViewById(R.id.navigation_bottom)));
-
     }
 
     /*private List<Note> createPos2ts(){

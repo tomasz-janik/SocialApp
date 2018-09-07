@@ -76,11 +76,15 @@
     <string name="report">Zgłoś</string>
     <string name="report_commited">Zgłoszenie zostało przyjęte, dziękujemy!</string>
 
+    <string name="refresh">Załaduj posty</string>
+
     <string name="loading">Przygotowujemy to dla ciebie</string>
     <string name="adding_post">Twój post jest dodawany!</string>
     <string name="added_post">Twój post został dodany!</string>
     <string name="couldnt_add_post">Nie udało się dodać postu\nSpróbuj ponownie później!</string>
-    <string name="no_internet">Musisz być połączony z internetem</string>
+    <string name="couldnt_refresh">Nie udało się odświeżyć postów\nSpróbuj ponownie później!</string>
+    <string name="couldnt_like_post">Nie udało się polubić postu\nSpróbuj ponownie później!</string>
+    <string name="no_internet">Brak połączenia z internetem!</string>
     <string name="comment">Skomentuj</string>
 
 </resources>

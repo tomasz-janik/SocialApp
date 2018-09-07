@@ -247,15 +247,24 @@ public class AddPost extends Fragment {
     }
 
     private void sendPost(String username, String date, String content, String hashesh, int comment) {
+        if (!Utilities.isNetworkAvailable(getContext())){
+            bottomPopup = Utilities.getBottomPopupText(getContext(),
+                    R.layout.bottom_popup_text, R.id.bottom_popup_text,
+                    getString(R.string.no_internet), bottomPopup);
+            return;
+        }
+
         postService.savePost(username, date, content, hashesh, comment).enqueue(new Callback<Note>() {
             @Override
             public void onResponse(Call<Note> call, Response<Note> response) {
                 //Toast.makeText(getContext(), ":)", Toast.LENGTH_SHORT).show();
-                bottomPopup = Utilities.getBottomPopupText(getContext(),
-                        R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                        getString(R.string.added_post), bottomPopup);
-                mContent.setText("");
-
+                if (response.isSuccessful()){
+                    bottomPopup = Utilities.getBottomPopupText(getContext(),
+                            R.layout.bottom_popup_text, R.id.bottom_popup_text,
+                            getString(R.string.added_post), bottomPopup);
+                    mContent.setText("");
+                    addedTagView.clearTags();
+                }
             }
 
             @Override

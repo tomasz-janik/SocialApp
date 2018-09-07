@@ -21,7 +21,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.CustomViewHold
     Context context;
 
     public class CustomViewHolder extends RecyclerView.ViewHolder{
-        public TextView username, date, content, rating, noOfComments;
+        public TextView username, date, content, likedText, likes, noOfComments;
         public RelativeLayout likeLayout, commentLayout;
 
         public CustomViewHolder(View view) {
@@ -29,7 +29,8 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.CustomViewHold
             username = (TextView) view.findViewById(R.id.note_username);
             date = (TextView) view.findViewById(R.id.note_date);
             content = (TextView) view.findViewById(R.id.note_content);
-            rating = (TextView) view.findViewById(R.id.rating);
+            likes = (TextView) view.findViewById(R.id.rating);
+            likedText = (TextView) view.findViewById(R.id.comment_like_text);
             noOfComments = (TextView) view.findViewById(R.id.note_item_comments_number);
             likeLayout = (RelativeLayout) view.findViewById(R.id.note_like_layout);
             commentLayout = (RelativeLayout) view.findViewById(R.id.note_comments_layout);
@@ -43,7 +44,11 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.CustomViewHold
         holder.username.setText(note.getUsername());
         //holder.date.setText(Utilities.decodeDate(note.getDate(), context));
         wrapper(note.getContent(), Values.NOTE_VISIBLE_LIMIT, context, holder.content);
-        holder.rating.setText(String.valueOf(note.getLikes()));
+        holder.likes.setText(String.valueOf(note.getLikes()));
+        if (note.getLiked()){
+            holder.likedText.setTextColor(Color.BLUE);
+        }
+
         holder.noOfComments.setText(String.valueOf(note.getComments()));
 
         holder.likeLayout.setOnClickListener(new View.OnClickListener() {

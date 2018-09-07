@@ -79,6 +79,14 @@ public class AddedTagView extends FlexboxLayout {
         return false;
     }
 
+    public void clearTags(){
+        for (SingleAddedTag tag : addedTags){
+            this.removeView(tag);
+        }
+        addedTags.clear();
+        noOfTags = 0;
+    }
+
     private void removeTag(SingleAddedTag tag){
         this.removeView(tag);
         addedTags.remove(tag);

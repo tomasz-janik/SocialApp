@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Handler;
 import android.support.annotation.MainThread;
@@ -102,6 +104,23 @@ public class Utilities {
                     .setContentView(layout)
                     .setString(text, textView)
                     .setAutoDismiss(true)
+                    .setGravity(Gravity.BOTTOM)
+                    .build();
+        }
+        else if (!popup.getText().equals(text)){
+            popup.setTextView(text);
+        }
+        popup.show();
+
+        return popup;
+    }
+
+    public static BottomPopup getBottomPopupText(Context context, int layout, int textView, String text, BottomPopup popup, boolean dismiss){
+        if (popup == null || popup.getText() == null || popup.getText().equals(context.getString(R.string.loading))){
+            popup = new BottomPopup.Builder(context)
+                    .setContentView(layout)
+                    .setString(text, textView)
+                    .setAutoDismiss(dismiss)
                     .setGravity(Gravity.BOTTOM)
                     .build();
         }
@@ -394,7 +413,12 @@ public class Utilities {
         return string;
     }
 
-
+    public static boolean isNetworkAvailable(Context context) {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
     public static String prepareHashesText(List<String> list){
         StringBuilder buffer = new StringBuilder();
         for (String temp: list) {
