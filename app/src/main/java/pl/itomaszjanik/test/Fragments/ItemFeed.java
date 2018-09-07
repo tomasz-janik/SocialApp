@@ -26,6 +26,7 @@ import pl.itomaszjanik.test.*;
 import pl.itomaszjanik.test.BottomPopup.BottomPopup;
 import pl.itomaszjanik.test.Posts.NoteAdapter;
 import pl.itomaszjanik.test.Posts.NoteClickListener;
+import pl.itomaszjanik.test.Remote.FailedCallback;
 import pl.itomaszjanik.test.Remote.NoteService;
 import pl.itomaszjanik.test.Remote.PostService;
 import retrofit2.Call;
@@ -35,7 +36,7 @@ import retrofit2.Response;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ItemFeed extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
+public class ItemFeed extends Fragment implements SwipeRefreshLayout.OnRefreshListener, FailedCallback {
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private List<Note> posts = new ArrayList<>();
@@ -121,6 +122,19 @@ public class ItemFeed extends Fragment implements SwipeRefreshLayout.OnRefreshLi
         createPosts();
     }
 
+    @Override
+    public void likeFailed(){
+        bottomPopup = Utilities.getBottomPopupText(getContext(),
+                R.layout.bottom_popup_text, R.id.bottom_popup_text,
+                getString(R.string.couldnt_like_post), bottomPopup);
+    }
+
+    @Override
+    public void unlikeFailed(){
+        bottomPopup = Utilities.getBottomPopupText(getContext(),
+                R.layout.bottom_popup_text, R.id.bottom_popup_text,
+                getString(R.string.couldnt_unlike_post), bottomPopup);
+    }
 
     private void createPosts(){
         if (!Utilities.isNetworkAvailable(getContext())){
@@ -157,64 +171,6 @@ public class ItemFeed extends Fragment implements SwipeRefreshLayout.OnRefreshLi
         });
     }
 
-    private void unlikePost(Note note, final View view){
-        PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
-        Call<ResponseBody> call = service.unlikePost(note.getId(), 1);
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                try{
-                    if (response.body() != null){
-                        String output = response.body().string();
-                        if (output.equals("yes")){
-                            TextView likes_number = view.findViewById(R.id.rating);
-                            likes_number.setText(String.valueOf(likes_number.getText().toString()));
-                            ((TextView)(view.findViewById(R.id.comment_like_text))).setTextColor(Color.parseColor("#747474"));
-                        }
-                    }
-                } catch (Exception e){
-                    Log.e(":(",":(");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                bottomPopup = Utilities.getBottomPopupText(getContext(),
-                        R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                        getString(R.string.couldnt_like_post), bottomPopup);
-            }
-        });
-    }
-
-    private void likePost(Note note, final View view){
-        PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
-        Call<ResponseBody> call = service.likePost(note.getId(), 1);
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                try{
-                    if (response.body() != null){
-                        String output = response.body().string();
-                        if (output.equals("yes")){
-                            TextView likes_number = view.findViewById(R.id.rating);
-                            likes_number.setText(String.valueOf(likes_number.getText().toString()));
-                            ((TextView)(view.findViewById(R.id.comment_like_text))).setTextColor(Color.BLUE);
-                        }
-                    }
-                } catch (Exception e){
-                    Log.e(":(",":(");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                bottomPopup = Utilities.getBottomPopupText(getContext(),
-                        R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                        getString(R.string.couldnt_like_post), bottomPopup);
-            }
-        });
-    }
-
     private void recyclerAdapter(){
         recyclerView.setAdapter(new NoteAdapter(posts, new NoteClickListener() {
             @Override
@@ -230,11 +186,19 @@ public class ItemFeed extends Fragment implements SwipeRefreshLayout.OnRefreshLi
 
             @Override
             public void onLikeClick(View v, Note note){
-                if (note.getLiked()){
-                    unlikePost(note, v);
+                if (Utilities.isNetworkAvailable(getContext())){
+                    if (note.getLiked()){
+                        Utilities.unlikePost(ItemFeed.this, note, v);
+                    }
+                    else{
+                        Utilities.likePost(ItemFeed.this, note, v);
+                    }
                 }
                 else{
-                    likePost(note, v);
+                    bottomPopup = Utilities.getBottomPopupText(getContext(),
+                            R.layout.bottom_popup_text, R.id.bottom_popup_text,
+                            getString(R.string.no_internet), bottomPopup);
+                    mSwipeRefreshLayout.setRefreshing(false);
                 }
             }
 

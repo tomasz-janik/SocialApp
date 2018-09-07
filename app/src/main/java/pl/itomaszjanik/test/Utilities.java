@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -14,6 +15,7 @@ import android.os.Handler;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.v4.content.FileProvider;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +24,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import okhttp3.ResponseBody;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 import org.joda.time.Instant;
@@ -32,14 +35,90 @@ import pl.itomaszjanik.test.AddPostTags.AddedTagView;
 import pl.itomaszjanik.test.AddPostTags.SingleAddedTag;
 import pl.itomaszjanik.test.BottomPopup.BlurPopupWindow;
 import pl.itomaszjanik.test.BottomPopup.BottomPopup;
+import pl.itomaszjanik.test.Remote.FailedCallback;
 import pl.itomaszjanik.test.Remote.NoteService;
-import pl.itomaszjanik.test.Remote.RetrofitClient;
+import pl.itomaszjanik.test.Remote.PostService;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.List;
 
 public class Utilities {
+
+    public static void likePost(final FailedCallback failedCallback, final Note note, final View view){
+        reactPostCall(true, failedCallback, note, view);
+    }
+
+    public static void unlikePost(final FailedCallback failedCallback, final Note note, final View view){
+        reactPostCall(false, failedCallback, note, view);
+    }
+
+    private static void reactPostCall(final boolean like, final FailedCallback failedCallback, final Note note, final View view){
+        PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
+        Call<ResponseBody> call;
+        if (like){
+            call = service.likePost(note.getId(), 1);
+        }
+        else{
+            call = service.unlikePost(note.getId(), 1);
+        }
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (like){
+                    likeResponse(note, view, response.body());
+                }
+                else{
+                    unlikeResponse(note, view, response.body());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                if (like){
+                    failedCallback.likeFailed();
+                }
+                else{
+                    failedCallback.unlikeFailed();
+                }
+            }
+        });
+    }
+
+    private static void likeResponse(Note note, View view, ResponseBody response){
+        note.setLiked(true);
+        try{
+            if (response != null){
+                String output = response.string();
+                if (output.equals("yes")){
+                    TextView likes_number = view.findViewById(R.id.rating);
+                    likes_number.setText(String.valueOf(Integer.valueOf(likes_number.getText().toString()) + 1));
+                    ((TextView)(view.findViewById(R.id.comment_like_text))).setTextColor(Color.BLUE);
+                }
+            }
+        } catch (Exception e){
+            Log.e(":(",":(");
+        }
+    }
+
+    private static void unlikeResponse(Note note, View view, ResponseBody response){
+        note.setLiked(false);
+        try{
+            if (response != null){
+                String output = response.string();
+                if (output.equals("yes")){
+                    TextView likes_number = view.findViewById(R.id.rating);
+                    likes_number.setText(String.valueOf(Integer.valueOf(likes_number.getText().toString()) - 1));
+                    ((TextView)(view.findViewById(R.id.comment_like_text))).setTextColor(Color.parseColor("#747474"));
+                }
+            }
+        } catch (Exception e){
+            Log.e(":(",":(");
+        }
+    }
 
     public static int checkComment(String string, Context context){
         if (string == null || string.equals("")){
