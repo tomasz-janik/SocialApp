@@ -11,7 +11,7 @@ public class CommentWithReplays extends Comment {
     public CommentWithReplays(){ }
 
     public CommentWithReplays(String content, String username, String date, int noOfReplays){
-        super(content, username, date);
+        //super(content, username, date);
         this.noOfReplays = noOfReplays;
     }
 

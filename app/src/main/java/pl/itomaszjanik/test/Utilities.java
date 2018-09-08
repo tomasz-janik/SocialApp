@@ -138,11 +138,11 @@ public class Utilities {
         }
     }
 
-    public static BottomPopup commentPost(int userID, int postID, String content,
+    public static BottomPopup commentPost(int postID, int userID, String username, String date, String content,
                                           final CommentPostCallback callback, Context context, BottomPopup bottomPopup){
         if (isNetworkAvailable(context)){
             PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
-            service.commentPost(userID, postID, content).enqueue(new Callback<ResponseBody>() {
+            service.commentPost(postID, userID, username, date, content).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     if (response.isSuccessful()){
@@ -519,20 +519,20 @@ public class Utilities {
     }
 
     private static void setCommentDetails(RelativeLayout layout, Comment comment, Activity activity){
-        ((TextView)(layout.findViewById(R.id.comment_username))).setText(comment.getUsername());
-        ((TextView)(layout.findViewById(R.id.comment_date))).setText(decodeDate(comment.getDate(), activity));
-        ((TextView)(layout.findViewById(R.id.comment_content))).setText(comment.getContent());
+        ((TextView)(layout.findViewById(R.id.comment_username))).setText(comment.getUSERNAME());
+        ((TextView)(layout.findViewById(R.id.comment_date))).setText(decodeDate(comment.getDATE(), activity));
+        ((TextView)(layout.findViewById(R.id.comment_content))).setText(comment.getCONTENT());
 
-        ((TextView)(layout.findViewById(R.id.comment_like_number))).setText(String.valueOf(comment.getLikes()));
-        ((TextView)(layout.findViewById(R.id.comment_item_replays))).setText(String.valueOf(comment.getNoOfReplays()));
+        ((TextView)(layout.findViewById(R.id.comment_like_number))).setText(String.valueOf(comment.getLIKES()));
+        ((TextView)(layout.findViewById(R.id.comment_item_replays))).setText(String.valueOf(comment.getREPLAYS()));
     }
 
     private static void setReplayDetails(RelativeLayout layout, Comment comment, Activity activity){
-        ((TextView)(layout.findViewById(R.id.comment_username))).setText(comment.getUsername());
-        ((TextView)(layout.findViewById(R.id.comment_date))).setText(decodeDate(comment.getDate(), activity));
-        ((TextView)(layout.findViewById(R.id.comment_content))).setText(comment.getContent());
+        ((TextView)(layout.findViewById(R.id.comment_username))).setText(comment.getUSERNAME());
+        ((TextView)(layout.findViewById(R.id.comment_date))).setText(decodeDate(comment.getDATE(), activity));
+        ((TextView)(layout.findViewById(R.id.comment_content))).setText(comment.getCONTENT());
 
-        ((TextView)(layout.findViewById(R.id.comment_like_number))).setText(String.valueOf(comment.getLikes()));
+        ((TextView)(layout.findViewById(R.id.comment_like_number))).setText(String.valueOf(comment.getLIKES()));
     }
 
     public static String prepareHasheshText(String string){

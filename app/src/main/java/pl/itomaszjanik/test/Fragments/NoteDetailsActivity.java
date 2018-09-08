@@ -25,6 +25,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.labo.kaji.relativepopupwindow.RelativePopupWindow;
+import okhttp3.ResponseBody;
+import org.joda.time.DateTime;
 import org.parceler.Parcels;
 import pl.itomaszjanik.test.*;
 import pl.itomaszjanik.test.BottomPopup.BottomPopup;
@@ -37,6 +39,10 @@ import pl.itomaszjanik.test.ExtendedComponents.CustomImage;
 import pl.itomaszjanik.test.ExtendedComponents.LayoutManagerNoScroll;
 import pl.itomaszjanik.test.Remote.CommentPostCallback;
 import pl.itomaszjanik.test.Remote.FailedCallback;
+import pl.itomaszjanik.test.Remote.PostService;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -53,13 +59,14 @@ public class NoteDetailsActivity extends Activity implements FailedCallback, Com
     private EditText input;
     private BottomPopup bottomPopup;
     private EllipsisPopup ellipsisPopup;
-    private SharedPreferences preferences;
+
+    private RecyclerView recyclerView;
+    private List<Comment> comments = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.note_details);
-        preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null){
@@ -75,6 +82,7 @@ public class NoteDetailsActivity extends Activity implements FailedCallback, Com
         prepareView();
         initListeners();
         initRecyclerView();
+        getComments(String.valueOf(note.getId()));
     }
 
     @Override
@@ -88,6 +96,7 @@ public class NoteDetailsActivity extends Activity implements FailedCallback, Com
         bottomPopup = Utilities.getBottomPopupText(this,
                 R.layout.bottom_popup_text, R.id.bottom_popup_text,
                 getString(R.string.couldnt_like_post), bottomPopup);
+        note.incrementComments();
     }
 
     @Override
@@ -103,6 +112,9 @@ public class NoteDetailsActivity extends Activity implements FailedCallback, Com
         bottomPopup = Utilities.getBottomPopupText(this,
                 R.layout.bottom_popup_text, R.id.bottom_popup_text,
                 getString(R.string.comment_post_added), bottomPopup);
+        getComments(String.valueOf(note.getId()));
+        note.incrementComments();
+        updateCommentsNumber();
     }
 
     @Override
@@ -123,33 +135,21 @@ public class NoteDetailsActivity extends Activity implements FailedCallback, Com
 
         ((TextView)findViewById(R.id.note_details_user)).setText(note.getUsername());
         ((TextView)findViewById(R.id.note_details_date)).setText(Utilities.decodeDate(note.getDate(), NoteDetailsActivity.this));
+        ((TextView)findViewById(R.id.note_details_item_replays)).setText(String.valueOf(note.getComments()));
         ((TextView)findViewById(R.id.note_details_like_number)).setText(String.valueOf(note.getLikes()));
 
         if (note.getLiked()){
             ((TextView)findViewById(R.id.note_details_like_text)).setTextColor(Color.BLUE);
         }
+        updateCommentsNumber();
+    }
 
+    private void updateCommentsNumber(){
         String noOfComments = Utilities.getCommentVariation(note.getComments(), NoteDetailsActivity.this);
         ((TextView)(findViewById(R.id.note_details_comments_number))).setText(noOfComments);
     }
 
-
-    private void initRecyclerView(){
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.note_details_comments_recycler_view);
-
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-
-        List<Comment> comments = new ArrayList<>();
-        comments.add(new Comment("chuja sie pan zna, prosze pana", "staszek22", "2018/08/26 22:41:00", 2, 5));
-        comments.add(new Comment("panie odpierdol sie pan", "misio69", "2018/08/26 22:12:00"));
-        comments.add(new Comment("nie rozumiem w czym problem", "heniek33", "2018/08/26 22:41:00"));
-        comments.add(new Comment("eskeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeetit", "lilPump", "2018/08/26 22:41:00"));
-        comments.add(new Comment("bez nas nie było by bułek w sklepie proszę to docenić", "bug12", "2018/08/26 22:41:00"));
-        comments.add(new Comment("proszę pana (specjalnie z małej litery), skończ pan pierdolić", "pomidor", "2018/08/26 22:41:00"));
-        comments.add(new Comment("hahahaah super bardzo śmieszne, leci plusik", "adam_guz", "2018/08/26 22:41:00"));
-        comments.add(new Comment("było już, na razie leci tylko warn, ale jeszcze raz i ban", "wpierdalator", "2018/08/26 22:41:00"));
-
-
+    private void updateRecyclerAdapter(){
         CommentAdapter adapter = new CommentAdapter(comments, new CommentClickListener() {
             @Override
             public void onItemClick(View v, Comment comment) {
@@ -206,13 +206,20 @@ public class NoteDetailsActivity extends Activity implements FailedCallback, Com
             }
 
         }, this);
+        recyclerView.setAdapter(adapter);
+    }
+
+
+    private void initRecyclerView(){
+        recyclerView = (RecyclerView) findViewById(R.id.note_details_comments_recycler_view);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
 
         LayoutManagerNoScroll lm = new LayoutManagerNoScroll(this, LinearLayoutManager.VERTICAL,false);
         lm.setScrollEnabled(false);
         recyclerView.setLayoutManager(lm);
         recyclerView.setNestedScrollingEnabled(false);
 
-        recyclerView.setAdapter(adapter);
+        //recyclerView.setAdapter(adapter);
 
         Drawable divider = ResourcesCompat.getDrawable(getResources(), R.drawable.comments_divider, null);
         if (divider != null){
@@ -225,9 +232,6 @@ public class NoteDetailsActivity extends Activity implements FailedCallback, Com
         findViewById(R.id.note_details_like_it_layout).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putBoolean("currentNote", !note.getLiked());
-                editor.apply();
                 bottomPopup = Utilities.onLikePostClick(NoteDetailsActivity.this,
                         NoteDetailsActivity.this, note, view, bottomPopup,
                         R.id.note_details_like_text, R.id.note_details_like_number);
@@ -306,7 +310,9 @@ public class NoteDetailsActivity extends Activity implements FailedCallback, Com
                     if (checkComment > 0){
                         hideKeyboard(NoteDetailsActivity.this);
                         input.clearFocus();
-                        bottomPopup = Utilities.commentPost(1, note.getId(), input.getText().toString(),
+                        DateTime dateTime = new DateTime();
+                        String time = dateTime.toString("yyyy/MM/dd HH:mm:ss");
+                        bottomPopup = Utilities.commentPost(note.getId(), 1, "admin", time,  input.getText().toString(),
                                 NoteDetailsActivity.this, NoteDetailsActivity.this, bottomPopup);
                     }
                     else{
@@ -317,4 +323,32 @@ public class NoteDetailsActivity extends Activity implements FailedCallback, Com
             }
         });
     }
+
+    private void getComments(String postID){
+        PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
+        service.getCommentsPost(postID).enqueue(new Callback<List<Comment>>() {
+            @Override
+            public void onResponse(Call<List<Comment>> call, Response<List<Comment>> response) {
+                if (response.isSuccessful()){
+                    try{
+                        comments = response.body();
+                        updateRecyclerAdapter();
+                        //Toast.makeText(NoteDetailsActivity.this, "" + response.body().get(0).getCONTENT(), Toast.LENGTH_SHORT).show();
+                    }catch (Exception e){}
+                    //callback.commentPostSucceeded();
+                }
+                else{
+                   // callback.commentPostFailed();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Comment>> call, Throwable t) {
+                Toast.makeText(NoteDetailsActivity.this, "" + t, Toast.LENGTH_SHORT).show();
+
+                //callback.commentPostFailed();
+            }
+        });
+    }
+
 }

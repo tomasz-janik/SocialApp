@@ -2,74 +2,60 @@ package pl.itomaszjanik.test;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import org.parceler.Parcel;
 
-@Parcel
-public class Comment {
+public class Comment02 {
 
     @SerializedName("POST_ID")
     @Expose
-    Integer pOSTID;
+    private String pOSTID;
     @SerializedName("USER_ID")
     @Expose
-    Integer uSERID;
+    private String uSERID;
     @SerializedName("USERNAME")
     @Expose
-    String uSERNAME;
+    private Object uSERNAME;
     @SerializedName("DATE")
     @Expose
-    String dATE;
+    private Object dATE;
     @SerializedName("CONTENT")
     @Expose
-    String cONTENT;
+    private String cONTENT;
     @SerializedName("LIKES")
     @Expose
-    Integer lIKES;
+    private Integer lIKES;
     @SerializedName("REPLAYS")
     @Expose
-    Integer rEPLAYS;
+    private Integer rEPLAYS;
 
-    public Comment(){}
-
-    public Comment(int postID, int userID, String username, String date, String content, int likes, int replays){
-        this.pOSTID = postID;
-        this.uSERID = userID;
-        this.uSERNAME = username;
-        this.dATE = date;
-        this.cONTENT = content;
-        this.lIKES = likes;
-        this.rEPLAYS = replays;
-    }
-
-    public Integer getPOSTID() {
+    public String getPOSTID() {
         return pOSTID;
     }
 
-    public void setPOSTID(Integer pOSTID) {
+    public void setPOSTID(String pOSTID) {
         this.pOSTID = pOSTID;
     }
 
-    public Integer getUSERID() {
+    public String getUSERID() {
         return uSERID;
     }
 
-    public void setUSERID(Integer uSERID) {
+    public void setUSERID(String uSERID) {
         this.uSERID = uSERID;
     }
 
-    public String getUSERNAME() {
+    public Object getUSERNAME() {
         return uSERNAME;
     }
 
-    public void setUSERNAME(String uSERNAME) {
+    public void setUSERNAME(Object uSERNAME) {
         this.uSERNAME = uSERNAME;
     }
 
-    public String getDATE() {
+    public Object getDATE() {
         return dATE;
     }
 
-    public void setDATE(String dATE) {
+    public void setDATE(Object dATE) {
         this.dATE = dATE;
     }
 

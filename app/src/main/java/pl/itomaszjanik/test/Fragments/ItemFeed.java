@@ -49,7 +49,6 @@ public class ItemFeed extends Fragment implements SwipeRefreshLayout.OnRefreshLi
     private RecyclerView recyclerView;
     private RelativeLayout refreshLayout;
     private BottomPopup bottomPopup;
-    private SharedPreferences preferences;
 
     public ItemFeed(){
     }
@@ -61,7 +60,6 @@ public class ItemFeed extends Fragment implements SwipeRefreshLayout.OnRefreshLi
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
     }
 
     @Nullable
@@ -128,25 +126,36 @@ public class ItemFeed extends Fragment implements SwipeRefreshLayout.OnRefreshLi
     @Override
     public void onResume(){
         super.onResume();
-        if (currentNote != null && currentView != null){
-            boolean current = currentNote.getLiked();
-            if (preferences.getBoolean("currentNote", true) != current){
-                int newLikes;
-                if (current){
-                    TextView likes_number = currentView.findViewById(R.id.note_like_number);
-                    newLikes = Integer.valueOf(likes_number.getText().toString()) - 1;
-                    likes_number.setText(String.valueOf(newLikes));
-                    ((TextView)(currentView.findViewById(R.id.note_like_text))).setTextColor(Color.parseColor("#747474"));
+        if (currentNote != null){
+            PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
+            Call<Note> call = service.updatePost(currentNote.getId(), 1);
+            call.enqueue(new Callback<Note>() {
+                @Override
+                public void onResponse(Call<Note> call, Response<Note> response) {
+                    if (currentView != null){
+                        Note note = response.body();
+                        if (note != null){
+                            currentNote.setLiked(note.getLiked());
+                            currentNote.setLikes(note.getLikes());
+                            currentNote.setComments(note.getComments());
+                            ((TextView)(currentView.findViewById(R.id.note_item_comments_number))).setText(String.valueOf(note.getComments()));
+                            TextView likes_number = currentView.findViewById(R.id.note_like_number);
+                            likes_number.setText(String.valueOf(note.getLikes()));
+                            if (note.getLiked()){
+                                ((TextView)(currentView.findViewById(R.id.note_like_text))).setTextColor(Color.BLUE);
+                            }
+                            else{
+                                ((TextView)(currentView.findViewById(R.id.note_like_text))).setTextColor(Color.parseColor("#747474"));
+                            }
+                        }
+                    }
                 }
-                else{
-                    TextView likes_number = currentView.findViewById(R.id.note_like_number);
-                    newLikes = Integer.valueOf(likes_number.getText().toString()) + 1;
-                    likes_number.setText(String.valueOf(newLikes));
-                    ((TextView)(currentView.findViewById(R.id.note_like_text))).setTextColor(Color.BLUE);
+
+                @Override
+                public void onFailure(Call<Note> call, Throwable t) {
+
                 }
-                currentNote.setLiked(!current);
-                currentNote.setLikes(newLikes);
-            }
+            });
         }
     }
 
@@ -213,10 +222,6 @@ public class ItemFeed extends Fragment implements SwipeRefreshLayout.OnRefreshLi
 
                 currentNote = note;
                 currentView = v;
-
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putBoolean("currentNote", note.getLiked());
-                editor.apply();
 
                 Intent intent = new Intent(getActivity(), NoteDetailsActivity.class);
                 intent.putExtras(data);

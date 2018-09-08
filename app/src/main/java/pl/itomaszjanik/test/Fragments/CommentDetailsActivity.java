@@ -58,7 +58,7 @@ public class CommentDetailsActivity extends Activity {
             comment = Parcels.unwrap(bundle.getParcelable("comment"));
             note = Parcels.unwrap(bundle.getParcelable("note"));
             if (comment == null){
-                comment = new Comment("TEST", "TEST", "26.08.2018 22:41:00", 0, 0);
+                comment = new Comment(1, 1, "admin", "26.08.2018 22:41:00", "TEST", 0, 0);
             }
             if (note == null){
                 ArrayList<String> list = new ArrayList<>();
@@ -103,7 +103,7 @@ public class CommentDetailsActivity extends Activity {
     }
 
     private void initCommentsNumber(){
-        int noOfComments = comment.getNoOfReplays();
+        int noOfComments = comment.getREPLAYS();
         String noOfCommentsString = noOfComments + " ";
         if (noOfComments == 1){
             noOfCommentsString += getResources().getString(R.string.replay_one);
@@ -113,15 +113,15 @@ public class CommentDetailsActivity extends Activity {
         }
 
         ((TextView)(findViewById(R.id.comment_details_comments_number))).setText(noOfCommentsString);
-        ((TextView)(findViewById(R.id.comment_item_replays))).setText(String.valueOf(comment.getNoOfReplays()));
+        ((TextView)(findViewById(R.id.comment_item_replays))).setText(String.valueOf(comment.getREPLAYS()));
     }
 
     private void initMainContent(boolean replay){
-        username.setText(comment.getUsername());
-        date.setText(Utilities.decodeDate(comment.getDate(), getApplicationContext()));
-        content.setText(comment.getContent());
+        username.setText(comment.getUSERNAME());
+        date.setText(Utilities.decodeDate(comment.getDATE(), getApplicationContext()));
+        content.setText(comment.getCONTENT());
 
-        ((TextView)findViewById(R.id.comment_like_number)).setText(String.valueOf(comment.getLikes()));
+        ((TextView)findViewById(R.id.comment_like_number)).setText(String.valueOf(comment.getLIKES()));
         if (replay){
             input.setFocusableInTouchMode(true);
             input.requestFocus();
@@ -145,7 +145,7 @@ public class CommentDetailsActivity extends Activity {
 
             @Override
             public void onReplayClick(View v, Comment comment){
-                String output = "@" + comment.getUsername() + " ";
+                String output = "@" + comment.getUSERNAME() + " ";
                 Spannable spannable = new SpannableString(output);
                 spannable.setSpan(new BackgroundColorSpan(Color.parseColor("#22000000")),0, output.length() - 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
@@ -296,8 +296,8 @@ public class CommentDetailsActivity extends Activity {
 
     private List<Comment> getComments(){
         List<Comment> comments = new ArrayList<>();
-        comments.add(new Comment("niech mnie pan zostawi", "misio69", "2018/08/26 22:41:00"));
-        comments.add(new Comment("a chuj z toba", "stachuBachu", "2018/08/26 22:12:00"));
+        comments.add(new Comment(1, 1, "admin", "26.08.2018 22:41:00", "TEST", 0, 0));
+        comments.add(new Comment(1, 1, "admin", "26.08.2018 22:41:00", "TEST", 0, 0));
         return comments;
     }
 

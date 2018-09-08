@@ -121,4 +121,16 @@ public class Note {
         this.liked = liked;
     }
 
+    public void incrementComments(){
+        this.comments++;
+    }
+
+    public void incrementLikes(){
+        this.likes++;
+    }
+
+    public void decrementLikes(){
+        this.likes--;
+    }
+
 }

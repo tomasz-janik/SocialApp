@@ -41,11 +41,11 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     public void onBindViewHolder(final CommentAdapter.CommentViewHolder holder, int position) {
         final Comment comment = comments.get(position);
 
-        holder.username.setText(comment.getUsername());
-        holder.date.setText(Utilities.decodeDate(comment.getDate(), context));
-        holder.content.setText(comment.getContent());
-        holder.like.setText(String.valueOf(comment.getLikes()));
-        holder.replays.setText(String.valueOf(comment.getNoOfReplays()));
+        holder.username.setText(comment.getUSERNAME());
+        holder.date.setText(Utilities.decodeDate(comment.getDATE(), context));
+        holder.content.setText(comment.getCONTENT());
+        holder.like.setText(String.valueOf(comment.getLIKES()));
+        holder.replays.setText(String.valueOf(comment.getREPLAYS()));
 
         holder.likeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
