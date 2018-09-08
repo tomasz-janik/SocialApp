@@ -4,9 +4,7 @@ import okhttp3.ResponseBody;
 import pl.itomaszjanik.test.Note;
 import pl.itomaszjanik.test.Note02;
 import retrofit2.Call;
-import retrofit2.http.Field;
-import retrofit2.http.FormUrlEncoded;
-import retrofit2.http.POST;
+import retrofit2.http.*;
 
 import java.util.List;
 
@@ -37,5 +35,14 @@ public interface PostService {
                             @Field("user_id")  int userID
     );
 
+    @POST("comment_post.php")
+    @FormUrlEncoded
+    Call<ResponseBody> commentPost(@Field("post_id")  int postID,
+                                   @Field("user_id")  int userID,
+                                   @Field("content")  String content
+    );
+
+    @GET("{postID}")
+    Call<List<Note>> getCommentsPost(@Path("postID") String postID);
 
 }

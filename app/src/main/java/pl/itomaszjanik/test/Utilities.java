@@ -28,6 +28,7 @@ import org.joda.time.Interval;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import pl.itomaszjanik.test.BottomPopup.BottomPopup;
+import pl.itomaszjanik.test.Remote.CommentPostCallback;
 import pl.itomaszjanik.test.Remote.FailedCallback;
 import pl.itomaszjanik.test.Remote.PostService;
 import retrofit2.Call;
@@ -135,6 +136,35 @@ public class Utilities {
         } catch (Exception e){
             Log.e(":(",":(");
         }
+    }
+
+    public static BottomPopup commentPost(int userID, int postID, String content,
+                                          final CommentPostCallback callback, Context context, BottomPopup bottomPopup){
+        if (isNetworkAvailable(context)){
+            PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
+            service.commentPost(userID, postID, content).enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.isSuccessful()){
+                        callback.commentPostSucceeded();
+                    }
+                    else{
+                        callback.commentPostFailed();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    callback.commentPostFailed();
+                }
+            });
+        }
+        else{
+            bottomPopup = getBottomPopupText(context,
+                    R.layout.bottom_popup_text, R.id.bottom_popup_text,
+                    context.getString(R.string.no_internet), bottomPopup);
+        }
+        return bottomPopup;
     }
 
     public static int checkComment(String string, Context context){

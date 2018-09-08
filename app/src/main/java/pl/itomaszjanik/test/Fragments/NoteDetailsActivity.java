@@ -35,6 +35,7 @@ import pl.itomaszjanik.test.EllipsisPopup.EllipsisPopup;
 import pl.itomaszjanik.test.EllipsisPopup.EllipsisPopupListener;
 import pl.itomaszjanik.test.ExtendedComponents.CustomImage;
 import pl.itomaszjanik.test.ExtendedComponents.LayoutManagerNoScroll;
+import pl.itomaszjanik.test.Remote.CommentPostCallback;
 import pl.itomaszjanik.test.Remote.FailedCallback;
 
 import java.io.File;
@@ -42,9 +43,10 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import static pl.itomaszjanik.test.Utilities.hideKeyboard;
 import static pl.itomaszjanik.test.Utilities.prepareHashesText;
 
-public class NoteDetailsActivity extends Activity implements FailedCallback {
+public class NoteDetailsActivity extends Activity implements FailedCallback, CommentPostCallback {
 
     private Note note;
     private TextView content, hashes, date, rate;
@@ -93,6 +95,21 @@ public class NoteDetailsActivity extends Activity implements FailedCallback {
         bottomPopup = Utilities.getBottomPopupText(this,
                 R.layout.bottom_popup_text, R.id.bottom_popup_text,
                 getString(R.string.couldnt_unlike_post), bottomPopup);
+    }
+
+    @Override
+    public void commentPostSucceeded(){
+        input.setText("");
+        bottomPopup = Utilities.getBottomPopupText(this,
+                R.layout.bottom_popup_text, R.id.bottom_popup_text,
+                getString(R.string.comment_post_added), bottomPopup);
+    }
+
+    @Override
+    public void commentPostFailed(){
+        bottomPopup = Utilities.getBottomPopupText(this,
+                R.layout.bottom_popup_text, R.id.bottom_popup_text,
+                getString(R.string.comment_post_couldnt), bottomPopup);
     }
 
     private void prepareView(){
@@ -287,7 +304,10 @@ public class NoteDetailsActivity extends Activity implements FailedCallback {
                 if (input != null){
                     int checkComment = Utilities.checkComment(input.getText().toString(), NoteDetailsActivity.this);
                     if (checkComment > 0){
-                        bottomPopup = Utilities.getBottomPopupLogin(NoteDetailsActivity.this, R.layout.bottom_popup_login, bottomPopup);
+                        hideKeyboard(NoteDetailsActivity.this);
+                        input.clearFocus();
+                        bottomPopup = Utilities.commentPost(1, note.getId(), input.getText().toString(),
+                                NoteDetailsActivity.this, NoteDetailsActivity.this, bottomPopup);
                     }
                     else{
                         bottomPopup = Utilities.errorComment(checkComment, NoteDetailsActivity.this, R.layout.bottom_popup_login, bottomPopup);

@@ -85,6 +85,10 @@
     <string name="couldnt_refresh">Nie udało się odświeżyć postów\nSpróbuj ponownie później!</string>
     <string name="couldnt_like_post">Nie udało się polubić postu\nSpróbuj ponownie później!</string>
     <string name="couldnt_unlike_post">Nie udało się odlubić postu\nSpróbuj ponownie później!</string>
+
+    <string name="comment_post_added">Twój komentarz został dodany!</string>
+    <string name="comment_post_couldnt">Nie udało się dodać komentarza\nSpróbuj ponownie później!</string>
+
     <string name="no_internet">Brak połączenia z internetem!</string>
     <string name="comment">Skomentuj</string>
 

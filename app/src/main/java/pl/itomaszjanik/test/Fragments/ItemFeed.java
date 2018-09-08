@@ -210,9 +210,10 @@ public class ItemFeed extends Fragment implements SwipeRefreshLayout.OnRefreshLi
             public void onItemClick(View v, Note note) {
                 Bundle data = new Bundle();
                 data.putParcelable("note", Parcels.wrap(note));
-                //NoteAdapter.CustomViewHolder lol =
+
                 currentNote = note;
                 currentView = v;
+
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putBoolean("currentNote", note.getLiked());
                 editor.apply();
