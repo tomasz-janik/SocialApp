@@ -28,9 +28,8 @@ import org.joda.time.Interval;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import pl.itomaszjanik.test.BottomPopup.BottomPopup;
-import pl.itomaszjanik.test.Remote.CommentPostCallback;
-import pl.itomaszjanik.test.Remote.FailedCallback;
-import pl.itomaszjanik.test.Remote.PostService;
+import pl.itomaszjanik.test.Fragments.NoteDetailsActivity;
+import pl.itomaszjanik.test.Remote.*;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -59,11 +58,11 @@ public class Utilities {
         return bottomPopup;
     }
 
-    public static void likePost(FailedCallback failedCallback, Note note, View view, int textID, int numberID){
+    private static void likePost(FailedCallback failedCallback, Note note, View view, int textID, int numberID){
         reactPostCall(true, failedCallback, note, view, textID, numberID);
     }
 
-    public static void unlikePost(FailedCallback failedCallback, Note note, View view, int textID, int numberID){
+    private static void unlikePost(FailedCallback failedCallback, Note note, View view, int textID, int numberID){
         reactPostCall(false, failedCallback, note, view, textID, numberID);
     }
 
@@ -138,15 +137,59 @@ public class Utilities {
         }
     }
 
-    public static BottomPopup commentPost(int postID, int userID, String username, String date, String content,
-                                          final CommentPostCallback callback, Context context, BottomPopup bottomPopup){
+    public static void onLikeCommentClick(Context context, ReactCommentsCallback callback, View view, Comment comment){
+        if (isNetworkAvailable(context)){
+            Utilities.reactCommentCall(callback, view, comment);
+        }
+        else{
+            callback.reactCommentNoInternet();
+        }
+    }
+
+    private static void reactCommentCall(final ReactCommentsCallback callback, final View view, final Comment comment){
+        PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
+        Call<ResponseBody> call;
+        if (comment.getLiked()){
+            call = service.unlikeComment(comment.getCommentID(), 1);
+        }
+        else{
+            call = service.likeComment(comment.getCommentID(), 1);
+        }
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (comment.getLiked()){
+                    callback.reactCommentUnlikeSucceeded(comment, view);
+                }
+                else{
+                    callback.reactCommentLikeSucceeded(comment, view);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                if (comment.getLiked()){
+                    callback.reactCommentUnlikeFailed();
+                }
+                else{
+                    callback.reactCommentLikeFailed();
+                }
+            }
+        });
+    }
+
+
+
+
+    public static void commentPost(int postID, int userID, String username, String date, String content,
+                                          final CommentPostCallback callback, Context context){
         if (isNetworkAvailable(context)){
             PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
-            service.commentPost(postID, userID, username, date, content).enqueue(new Callback<ResponseBody>() {
+            service.commentPost(postID, userID, username, date, content).enqueue(new Callback<Comment>() {
                 @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                public void onResponse(Call<Comment> call, Response<Comment> response) {
                     if (response.isSuccessful()){
-                        callback.commentPostSucceeded();
+                        callback.commentPostSucceeded(response.body());
                     }
                     else{
                         callback.commentPostFailed();
@@ -154,18 +197,62 @@ public class Utilities {
                 }
 
                 @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                public void onFailure(Call<Comment> call, Throwable t) {
                     callback.commentPostFailed();
                 }
             });
         }
         else{
-            bottomPopup = getBottomPopupText(context,
-                    R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                    context.getString(R.string.no_internet), bottomPopup);
+            callback.commentPostNoInternet();
         }
-        return bottomPopup;
     }
+
+    public static void getComments(int userID, int postID, int page, final GetCommentsCallback callback, Context context){
+        if (isNetworkAvailable(context)){
+            PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
+            service.getCommentsPost(userID, postID, page).enqueue(new Callback<List<Comment>>() {
+                @Override
+                public void onResponse(Call<List<Comment>> call, Response<List<Comment>> response) {
+                    if (response.isSuccessful()){
+                        if (response.body() != null){
+                            callback.getCommentSucceeded(response.body());
+                        }
+                        else{
+                            callback.getCommentFailed();
+                        }
+                    }
+                    else{
+                        callback.getCommentFailed();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<Comment>> call, Throwable t) {
+                    callback.getCommentFailed();
+                }
+            });
+        }
+        else{
+            callback.getCommentNoInternet();
+        }
+    }
+
+    public static void updateCommentCall(final UpdateCommentCallback callback, Comment comment){
+        PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
+        Call<Comment> call = service.updateComment(comment.getCommentID(), 1);
+        call.enqueue(new Callback<Comment>() {
+            @Override
+            public void onResponse(Call<Comment> call, Response<Comment> response) {
+                callback.updateCommentSucceeded(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<Comment> call, Throwable t) {
+                callback.updateCommentFailed();
+            }
+        });
+    }
+
 
     public static int checkComment(String string, Context context){
         if (string == null || string.equals("")){
@@ -519,20 +606,20 @@ public class Utilities {
     }
 
     private static void setCommentDetails(RelativeLayout layout, Comment comment, Activity activity){
-        ((TextView)(layout.findViewById(R.id.comment_username))).setText(comment.getUSERNAME());
-        ((TextView)(layout.findViewById(R.id.comment_date))).setText(decodeDate(comment.getDATE(), activity));
-        ((TextView)(layout.findViewById(R.id.comment_content))).setText(comment.getCONTENT());
+        ((TextView)(layout.findViewById(R.id.comment_username))).setText(comment.getUsername());
+        ((TextView)(layout.findViewById(R.id.comment_date))).setText(decodeDate(comment.getDate(), activity));
+        ((TextView)(layout.findViewById(R.id.comment_content))).setText(comment.getContent());
 
-        ((TextView)(layout.findViewById(R.id.comment_like_number))).setText(String.valueOf(comment.getLIKES()));
-        ((TextView)(layout.findViewById(R.id.comment_item_replays))).setText(String.valueOf(comment.getREPLAYS()));
+        ((TextView)(layout.findViewById(R.id.comment_like_number))).setText(String.valueOf(comment.getLikes()));
+        ((TextView)(layout.findViewById(R.id.comment_item_replays))).setText(String.valueOf(comment.getReplays()));
     }
 
     private static void setReplayDetails(RelativeLayout layout, Comment comment, Activity activity){
-        ((TextView)(layout.findViewById(R.id.comment_username))).setText(comment.getUSERNAME());
-        ((TextView)(layout.findViewById(R.id.comment_date))).setText(decodeDate(comment.getDATE(), activity));
-        ((TextView)(layout.findViewById(R.id.comment_content))).setText(comment.getCONTENT());
+        ((TextView)(layout.findViewById(R.id.comment_username))).setText(comment.getUsername());
+        ((TextView)(layout.findViewById(R.id.comment_date))).setText(decodeDate(comment.getDate(), activity));
+        ((TextView)(layout.findViewById(R.id.comment_content))).setText(comment.getContent());
 
-        ((TextView)(layout.findViewById(R.id.comment_like_number))).setText(String.valueOf(comment.getLIKES()));
+        ((TextView)(layout.findViewById(R.id.comment_like_number))).setText(String.valueOf(comment.getLikes()));
     }
 
     public static String prepareHasheshText(String string){

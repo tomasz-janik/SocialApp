@@ -8,6 +8,7 @@ import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import pl.itomaszjanik.test.*;
@@ -90,6 +91,8 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.CustomViewHold
     public int getItemCount() {
         return notes.size();
     }
+
+
 
     private void wrapper(String text, int wrapLength, Context context, TextView textView){
         int toWrap = text.length();

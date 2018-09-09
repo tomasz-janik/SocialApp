@@ -316,6 +316,7 @@
                             android:background="#15000000" />
 
                     <RelativeLayout
+                            android:id="@+id/note_details_comments_refresh"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:clickable="true"

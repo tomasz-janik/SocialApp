@@ -16,6 +16,13 @@ public interface PostService {
     @FormUrlEncoded
     Call<List<Note>> getPosts(@Field("user_id")  int userID);
 
+    @POST("get_comments_post.php")
+    @FormUrlEncoded
+    Call<List<Comment>> getCommentsPost(@Field("userID") int userID,
+                                        @Field("postID") int postID,
+                                        @Field("page")   int page
+    );
+
     @POST("insert.php")
     @FormUrlEncoded
     Call<Note> savePost(@Field("username")  String username,
@@ -28,31 +35,51 @@ public interface PostService {
     @POST("update_post.php")
     @FormUrlEncoded
     Call<Note> updatePost(@Field("post_id")  int postID,
-                                  @Field("user_id")  int userID
+                          @Field("user_id")  int userID
     );
 
-    @POST("like.php")
+    @POST("update_comment.php")
+    @FormUrlEncoded
+    Call<Comment> updateComment(@Field("comment_id")  int commentID,
+                                @Field("user_id")     int userID
+    );
+
+    @POST("like_post.php")
     @FormUrlEncoded
     Call<ResponseBody> likePost(@Field("post_id")  int postID,
                                 @Field("user_id")  int userID
     );
 
-    @POST("unlike.php")
+    @POST("unlike_post.php")
     @FormUrlEncoded
     Call<ResponseBody> unlikePost(@Field("post_id")  int postID,
-                            @Field("user_id")  int userID
+                                  @Field("user_id")  int userID
     );
 
     @POST("comment_post.php")
     @FormUrlEncoded
-    Call<ResponseBody> commentPost(@Field("post_id")  int postID,
-                                   @Field("user_id")  int userID,
-                                   @Field("username") String username,
-                                   @Field("date")     String date,
-                                   @Field("content")  String content
+    Call<Comment> commentPost(@Field("post_id")  int postID,
+                              @Field("user_id")  int userID,
+                              @Field("username") String username,
+                              @Field("date")     String date,
+                              @Field("content")  String content
     );
 
-    @GET("POSTS/{postID}/COMMENTS/0.json")
-    Call<List<Comment>> getCommentsPost(@Path("postID") String postID);
+    @POST("like_comment.php")
+    @FormUrlEncoded
+    Call<ResponseBody> likeComment(@Field("comment_id")  int commentID,
+                                   @Field("user_id")     int userID
+    );
+
+    @POST("unlike_comment.php")
+    @FormUrlEncoded
+    Call<ResponseBody> unlikeComment(@Field("comment_id")  int commentID,
+                                     @Field("user_id")     int userID
+    );
+
+/*    @GET("POSTS/{postID}/COMMENTS/{pageID}.json")
+    Call<List<Comment>> getCommentsPost(@Path("postID") String postID,
+                                        @Path("pageID") String pageID
+    );*/
 
 }

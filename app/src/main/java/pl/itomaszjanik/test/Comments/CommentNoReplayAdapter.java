@@ -40,15 +40,15 @@ public class CommentNoReplayAdapter extends RecyclerView.Adapter<CommentNoReplay
     public void onBindViewHolder(final CommentNoReplayAdapter.CommentViewHolder holder, int position) {
         final Comment comment = comments.get(position);
 
-        holder.username.setText(comment.getUSERNAME());
-        holder.date.setText(Utilities.decodeDate(comment.getDATE(), context));
-        holder.content.setText(comment.getCONTENT());
-        holder.like.setText(String.valueOf(comment.getLIKES()));
+        holder.username.setText(comment.getUsername());
+        holder.date.setText(Utilities.decodeDate(comment.getDate(), context));
+        holder.content.setText(comment.getContent());
+        holder.like.setText(String.valueOf(comment.getLikes()));
 
         holder.likeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.onLikeClick(v, holder.likeLayout);
+                listener.onLikeClick(v, comment);
             }
         });
 

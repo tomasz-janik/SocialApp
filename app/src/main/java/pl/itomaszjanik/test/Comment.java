@@ -7,94 +7,135 @@ import org.parceler.Parcel;
 @Parcel
 public class Comment {
 
+    @SerializedName("COMMENT_ID")
+    @Expose
+    Integer commentID;
     @SerializedName("POST_ID")
     @Expose
-    Integer pOSTID;
+    Integer postID;
     @SerializedName("USER_ID")
     @Expose
-    Integer uSERID;
+    Integer userID;
     @SerializedName("USERNAME")
     @Expose
-    String uSERNAME;
+    String username;
     @SerializedName("DATE")
     @Expose
-    String dATE;
+    String date;
     @SerializedName("CONTENT")
     @Expose
-    String cONTENT;
+    String content;
     @SerializedName("LIKES")
     @Expose
-    Integer lIKES;
+    Integer likes;
     @SerializedName("REPLAYS")
     @Expose
-    Integer rEPLAYS;
+    Integer replays;
+    @SerializedName("LIKED")
+    @Expose
+    Boolean liked;
 
     public Comment(){}
 
-    public Comment(int postID, int userID, String username, String date, String content, int likes, int replays){
-        this.pOSTID = postID;
-        this.uSERID = userID;
-        this.uSERNAME = username;
-        this.dATE = date;
-        this.cONTENT = content;
-        this.lIKES = likes;
-        this.rEPLAYS = replays;
+    public Comment(int commentID, int postID, int userID, String username, String date, String content, int likes, int replays, boolean liked){
+        this.commentID = commentID;
+        this.postID = postID;
+        this.userID = userID;
+        this.username = username;
+        this.date = date;
+        this.content = content;
+        this.likes = likes;
+        this.replays = replays;
+        this.liked = liked;
     }
 
-    public Integer getPOSTID() {
-        return pOSTID;
+    public Integer getCommentID() {
+        return commentID;
     }
 
-    public void setPOSTID(Integer pOSTID) {
-        this.pOSTID = pOSTID;
+    public void setCommentID(Integer commentID) {
+        this.commentID = commentID;
     }
 
-    public Integer getUSERID() {
-        return uSERID;
+    public Integer getPostID() {
+        return postID;
     }
 
-    public void setUSERID(Integer uSERID) {
-        this.uSERID = uSERID;
+    public void setPostID(Integer postID) {
+        this.postID = postID;
     }
 
-    public String getUSERNAME() {
-        return uSERNAME;
+    public Integer getUserID() {
+        return userID;
     }
 
-    public void setUSERNAME(String uSERNAME) {
-        this.uSERNAME = uSERNAME;
+    public void setUserID(Integer userID) {
+        this.userID = userID;
     }
 
-    public String getDATE() {
-        return dATE;
+    public String getUsername() {
+        return username;
     }
 
-    public void setDATE(String dATE) {
-        this.dATE = dATE;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public String getCONTENT() {
-        return cONTENT;
+    public String getDate() {
+        return date;
     }
 
-    public void setCONTENT(String cONTENT) {
-        this.cONTENT = cONTENT;
+    public void setDate(String date) {
+        this.date = date;
     }
 
-    public Integer getLIKES() {
-        return lIKES;
+    public String getContent() {
+        return content;
     }
 
-    public void setLIKES(Integer lIKES) {
-        this.lIKES = lIKES;
+    public void setContent(String content) {
+        this.content = content;
     }
 
-    public Integer getREPLAYS() {
-        return rEPLAYS;
+    public Integer getLikes() {
+        return likes;
     }
 
-    public void setREPLAYS(Integer rEPLAYS) {
-        this.rEPLAYS = rEPLAYS;
+    public void setLikes(Integer likes) {
+        this.likes = likes;
+    }
+
+    public Integer getReplays() {
+        return replays;
+    }
+
+    public void setReplays(Integer replays) {
+        this.replays = replays;
+    }
+
+    public Boolean getLiked() {
+        return liked;
+    }
+
+    public void setLiked(Boolean liked) {
+        this.liked = liked;
+    }
+
+    public void changeLiked(){
+        if (liked){
+            liked = false;
+        }
+        else{
+            liked = true;
+        }
+    }
+
+    public void incrementLikes(){
+        likes++;
+    }
+
+    public void decrementLikes(){
+        likes--;
     }
 
 }
