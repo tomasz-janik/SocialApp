@@ -1,6 +1,7 @@
 package pl.itomaszjanik.test.Comments;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,8 +25,7 @@ public class CommentAdapter extends RecyclerView.Adapter{
     private Context context;
 
     public class CommentViewHolder extends RecyclerView.ViewHolder{
-        TextView username, date, content, replays;
-        TextView like;
+        TextView username, date, content, like, likeText, replays;
         RelativeLayout likeLayout, replayLayout, ellipsisLayout, shareLayout;
 
         CommentViewHolder(View view) {
@@ -34,6 +34,7 @@ public class CommentAdapter extends RecyclerView.Adapter{
             date = (TextView) view.findViewById(R.id.comment_date);
             content = (TextView) view.findViewById(R.id.comment_content);
             like = (TextView) view.findViewById(R.id.comment_like_number);
+            likeText = (TextView) view.findViewById(R.id.comment_like_text);
             replays = (TextView) view.findViewById(R.id.comment_item_replays);
             likeLayout = (RelativeLayout) view.findViewById(R.id.comment_like_it_layout);
             replayLayout = (RelativeLayout) view.findViewById(R.id.comment_replay_layout);
@@ -61,6 +62,10 @@ public class CommentAdapter extends RecyclerView.Adapter{
             ((CommentAdapter.CommentViewHolder)holder).content.setText(comment.getContent());
             ((CommentAdapter.CommentViewHolder)holder).like.setText(String.valueOf(comment.getLikes()));
             ((CommentAdapter.CommentViewHolder)holder).replays.setText(String.valueOf(comment.getReplays()));
+            if (comment.getLiked()){
+                ((CommentAdapter.CommentViewHolder)holder).likeText.setTextColor(Color.BLUE);
+            }
+
             ((CommentAdapter.CommentViewHolder)holder).likeLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

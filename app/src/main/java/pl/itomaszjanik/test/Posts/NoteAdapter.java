@@ -43,14 +43,12 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.CustomViewHold
         final Note note = notes.get(position);
 
         holder.username.setText(note.getUsername());
-        //holder.date.setText(Utilities.decodeDate(note.getDate(), context));
         wrapper(note.getContent(), Values.NOTE_VISIBLE_LIMIT, context, holder.content);
         holder.likes.setText(String.valueOf(note.getLikes()));
+        holder.noOfComments.setText(String.valueOf(note.getComments()));
         if (note.getLiked()){
             holder.likedText.setTextColor(Color.BLUE);
         }
-
-        holder.noOfComments.setText(String.valueOf(note.getComments()));
 
         holder.likeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,13 +57,6 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.CustomViewHold
             }
         });
 
-       /* holder.commentLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.onCommentClick(v, note);
-            }
-        });
-*/
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
