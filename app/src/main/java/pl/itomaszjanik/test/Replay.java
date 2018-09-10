@@ -5,14 +5,14 @@ import com.google.gson.annotations.SerializedName;
 import org.parceler.Parcel;
 
 @Parcel
-public class Comment {
+public class Replay {
 
+    @SerializedName("REPLAY_ID")
+    @Expose
+    Integer replayID;
     @SerializedName("COMMENT_ID")
     @Expose
     Integer commentID;
-    @SerializedName("POST_ID")
-    @Expose
-    Integer postID;
     @SerializedName("USER_ID")
     @Expose
     Integer userID;
@@ -35,11 +35,11 @@ public class Comment {
     @Expose
     Boolean liked;
 
-    public Comment(){}
+    public Replay(){}
 
-    public Comment(int commentID, int postID, int userID, String username, String date, String content, int likes, int replays, boolean liked){
+    public Replay(int replayID, int commentID, int userID, String username, String date, String content, int likes, int replays, boolean liked){
+        this.replayID = replayID;
         this.commentID = commentID;
-        this.postID = postID;
         this.userID = userID;
         this.username = username;
         this.date = date;
@@ -49,20 +49,20 @@ public class Comment {
         this.liked = liked;
     }
 
+    public Integer getReplayID(){
+        return replayID;
+    }
+
+    public void setReplayID(Integer replayID){
+        this.replayID = replayID;
+    }
+
     public Integer getCommentID() {
         return commentID;
     }
 
     public void setCommentID(Integer commentID) {
         this.commentID = commentID;
-    }
-
-    public Integer getPostID() {
-        return postID;
-    }
-
-    public void setPostID(Integer postID) {
-        this.postID = postID;
     }
 
     public Integer getUserID() {

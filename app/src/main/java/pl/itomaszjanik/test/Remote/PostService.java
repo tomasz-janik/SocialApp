@@ -1,10 +1,7 @@
 package pl.itomaszjanik.test.Remote;
 
 import okhttp3.ResponseBody;
-import pl.itomaszjanik.test.Comment;
-import pl.itomaszjanik.test.Comment02;
-import pl.itomaszjanik.test.Note;
-import pl.itomaszjanik.test.Note02;
+import pl.itomaszjanik.test.*;
 import retrofit2.Call;
 import retrofit2.http.*;
 
@@ -21,6 +18,13 @@ public interface PostService {
     Call<List<Comment>> getCommentsPost(@Field("userID") int userID,
                                         @Field("postID") int postID,
                                         @Field("page")   int page
+    );
+
+    @POST("get_replays_comment.php")
+    @FormUrlEncoded
+    Call<List<Replay>> getReplaysComment(@Field("userID")    int userID,
+                                         @Field("commentID") int commentID,
+                                         @Field("page")      int page
     );
 
     @POST("insert.php")
@@ -75,6 +79,27 @@ public interface PostService {
     @FormUrlEncoded
     Call<ResponseBody> unlikeComment(@Field("comment_id")  int commentID,
                                      @Field("user_id")     int userID
+    );
+
+    @POST("replay_comment.php")
+    @FormUrlEncoded
+    Call<Replay> replayComment(@Field("comment_id")  int commentID,
+                               @Field("user_id")     int userID,
+                               @Field("username")    String username,
+                               @Field("date")        String date,
+                               @Field("content")     String content
+    );
+
+    @POST("like_replay.php")
+    @FormUrlEncoded
+    Call<ResponseBody> likeReplay(@Field("replay_id")   int replayID,
+                                  @Field("user_id")     int userID
+    );
+
+    @POST("unlike_replay.php")
+    @FormUrlEncoded
+    Call<ResponseBody> unlikeReplay(@Field("replay_id")   int replayID,
+                                    @Field("user_id")     int userID
     );
 
 /*    @GET("POSTS/{postID}/COMMENTS/{pageID}.json")

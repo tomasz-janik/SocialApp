@@ -168,11 +168,8 @@ public class NoteDetailsActivity extends Activity implements FailedCallback, Com
         bottomPopup = Utilities.getBottomPopupText(this,
                 R.layout.bottom_popup_text, R.id.bottom_popup_text,
                 getString(R.string.comment_post_added), bottomPopup);
-        //getComments(0);
         comments.add(comment);
         mCommentAdapter.notifyItemInserted(comments.size() - 1);
-        //scrollView.fullScroll(View.FOCUS_DOWN);
-        //scrollView.smoothScrollTo(0,scrollView.getHeight());
 
         note.incrementComments();
         updateCommentsNumber();

@@ -178,9 +178,6 @@ public class Utilities {
         });
     }
 
-
-
-
     public static void commentPost(int postID, int userID, String username, String date, String content,
                                           final CommentPostCallback callback, Context context){
         if (isNetworkAvailable(context)){
@@ -253,6 +250,99 @@ public class Utilities {
         });
     }
 
+    public static void getReplays(int userID, int commentID, int page, final GetReplaysCallback callback, Context context) {
+        if (isNetworkAvailable(context)) {
+            PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
+            service.getReplaysComment(userID, commentID, page).enqueue(new Callback<List<Replay>>() {
+                @Override
+                public void onResponse(Call<List<Replay>> call, Response<List<Replay>> response) {
+                    if (response.isSuccessful()) {
+                        if (response.body() != null) {
+                            callback.getReplaySucceeded(response.body());
+                        } else {
+                            callback.getReplayFailed();
+                        }
+                    } else {
+                        callback.getReplayFailed();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<Replay>> call, Throwable t) {
+                    callback.getReplayFailed();
+                }
+            });
+        } else {
+            callback.getReplayNoInternet();
+        }
+    }
+
+    public static void replayComment(int commentID, int userID, String username, String date, String content,
+                                     final ReplayCommentCallback callback, Context context){
+        if (isNetworkAvailable(context)){
+            PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
+            service.replayComment(commentID, userID, username, date, content).enqueue(new Callback<Replay>() {
+                @Override
+                public void onResponse(Call<Replay> call, Response<Replay> response) {
+                    if (response.isSuccessful()){
+                        callback.replayCommentSucceeded(response.body());
+                    }
+                    else{
+                        callback.replayCommentFailed();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Replay> call, Throwable t) {
+                    callback.replayCommentFailed();
+                }
+            });
+        }
+        else{
+            callback.replayCommentNoInternet();
+        }
+    }
+
+    public static void onLikeReplayClick(Context context, ReactReplayCallback callback, View view, Replay replay){
+        if (isNetworkAvailable(context)){
+            Utilities.reactReplayCall(callback, view, replay);
+        }
+        else{
+            callback.reactReplayNoInternet();
+        }
+    }
+
+    private static void reactReplayCall(final ReactReplayCallback callback, final View view, final Replay replay){
+        PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
+        Call<ResponseBody> call;
+        if (replay.getLiked()){
+            call = service.unlikeReplay(replay.getReplayID(), 1);
+        }
+        else{
+            call = service.likeReplay(replay.getReplayID(), 1);
+        }
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (replay.getLiked()){
+                    callback.reactReplayUnlikeSucceeded(replay, view);
+                }
+                else{
+                    callback.reactReplayLikeSucceeded(replay, view);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                if (replay.getLiked()){
+                    callback.reactReplayUnlikeFailed();
+                }
+                else{
+                    callback.reactReplayLikeFailed();
+                }
+            }
+        });
+    }
 
     public static int checkComment(String string, Context context){
         if (string == null || string.equals("")){
@@ -558,7 +648,7 @@ public class Utilities {
         return b;
     }
 
-    public static Bitmap getBitmapReplay(Activity activity, Note note, Comment comment, Comment replay){
+    public static Bitmap getBitmapReplay(Activity activity, Note note, Comment comment, Replay replay){
         final View view = LayoutInflater.from(activity).inflate(R.layout.screenshoot_replay, (ViewGroup) activity.findViewById(R.id.ide), false);
 
         setNoteDetails(view, note);
@@ -614,7 +704,7 @@ public class Utilities {
         ((TextView)(layout.findViewById(R.id.comment_item_replays))).setText(String.valueOf(comment.getReplays()));
     }
 
-    private static void setReplayDetails(RelativeLayout layout, Comment comment, Activity activity){
+    private static void setReplayDetails(RelativeLayout layout, Replay comment, Activity activity){
         ((TextView)(layout.findViewById(R.id.comment_username))).setText(comment.getUsername());
         ((TextView)(layout.findViewById(R.id.comment_date))).setText(decodeDate(comment.getDate(), activity));
         ((TextView)(layout.findViewById(R.id.comment_content))).setText(comment.getContent());
@@ -659,6 +749,17 @@ public class Utilities {
         }
         else{
             noOfCommentsString += context.getString(R.string.comment_five);
+        }
+        return noOfCommentsString;
+    }
+
+    public static String getReplaysVariation(int noOfReplays, Context context){
+        String noOfCommentsString = noOfReplays + " ";
+        if (noOfReplays == 1){
+            noOfCommentsString += context.getResources().getString(R.string.replay_one);
+        }
+        else{
+            noOfCommentsString += context.getResources().getString(R.string.replay_two);
         }
         return noOfCommentsString;
     }

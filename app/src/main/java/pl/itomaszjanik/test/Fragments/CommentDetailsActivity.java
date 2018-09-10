@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.content.res.ResourcesCompat;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,18 +21,16 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import com.labo.kaji.relativepopupwindow.RelativePopupWindow;
 import okhttp3.internal.Util;
+import org.joda.time.DateTime;
 import org.parceler.Parcels;
 import pl.itomaszjanik.test.*;
 import pl.itomaszjanik.test.BottomPopup.BottomPopup;
-import pl.itomaszjanik.test.Comments.CommentClickListener;
-import pl.itomaszjanik.test.Comments.CommentNoReplayAdapter;
-import pl.itomaszjanik.test.Comments.CommentsDivider;
+import pl.itomaszjanik.test.Comments.*;
 import pl.itomaszjanik.test.EllipsisPopup.EllipsisPopup;
 import pl.itomaszjanik.test.EllipsisPopup.EllipsisPopupListener;
 import pl.itomaszjanik.test.ExtendedComponents.CustomImage;
 import pl.itomaszjanik.test.ExtendedComponents.LayoutManagerNoScroll;
-import pl.itomaszjanik.test.Remote.PostService;
-import pl.itomaszjanik.test.Remote.ReactCommentsCallback;
+import pl.itomaszjanik.test.Remote.*;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -39,7 +38,8 @@ import retrofit2.Response;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommentDetailsActivity extends Activity implements ReactCommentsCallback {
+public class CommentDetailsActivity extends Activity implements ReactCommentsCallback, ReplayCommentCallback,
+        GetReplaysCallback, ReactReplayCallback {
 
     private Note note;
     private Comment comment;
@@ -49,6 +49,14 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
     private boolean change;
     private BottomPopup bottomPopup;
     private EllipsisPopup ellipsisPopup;
+
+    private List<Replay> replays = new ArrayList<>();
+    private CommentNoReplayAdapter mCommentAdapter;
+    private RecyclerView recyclerView;
+    private NestedScrollView scrollView;
+
+    private boolean loading;
+    private int page = 0;
 
     private View currentView;
     private Comment currentComment;
@@ -88,6 +96,7 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
         initInput();
         initCommentsNumber();
         initRecyclerView();
+        getReplays();
     }
 
     @Override
@@ -123,6 +132,99 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
 
     @Override
     public void reactCommentNoInternet(){
+        bottomPopup = Utilities.getBottomPopupText(this,
+                R.layout.bottom_popup_text, R.id.bottom_popup_text,
+                getString(R.string.no_internet), bottomPopup);
+    }
+
+    @Override
+    public void replayCommentSucceeded(Replay replay){
+        input.setText("");
+        bottomPopup = Utilities.getBottomPopupText(this,
+                R.layout.bottom_popup_text, R.id.bottom_popup_text,
+                getString(R.string.comment_post_added), bottomPopup);
+
+        replays.add(replay);
+        mCommentAdapter.notifyItemInserted(replays.size() - 1);
+
+        comment.incrementReplays();
+        updateReplaysNumber();
+    }
+
+    @Override
+    public void replayCommentFailed(){
+        bottomPopup = Utilities.getBottomPopupText(this,
+                R.layout.bottom_popup_text, R.id.bottom_popup_text,
+                getString(R.string.couldnt_unlike_comment), bottomPopup);
+    }
+
+    @Override
+    public void replayCommentNoInternet(){
+        bottomPopup = Utilities.getBottomPopupText(this,
+                R.layout.bottom_popup_text, R.id.bottom_popup_text,
+                getString(R.string.no_internet), bottomPopup);
+    }
+
+    @Override
+    public void getReplaySucceeded(List<Replay> list){
+        if (loading){
+            replays.remove(replays.size() - 1);
+            mCommentAdapter.notifyItemRemoved(replays.size());
+            replays.addAll(list);
+        }
+        else{
+            replays = list;
+        }
+        updateRecyclerAdapter();
+    }
+
+    @Override
+    public void getReplayFailed(){
+        bottomPopup = Utilities.getBottomPopupText(this,
+                R.layout.bottom_popup_text, R.id.bottom_popup_text,
+                getString(R.string.comment_load_couldnt), bottomPopup);
+    }
+
+    @Override
+    public void getReplayNoInternet(){
+        bottomPopup = Utilities.getBottomPopupText(this,
+                R.layout.bottom_popup_text, R.id.bottom_popup_text,
+                getString(R.string.no_internet), bottomPopup);
+    }
+
+    @Override
+    public void reactReplayLikeSucceeded(Replay replay, View view){
+        replay.changeLiked();
+        replay.incrementLikes();
+        ((TextView)view.findViewById(R.id.comment_like_number)).setText(String.valueOf(replay.getLikes()));
+        ((TextView)view.findViewById(R.id.comment_like_text)).setTextColor(Color.BLUE);
+    }
+
+    @Override
+    public void reactReplayLikeFailed(){
+        bottomPopup = Utilities.getBottomPopupText(this,
+                R.layout.bottom_popup_text, R.id.bottom_popup_text,
+                getString(R.string.couldnt_like_comment), bottomPopup);
+    }
+
+    @Override
+    public void reactReplayUnlikeSucceeded(Replay replay, View view){
+        replay.changeLiked();
+        replay.decrementLikes();
+        ((TextView)view.findViewById(R.id.comment_like_number)).setText(String.valueOf(replay.getLikes()));
+        ((TextView)view.findViewById(R.id.comment_like_text)).setTextColor(Color.parseColor("#747474"));
+
+    }
+
+    @Override
+    public void reactReplayUnlikeFailed(){
+        bottomPopup = Utilities.getBottomPopupText(this,
+                R.layout.bottom_popup_text, R.id.bottom_popup_text,
+                getString(R.string.couldnt_unlike_comment), bottomPopup);
+    }
+
+    @Override
+    public void reactReplayNoInternet(){
         bottomPopup = Utilities.getBottomPopupText(this,
                 R.layout.bottom_popup_text, R.id.bottom_popup_text,
                 getString(R.string.no_internet), bottomPopup);
@@ -184,21 +286,61 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
 
 
     private void initRecyclerView(){
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.comment_details_comments_recycler_view);
+        recyclerView = (RecyclerView) findViewById(R.id.comment_details_comments_recycler_view);
 
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        CommentNoReplayAdapter adapter = new CommentNoReplayAdapter(getComments(), new CommentClickListener() {
+        LayoutManagerNoScroll lm = new LayoutManagerNoScroll(this, LinearLayoutManager.VERTICAL,false);
+        lm.setScrollEnabled(false);
+
+        recyclerView.setLayoutManager(lm);
+        recyclerView.setNestedScrollingEnabled(false);
+
+        Drawable divider = ResourcesCompat.getDrawable(getResources(), R.drawable.comments_divider, null);
+        if (divider != null){
+            CommentsDivider dividerItemDecoration = new CommentsDivider(divider);
+            recyclerView.addItemDecoration(dividerItemDecoration);
+        }
+
+        scrollView = findViewById(R.id.scroll_view_comment_details);
+        scrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
             @Override
-            public void onItemClick(View v, Comment comment){}
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                View view = (View) scrollView.getChildAt(scrollView.getChildCount() - 1);
+                int diff = (view.getBottom() - (scrollView.getHeight() + scrollView.getScrollY()));
+
+                if (diff == 0) {
+                    if (replays.size() < comment.getReplays()){
+                        loading = true;
+                        replays.add(null);
+                        mCommentAdapter.notifyItemInserted(replays.size() - 1);
+                        page++;
+                        getReplays();
+                    }
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onBackPressed(){
+        super.onBackPressed();
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+    }
+
+    private void updateRecyclerAdapter(){
+        mCommentAdapter = new CommentNoReplayAdapter(replays, new ReplayClickListener() {
+            @Override
+            public void onItemClick(View v, Replay replay){}
 
             @Override
-            public void onLikeClick(View v, Comment comment){
-                bottomPopup = Utilities.getBottomPopupLogin(CommentDetailsActivity.this, R.layout.bottom_popup_login, bottomPopup);
+            public void onLikeClick(View v, Replay comment){
+                Utilities.onLikeReplayClick(CommentDetailsActivity.this, CommentDetailsActivity.this,
+                        v, comment);
             }
 
             @Override
-            public void onReplayClick(View v, Comment comment){
+            public void onReplayClick(View v, Replay comment){
                 String output = "@" + comment.getUsername() + " ";
                 Spannable spannable = new SpannableString(output);
                 spannable.setSpan(new BackgroundColorSpan(Color.parseColor("#22000000")),0, output.length() - 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -233,7 +375,7 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
             }
 
             @Override
-            public void onShareClick(View v, Comment replay){
+            public void onShareClick(View v, Replay replay){
                 bottomPopup = Utilities.getBottomPopupLoading(CommentDetailsActivity.this,
                         R.layout.bottom_popup_loading, R.id.bottom_popup_text, getString(R.string.loading), bottomPopup);
                 Bitmap screenshot = Utilities.getBitmapReplay(CommentDetailsActivity.this, note, comment, replay);
@@ -241,26 +383,10 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
             }
 
         }, this);
-
-        LayoutManagerNoScroll lm = new LayoutManagerNoScroll(this, LinearLayoutManager.VERTICAL,false);
-        lm.setScrollEnabled(false);
-        recyclerView.setLayoutManager(lm);
-        recyclerView.setNestedScrollingEnabled(false);
-
-        recyclerView.setAdapter(adapter);
-
-        Drawable divider = ResourcesCompat.getDrawable(getResources(), R.drawable.comments_divider, null);
-        if (divider != null){
-            CommentsDivider dividerItemDecoration = new CommentsDivider(divider);
-            recyclerView.addItemDecoration(dividerItemDecoration);
-        }
+        recyclerView.setAdapter(mCommentAdapter);
     }
 
-    @Override
-    public void onBackPressed(){
-        super.onBackPressed();
-        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-    }
+
 
     private void initListeners(){
         findViewById(R.id.comment_details_button_back).setOnClickListener(new View.OnClickListener() {
@@ -299,7 +425,11 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
                     Utilities.hideKeyboard(CommentDetailsActivity.this);
                     int checkComment = Utilities.checkComment(input.getText().toString(), CommentDetailsActivity.this);
                     if (checkComment > 0){
-                        bottomPopup = Utilities.getBottomPopupLogin(CommentDetailsActivity.this, R.layout.bottom_popup_login, bottomPopup);
+                        DateTime dateTime = new DateTime();
+                        String time = dateTime.toString("yyyy/MM/dd HH:mm:ss");
+                        Utilities.replayComment(comment.getCommentID(), 1, "admin",
+                                time, input.getText().toString(), CommentDetailsActivity.this, CommentDetailsActivity.this);
+                        //bottomPopup = Utilities.getBottomPopupLogin(CommentDetailsActivity.this, R.layout.bottom_popup_login, bottomPopup);
                     }
                     else{
                         bottomPopup = Utilities.errorComment(checkComment, CommentDetailsActivity.this, R.layout.bottom_popup_login, bottomPopup);
@@ -355,12 +485,15 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
         });
     }
 
-    private List<Comment> getComments(){
-        List<Comment> comments = new ArrayList<>();
-        comments.add(new Comment(1, 1, 1, "admin", "2018/08/26 22:41:00", "TEST", 0, 0, false));
-        comments.add(new Comment(1, 1, 1, "admin", "2018/08/26 22:41:00", "TEST", 0, 0, false));
-        return comments;
+    private void updateReplaysNumber(){
+        String noOfComments = Utilities.getReplaysVariation(comment.getReplays(), CommentDetailsActivity.this);
+        ((TextView)(findViewById(R.id.comment_details_comments_number))).setText(noOfComments);
+        ((TextView)(findViewById(R.id.comment_item_replays))).setText(String.valueOf(comment.getReplays()));
     }
 
+    private void getReplays(){
+        Utilities.getReplays(1, comment.getCommentID(), page, CommentDetailsActivity.this,
+                CommentDetailsActivity.this);
+    }
 
 }

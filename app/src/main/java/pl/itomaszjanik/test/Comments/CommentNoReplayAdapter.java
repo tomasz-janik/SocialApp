@@ -9,14 +9,15 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import pl.itomaszjanik.test.Comment;
 import pl.itomaszjanik.test.R;
+import pl.itomaszjanik.test.Replay;
 import pl.itomaszjanik.test.Utilities;
 
 import java.util.List;
 
 public class CommentNoReplayAdapter extends RecyclerView.Adapter<CommentNoReplayAdapter.CommentViewHolder>{
 
-    private List<Comment> comments;
-    private CommentClickListener listener;
+    private List<Replay> comments;
+    private ReplayClickListener listener;
     private Context context;
 
     public class CommentViewHolder extends RecyclerView.ViewHolder{
@@ -38,7 +39,7 @@ public class CommentNoReplayAdapter extends RecyclerView.Adapter<CommentNoReplay
 
     @Override
     public void onBindViewHolder(final CommentNoReplayAdapter.CommentViewHolder holder, int position) {
-        final Comment comment = comments.get(position);
+        final Replay comment = comments.get(position);
 
         holder.username.setText(comment.getUsername());
         holder.date.setText(Utilities.decodeDate(comment.getDate(), context));
@@ -82,7 +83,7 @@ public class CommentNoReplayAdapter extends RecyclerView.Adapter<CommentNoReplay
     }
 
 
-    public CommentNoReplayAdapter(List<Comment> comments, CommentClickListener listener, Context context){
+    public CommentNoReplayAdapter(List<Replay> comments, ReplayClickListener listener, Context context){
         this.comments = comments;
         this.listener = listener;
         this.context = context;
