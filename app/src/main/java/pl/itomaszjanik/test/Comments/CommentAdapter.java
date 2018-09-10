@@ -18,8 +18,8 @@ import java.util.List;
 
 public class CommentAdapter extends RecyclerView.Adapter{
 
-    public static int VIEW_COMMENT = 0;
-    public static int VIEW_LOADING = 1;
+    private static int VIEW_COMMENT = 0;
+    private static int VIEW_LOADING = 1;
     private List<Comment> comments;
     private CommentClickListener listener;
     private Context context;
@@ -136,5 +136,33 @@ public class CommentAdapter extends RecyclerView.Adapter{
     public int getItemCount() {
         return comments.size();
     }
+
+    public void insert(Comment comment){
+        comments.add(comment);
+        notifyItemInserted(comments.size() - 1);
+    }
+
+    public void insert(List<Comment> list){
+        int size = list.size();
+        for (int i = 0; i < size; i++){
+            comments.add(list.get(i));
+            notifyItemInserted(comments.size() - 1);
+        }
+    }
+
+    public void removeLast(){
+        if (comments.size() > 0){
+            comments.remove(comments.size() - 1);
+            notifyItemRemoved(comments.size());
+        }
+    }
+
+    public void removeAll(){
+        int size = comments.size();
+        comments.clear();
+        if (size != 0)
+            notifyItemRangeRemoved(0, size);
+    }
+
 }
 

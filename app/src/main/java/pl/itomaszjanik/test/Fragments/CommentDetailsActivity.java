@@ -50,7 +50,6 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
     private BottomPopup bottomPopup;
     private EllipsisPopup ellipsisPopup;
 
-    private List<Replay> replays = new ArrayList<>();
     private CommentNoReplayAdapter mCommentAdapter;
     private RecyclerView recyclerView;
     private NestedScrollView scrollView;
@@ -58,17 +57,10 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
     private boolean loading;
     private int page = 0;
 
-    private View currentView;
-    private Comment currentComment;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.comment_details);
-
-        findViews();
-        initListeners();
-
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null){
@@ -78,21 +70,16 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
                 comment = new Comment(1, 1, 1, "admin", "26.08.2018 22:41:00", "TEST", 0, 0, false);
             }
             if (note == null){
-                ArrayList<String> list = new ArrayList<>();
-                list.add("TEST");
-                list.add("#TEST");
                 note = new Note(0,"TEST", "26.08.2018 22:41:00", "TEST", "#TEST", 0, 0, 0, false);
             }
-
             initMainContent(bundle.getBoolean("replay", false));
         }
-
-        if (comment.getLiked()){
-            ((TextView)findViewById(R.id.comment_like_text)).setTextColor(Color.BLUE);
-        }
         else{
-            ((TextView)findViewById(R.id.comment_like_text)).setTextColor(Color.parseColor("#747474"));
+            note = new Note(0,"TEST", "26.08.2018 22:41:00", "TEST", "#TEST", 0, 0, 0, false);
+            comment = new Comment(1, 1, 1, "admin", "26.08.2018 22:41:00", "TEST", 0, 0, false);
+            initMainContent(false);
         }
+
         initInput();
         initCommentsNumber();
         initRecyclerView();
@@ -144,8 +131,7 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
                 R.layout.bottom_popup_text, R.id.bottom_popup_text,
                 getString(R.string.comment_post_added), bottomPopup);
 
-        replays.add(replay);
-        mCommentAdapter.notifyItemInserted(replays.size() - 1);
+        mCommentAdapter.insert(replay);
 
         comment.incrementReplays();
         updateReplaysNumber();
@@ -168,14 +154,13 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
     @Override
     public void getReplaySucceeded(List<Replay> list){
         if (loading){
-            replays.remove(replays.size() - 1);
-            mCommentAdapter.notifyItemRemoved(replays.size());
-            replays.addAll(list);
+            mCommentAdapter.removeLast();
+            mCommentAdapter.insert(list);
         }
         else{
-            replays = list;
+            mCommentAdapter.removeAll();
+            mCommentAdapter.insert(list);
         }
-        updateRecyclerAdapter();
     }
 
     @Override
@@ -273,11 +258,21 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
     }
 
     private void initMainContent(boolean replay){
+        findViews();
+        initListeners();
+
         username.setText(comment.getUsername());
         date.setText(Utilities.decodeDate(comment.getDate(), getApplicationContext()));
         content.setText(comment.getContent());
 
+        if (comment.getLiked()){
+            ((TextView)findViewById(R.id.comment_like_text)).setTextColor(Color.BLUE);
+        }
+        else{
+            ((TextView)findViewById(R.id.comment_like_text)).setTextColor(Color.parseColor("#747474"));
+        }
         ((TextView)findViewById(R.id.comment_like_number)).setText(String.valueOf(comment.getLikes()));
+
         if (replay){
             input.setFocusableInTouchMode(true);
             input.requestFocus();
@@ -310,16 +305,16 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
                 int diff = (view.getBottom() - (scrollView.getHeight() + scrollView.getScrollY()));
 
                 if (diff == 0) {
-                    if (replays.size() < comment.getReplays()){
+                    if (mCommentAdapter.getItemCount() < comment.getReplays()){
                         loading = true;
-                        replays.add(null);
-                        mCommentAdapter.notifyItemInserted(replays.size() - 1);
+                        mCommentAdapter.insertNull();
                         page++;
                         getReplays();
                     }
                 }
             }
         });
+        initCommentAdapter();
     }
 
     @Override
@@ -328,8 +323,8 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 
-    private void updateRecyclerAdapter(){
-        mCommentAdapter = new CommentNoReplayAdapter(replays, new ReplayClickListener() {
+    private void initCommentAdapter(){
+        mCommentAdapter = new CommentNoReplayAdapter(new ReplayClickListener() {
             @Override
             public void onItemClick(View v, Replay replay){}
 
@@ -353,7 +348,6 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
                 input.setFocusableInTouchMode(true);
                 input.requestFocus();
                 input.setSelection(length);
-
 
                 Utilities.showKeyboard(CommentDetailsActivity.this);
             }
@@ -408,7 +402,6 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
                         data.putInt("name_length", length);
                     }
                     input.setText("");
-                    //input.clearFocus();
                 }
                 Intent intent = new Intent(getApplicationContext(), AddCommentActivity.class);
                 intent.putExtras(data);
@@ -429,7 +422,6 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
                         String time = dateTime.toString("yyyy/MM/dd HH:mm:ss");
                         Utilities.replayComment(comment.getCommentID(), 1, "admin",
                                 time, input.getText().toString(), CommentDetailsActivity.this, CommentDetailsActivity.this);
-                        //bottomPopup = Utilities.getBottomPopupLogin(CommentDetailsActivity.this, R.layout.bottom_popup_login, bottomPopup);
                     }
                     else{
                         bottomPopup = Utilities.errorComment(checkComment, CommentDetailsActivity.this, R.layout.bottom_popup_login, bottomPopup);
@@ -481,8 +473,21 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
                 bottomPopup = Utilities.getBottomPopupLoading(CommentDetailsActivity.this,
                         R.layout.bottom_popup_loading, R.id.bottom_popup_text, getString(R.string.loading), bottomPopup);
                 Bitmap screenshot = Utilities.getBitmapComment(CommentDetailsActivity.this, note, comment);
-                Utilities.share(screenshot, CommentDetailsActivity.this);            }
+                Utilities.share(screenshot, CommentDetailsActivity.this);
+            }
         });
+
+        findViewById(R.id.comment_details_comments_refresh).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                loading = false;
+                scrollView.fullScroll(View.FOCUS_UP);
+                scrollView.smoothScrollTo(0,0);
+                page = 0;
+                getReplays();
+            }
+        });
+
     }
 
     private void updateReplaysNumber(){

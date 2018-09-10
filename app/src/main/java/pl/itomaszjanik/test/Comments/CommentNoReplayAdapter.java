@@ -5,26 +5,30 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import pl.itomaszjanik.test.Comment;
 import pl.itomaszjanik.test.R;
 import pl.itomaszjanik.test.Replay;
 import pl.itomaszjanik.test.Utilities;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class CommentNoReplayAdapter extends RecyclerView.Adapter<CommentNoReplayAdapter.CommentViewHolder>{
+public class CommentNoReplayAdapter extends RecyclerView.Adapter{
 
-    private List<Replay> comments;
+    public static int VIEW_COMMENT = 0;
+    public static int VIEW_LOADING = 1;
+
+    private List<Replay> comments = new ArrayList<>();
     private ReplayClickListener listener;
     private Context context;
 
-    public class CommentViewHolder extends RecyclerView.ViewHolder{
-        public TextView username, date, content, like;
-        public RelativeLayout likeLayout, replayLayout, ellipsisLayout, shareLayout;
+    class CommentViewHolder extends RecyclerView.ViewHolder{
+        TextView username, date, content, like;
+        RelativeLayout likeLayout, replayLayout, ellipsisLayout, shareLayout;
 
-        public CommentViewHolder(View view) {
+        CommentViewHolder(View view) {
             super(view);
             username = (TextView) view.findViewById(R.id.comment_username);
             date = (TextView) view.findViewById(R.id.comment_date);
@@ -37,68 +41,126 @@ public class CommentNoReplayAdapter extends RecyclerView.Adapter<CommentNoReplay
         }
     }
 
+    static class ProgressViewHolder extends RecyclerView.ViewHolder {
+        ProgressBar progressBar;
+
+        ProgressViewHolder(View v) {
+            super(v);
+            progressBar = (ProgressBar) v.findViewById(R.id.progress_bar);
+        }
+    }
+
     @Override
-    public void onBindViewHolder(final CommentNoReplayAdapter.CommentViewHolder holder, int position) {
-        final Replay comment = comments.get(position);
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
+        if (holder instanceof CommentNoReplayAdapter.CommentViewHolder){
+            final Replay comment = comments.get(position);
 
-        holder.username.setText(comment.getUsername());
-        holder.date.setText(Utilities.decodeDate(comment.getDate(), context));
-        holder.content.setText(comment.getContent());
-        holder.like.setText(String.valueOf(comment.getLikes()));
+            ((CommentNoReplayAdapter.CommentViewHolder)holder).username.setText(comment.getUsername());
+            ((CommentNoReplayAdapter.CommentViewHolder)holder).date.setText(Utilities.decodeDate(comment.getDate(), context));
+            ((CommentNoReplayAdapter.CommentViewHolder)holder).content.setText(comment.getContent());
+            ((CommentNoReplayAdapter.CommentViewHolder)holder).like.setText(String.valueOf(comment.getLikes()));
 
-        holder.likeLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.onLikeClick(v, comment);
-            }
-        });
+            ((CommentNoReplayAdapter.CommentViewHolder)holder).likeLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onLikeClick(v, comment);
+                }
+            });
 
-        holder.replayLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.onReplayClick(v, comment);
-            }
-        });
+            ((CommentNoReplayAdapter.CommentViewHolder)holder).replayLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onReplayClick(v, comment);
+                }
+            });
 
-        holder.ellipsisLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.onEllipsisClick(v, holder.ellipsisLayout);
-            }
-        });
+            ((CommentNoReplayAdapter.CommentViewHolder)holder).ellipsisLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onEllipsisClick(v, ((CommentNoReplayAdapter.CommentViewHolder)holder).ellipsisLayout);
+                }
+            });
 
-        holder.shareLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.onShareClick(v, comment);
-            }
-        });
+            ((CommentNoReplayAdapter.CommentViewHolder)holder).shareLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onShareClick(v, comment);
+                }
+            });
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.onItemClick(v, comment);
-            }
-        });
+            ((CommentNoReplayAdapter.CommentViewHolder)holder).itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onItemClick(v, comment);
+                }
+            });
+        }
+        else{
+            ((CommentNoReplayAdapter.ProgressViewHolder)holder).progressBar.setIndeterminate(true);
+        }
     }
 
 
-    public CommentNoReplayAdapter(List<Replay> comments, ReplayClickListener listener, Context context){
-        this.comments = comments;
+    public CommentNoReplayAdapter(ReplayClickListener listener, Context context){
         this.listener = listener;
         this.context = context;
     }
 
 
     @Override
-    public CommentViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.comment_item_no_replays, parent, false);
-        return new CommentViewHolder(itemView);
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view;
+        if (viewType == VIEW_COMMENT){
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.comment_item_no_replays, parent, false);
+            return new CommentViewHolder(view);
+        }
+        else{
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.progress_bar_item, parent, false);
+            return new ProgressViewHolder(view);
+        }
     }
 
     @Override
     public int getItemCount() {
         return comments.size();
     }
+
+    @Override
+    public int getItemViewType(int position) {
+        return comments.get(position) != null ? VIEW_COMMENT : VIEW_LOADING;
+    }
+
+    public void insert(Replay replay){
+        comments.add(replay);
+        notifyItemInserted(comments.size() - 1);
+    }
+
+    public void insert(List<Replay> list){
+        int size = list.size();
+        for (int i = 0; i < size; i++){
+            comments.add(list.get(i));
+            notifyItemInserted(comments.size() - 1);
+        }
+    }
+
+    public void insertNull(){
+        comments.add(null);
+        notifyItemInserted(comments.size() - 1);
+    }
+
+    public void removeLast(){
+        if (comments.size() > 0){
+            comments.remove(comments.size() - 1);
+            notifyItemRemoved(comments.size());
+        }
+    }
+
+    public void removeAll(){
+        int size = comments.size();
+        comments.clear();
+        if (size != 0)
+            notifyItemRangeRemoved(0, size);
+    }
+
 }
 
