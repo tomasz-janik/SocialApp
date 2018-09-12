@@ -11,6 +11,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import pl.itomaszjanik.test.*;
+import pl.itomaszjanik.test.Replays.ReplayClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -161,7 +162,7 @@ public class CommentNoReplayAdapter extends RecyclerView.Adapter{
         holder.ellipsisLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.onEllipsisClick(v, holder.ellipsisLayout);
+                listener.onEllipsisClick(v, replay, holder.ellipsisLayout);
             }
         });
 
@@ -209,7 +210,7 @@ public class CommentNoReplayAdapter extends RecyclerView.Adapter{
         holder.ellipsisLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                commentClickListener.onCommentEllipsisClick(view, holder.ellipsisLayout);
+                commentClickListener.onCommentEllipsisClick(view, mComment, holder.ellipsisLayout);
             }
         });
 

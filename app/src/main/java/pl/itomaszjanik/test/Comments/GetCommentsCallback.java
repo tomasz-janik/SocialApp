@@ -1,4 +1,4 @@
-package pl.itomaszjanik.test.Remote;
+package pl.itomaszjanik.test.Comments;
 
 import pl.itomaszjanik.test.Comment;
 

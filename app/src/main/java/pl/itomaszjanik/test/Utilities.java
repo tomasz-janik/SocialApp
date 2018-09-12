@@ -28,8 +28,14 @@ import org.joda.time.Interval;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import pl.itomaszjanik.test.BottomPopup.BottomPopup;
-import pl.itomaszjanik.test.Fragments.NoteDetailsActivity;
+import pl.itomaszjanik.test.Comments.GetCommentsCallback;
+import pl.itomaszjanik.test.Comments.ReactCommentsCallback;
+import pl.itomaszjanik.test.Comments.ReplayCommentCallback;
+import pl.itomaszjanik.test.Comments.UpdateCommentCallback;
+import pl.itomaszjanik.test.Posts.ReactNoteCallback;
 import pl.itomaszjanik.test.Remote.*;
+import pl.itomaszjanik.test.Replays.GetReplaysCallback;
+import pl.itomaszjanik.test.Replays.ReactReplayCallback;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -39,65 +45,6 @@ import java.io.FileOutputStream;
 import java.util.List;
 
 public class Utilities {
-
-    public static BottomPopup onLikePostClick(Context context, FailedCallback callback, Note note, View view,
-                                              BottomPopup bottomPopup, int textID, int numberID){
-        if (isNetworkAvailable(context)){
-            if (note.getLiked()){
-                Utilities.unlikePost(callback, note, view, textID, numberID);
-            }
-            else{
-                Utilities.likePost(callback, note, view, textID, numberID);
-            }
-        }
-        else{
-            bottomPopup = getBottomPopupText(context,
-                    R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                    context.getString(R.string.no_internet), bottomPopup);
-        }
-        return bottomPopup;
-    }
-
-    private static void likePost(FailedCallback failedCallback, Note note, View view, int textID, int numberID){
-        reactPostCall(true, failedCallback, note, view, textID, numberID);
-    }
-
-    private static void unlikePost(FailedCallback failedCallback, Note note, View view, int textID, int numberID){
-        reactPostCall(false, failedCallback, note, view, textID, numberID);
-    }
-
-    private static void reactPostCall(final boolean like, final FailedCallback failedCallback, final Note note,
-                                      final View view, final int textID, final int numberID){
-        PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
-        Call<ResponseBody> call;
-        if (like){
-            call = service.likePost(note.getId(), 1);
-        }
-        else{
-            call = service.unlikePost(note.getId(), 1);
-        }
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (like){
-                    likeResponse(note, view, response.body(), textID, numberID);
-                }
-                else{
-                    unlikeResponse(note, view, response.body(), textID, numberID);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                if (like){
-                    failedCallback.likeFailed();
-                }
-                else{
-                    failedCallback.unlikeFailed();
-                }
-            }
-        });
-    }
 
     private static void likeResponse(Note note, View view, ResponseBody response, int textID, int numberID){
         note.setLiked(true);
@@ -136,6 +83,48 @@ public class Utilities {
             Log.e(":(",":(");
         }
     }
+
+    public static void onLikeNoteClick(Context context, ReactNoteCallback callback, View view, Note note){
+        if (isNetworkAvailable(context)){
+            Utilities.reactNoteCall(callback, view, note);
+        }
+        else{
+            callback.reactNoteNoInternet();
+        }
+    }
+
+    private static void reactNoteCall(final ReactNoteCallback callback, final View view, final Note note){
+        PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
+        Call<ResponseBody> call;
+        if (note.getLiked()){
+            call = service.unlikeComment(note.getId(), 1);
+        }
+        else{
+            call = service.likeComment(note.getId(), 1);
+        }
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (note.getLiked()){
+                    callback.reactNoteUnlikeSucceeded(note, view);
+                }
+                else{
+                    callback.reactNoteLikeSucceeded(note, view);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                if (note.getLiked()){
+                    callback.reactNoteUnlikeFailed();
+                }
+                else{
+                    callback.reactNoteLikeFailed();
+                }
+            }
+        });
+    }
+
 
     public static void onLikeCommentClick(Context context, ReactCommentsCallback callback, View view, Comment comment){
         if (isNetworkAvailable(context)){

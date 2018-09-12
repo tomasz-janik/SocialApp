@@ -133,4 +133,13 @@ public class Note {
         this.likes--;
     }
 
+    public void changeLiked(){
+        if (liked){
+            liked = false;
+        }
+        else{
+            liked = true;
+        }
+    }
+
 }

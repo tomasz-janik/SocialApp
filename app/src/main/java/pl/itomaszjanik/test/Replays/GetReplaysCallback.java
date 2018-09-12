@@ -1,4 +1,4 @@
-package pl.itomaszjanik.test.Remote;
+package pl.itomaszjanik.test.Replays;
 
 import pl.itomaszjanik.test.Comment;
 import pl.itomaszjanik.test.Replay;

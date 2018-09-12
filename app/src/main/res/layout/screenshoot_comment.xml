@@ -160,7 +160,7 @@
                             app:srcCompat="@drawable/icon_comments_gray_12dp"/>
 
                     <TextView
-                            android:id="@+id/note_details_item_replays"
+                            android:id="@+id/note_details_comments_number"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="4dp"

@@ -119,91 +119,100 @@
 
     </RelativeLayout>
 
-    <pl.itomaszjanik.test.NavigationController
-            android:id="@+id/navigation_top"
+    <android.support.v7.widget.CardView
+            android:id="@+id/api"
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:baselineAligned="false"
-            android:background="@drawable/top_background"
+            android:layout_height="wrap_content"
             android:layout_gravity="top"
-            android:weightSum="100">
+            app:cardElevation="4dp"
+            app:cardCornerRadius="0dp">
 
-        <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="33"
-                android:onClick="clickTop"
-                android:clickable="true"
-                android:focusable="true">
+        <pl.itomaszjanik.test.NavigationController
+                android:id="@+id/navigation_top"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:baselineAligned="false"
+                android:background="@drawable/top_background"
+                android:weightSum="100">
 
-            <ImageButton
-                    android:layout_width="match_parent"
+            <RelativeLayout
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:background="?android:selectableItemBackground"
-                    android:clickable="false"
-            />
+                    android:layout_weight="33"
+                    android:onClick="clickTop"
+                    android:clickable="true"
+                    android:focusable="true">
 
-            <pl.itomaszjanik.test.ExtendedComponents.CustomImage
-                    android:id="@+id/icon_top"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    app:srcCompat="@drawable/icon_top_active_24dp"
-                    android:clickable="false"
+                <ImageButton
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="?android:selectableItemBackground"
+                        android:clickable="false"
+                />
 
-            />
+                <pl.itomaszjanik.test.ExtendedComponents.CustomImage
+                        android:id="@+id/icon_top"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        app:srcCompat="@drawable/icon_top_active_24dp"
+                        android:clickable="false"
 
-        </RelativeLayout>
+                />
 
-        <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="33"
-                android:clickable="true"
-                android:focusable="true">
+            </RelativeLayout>
 
-            <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAlignment="center"
-                    android:layout_centerInParent="true"
-                    android:text="@string/app_name"
-                    android:textSize="24sp"
-            />
-
-        </RelativeLayout>
-
-        <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="33"
-                android:onClick="clickProfile"
-
-        >
-
-
-            <ImageButton
-                    android:layout_width="match_parent"
+            <RelativeLayout
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:background="?android:selectableItemBackground"
-                    android:clickable="false"
-            />
+                    android:layout_weight="33"
+                    android:clickable="true"
+                    android:focusable="true">
 
-            <pl.itomaszjanik.test.ExtendedComponents.CustomImage
-                    android:id="@+id/icon_profile"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    app:srcCompat="@drawable/icon_profile_inactive_24dp"
-                    android:clickable="false"
-                    android:padding="12dp"
-            />
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAlignment="center"
+                        android:layout_centerInParent="true"
+                        android:text="@string/app_name"
+                        android:textSize="24sp"
+                />
 
-        </RelativeLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="33"
+                    android:onClick="clickProfile"
+
+            >
+
+
+                <ImageButton
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="?android:selectableItemBackground"
+                        android:clickable="false"
+                />
+
+                <pl.itomaszjanik.test.ExtendedComponents.CustomImage
+                        android:id="@+id/icon_profile"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        app:srcCompat="@drawable/icon_profile_inactive_24dp"
+                        android:clickable="false"
+                        android:padding="12dp"
+                />
+
+            </RelativeLayout>
 
 
 
-    </pl.itomaszjanik.test.NavigationController>
+        </pl.itomaszjanik.test.NavigationController>
+
+    </android.support.v7.widget.CardView>
 
     <com.arlib.floatingsearchview.FloatingSearchView
             android:id="@+id/floating_search_view"

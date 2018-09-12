@@ -5,14 +5,9 @@ import android.widget.RelativeLayout;
 import pl.itomaszjanik.test.Comment;
 
 public interface CommentClickListener {
-    public void onCommentClick(View v, Comment comment);
-
-    public void onCommentLikeClick(View v, Comment comment);
-
-    public void onCommentReplayClick(View v, Comment comment);
-
-    public void onCommentEllipsisClick(View v, RelativeLayout layout);
-
-    public void onCommentShareClick(View v, Comment comment);
-
+    void onCommentClick(View v, Comment comment);
+    void onCommentLikeClick(View v, Comment comment);
+    void onCommentReplayClick(View v, Comment comment);
+    void onCommentEllipsisClick(View v, Comment comment, RelativeLayout layout);
+    void onCommentShareClick(View v, Comment comment);
 }

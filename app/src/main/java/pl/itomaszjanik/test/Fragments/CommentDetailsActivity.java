@@ -1,15 +1,10 @@
 package pl.itomaszjanik.test.Fragments;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.content.res.ResourcesCompat;
-import android.support.v4.widget.NestedScrollView;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -18,10 +13,8 @@ import android.text.SpannableString;
 import android.text.style.BackgroundColorSpan;
 import android.util.Log;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import com.labo.kaji.relativepopupwindow.RelativePopupWindow;
-import okhttp3.internal.Util;
 import org.joda.time.DateTime;
 import org.parceler.Parcels;
 import pl.itomaszjanik.test.*;
@@ -29,14 +22,9 @@ import pl.itomaszjanik.test.BottomPopup.BottomPopup;
 import pl.itomaszjanik.test.Comments.*;
 import pl.itomaszjanik.test.EllipsisPopup.EllipsisPopup;
 import pl.itomaszjanik.test.EllipsisPopup.EllipsisPopupListener;
-import pl.itomaszjanik.test.ExtendedComponents.CustomImage;
-import pl.itomaszjanik.test.ExtendedComponents.LayoutManagerNoScroll;
-import pl.itomaszjanik.test.Remote.*;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import pl.itomaszjanik.test.Replays.*;
+import pl.itomaszjanik.test.Replays.ReplaysFooterClickListener;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class CommentDetailsActivity extends Activity implements ReactCommentsCallback, ReplayCommentCallback,
@@ -45,16 +33,14 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
     private Note note;
     private Comment comment;
     private EditText input;
-    private TextView username, date, content;
     private int length;
     private boolean change;
     private BottomPopup bottomPopup;
     private EllipsisPopup ellipsisPopup;
 
-    private CommentNoReplayAdapter mCommentAdapter;
+    private ReplayAdapter mCommentAdapter;
     private RecyclerView recyclerView;
     private LinearLayoutManager mLayoutManager;
-    private NestedScrollView scrollView;
 
     private boolean loading = true;
     private int page = 0;
@@ -62,7 +48,7 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.comment_details_new);
+        setContentView(R.layout.activity_comment_details);
 
         Bundle bundle = getIntent().getExtras();
         boolean replay;
@@ -144,7 +130,7 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
         mCommentAdapter.insertFooter();
         comment.incrementReplays();
         updateReplaysNumber();
-        recyclerView.smoothScrollToPosition(mCommentAdapter.getItemCount());
+        //recyclerView.smoothScrollToPosition(mCommentAdapter.getItemCount());
     }
 
     @Override
@@ -250,7 +236,7 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
     }
 
     @Override
-    public void onCommentEllipsisClick(View view, RelativeLayout layout){
+    public void onCommentEllipsisClick(View view, Comment comment, RelativeLayout layout){
         if (ellipsisPopup == null){
             ellipsisPopup = new EllipsisPopup(view.getContext(), new EllipsisPopupListener() {
                 @Override
@@ -267,10 +253,10 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
 
     @Override
     public void onCommentShareClick(View view, Comment comment){
-        bottomPopup = Utilities.getBottomPopupLoading(CommentDetailsActivity.this,
-                R.layout.bottom_popup_loading, R.id.bottom_popup_text, getString(R.string.loading), bottomPopup);
-        Bitmap screenshot = Utilities.getBitmapComment(CommentDetailsActivity.this, note, comment);
-        Utilities.share(screenshot, CommentDetailsActivity.this);
+        bottomPopup = Utilities.getBottomPopupLoading(this, R.layout.bottom_popup_loading,
+                R.id.bottom_popup_text, getString(R.string.loading), bottomPopup);
+        Bitmap screenshot = Utilities.getBitmapComment(this, note, comment);
+        Utilities.share(screenshot, this);
     }
 
     @Override
@@ -320,29 +306,11 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
         initListeners();
     }
 
-
     private void initRecyclerView(){
         recyclerView = findViewById(R.id.comment_details_comments_recycler_view);
 
         mLayoutManager = new LinearLayoutManager(CommentDetailsActivity.this);
         recyclerView.setLayoutManager(mLayoutManager);
-
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                int visibleItemCount = mLayoutManager.getChildCount();
-                int totalItemCount = mLayoutManager.getItemCount();
-                int pastVisibleItems = mLayoutManager.findFirstVisibleItemPosition();
-
-                if (!loading){
-                    if ((visibleItemCount + pastVisibleItems) >= totalItemCount){
-                        loading = true;
-                    }
-                }
-            }
-
-        });
         recyclerView.getItemAnimator().setChangeDuration(0);
         initCommentAdapter();
     }
@@ -354,7 +322,7 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
     }
 
     private void initCommentAdapter(){
-        mCommentAdapter = new CommentNoReplayAdapter(new ReplayClickListener() {
+        mCommentAdapter = new ReplayAdapter(new ReplayClickListener() {
             @Override
             public void onItemClick(View v, Replay replay){}
 
@@ -383,7 +351,7 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
             }
 
             @Override
-            public void onEllipsisClick(View v, RelativeLayout layout){
+            public void onEllipsisClick(View v, Replay replay, RelativeLayout layout){
                 if (ellipsisPopup == null){
                     ellipsisPopup = new EllipsisPopup(v.getContext(), new EllipsisPopupListener() {
                         @Override

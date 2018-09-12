@@ -207,6 +207,6 @@
             android:layout_alignParentBottom="true"
             android:background="@drawable/box_comment"
             android:layout_height="56dp"
-            layout="@layout/comment_insert"/>
+            layout="@layout/input_bottom"/>
 
 </RelativeLayout>

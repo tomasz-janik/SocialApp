@@ -1,4 +1,4 @@
-package pl.itomaszjanik.test.Remote;
+package pl.itomaszjanik.test.Replays;
 
 import android.view.View;
 import pl.itomaszjanik.test.Comment;

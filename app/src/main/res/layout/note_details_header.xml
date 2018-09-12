@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/note_details_main_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="68dp"
+        android:layout_marginEnd="8dp" android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp" android:layout_marginLeft="8dp"
+        android:layout_marginBottom="8dp"
+        app:cardElevation="4dp"
+        app:cardCornerRadius="10dp">
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            <TextView
+                    android:id="@+id/note_details_user"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="username"
+                    android:textStyle="bold"
+                    android:textColor="#BB000000"
+                    android:textAlignment="viewStart"
+                    android:gravity="start"
+                    android:layout_marginLeft="12dp" android:layout_marginRight="12dp"
+                    android:layout_marginTop="8dp"/>
+
+            <TextView
+                    android:id="@+id/note_details_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/note_details_user"
+                    android:text="date"
+                    android:layout_marginLeft="12dp" android:layout_marginRight="12dp"
+            />
+
+            <RelativeLayout
+                    android:id="@+id/note_details_share_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentTop="true">
+
+                <pl.itomaszjanik.test.ExtendedComponents.CustomImage
+                        android:id="@+id/note_share_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:srcCompat="@drawable/icon_share_12dp" android:layout_centerInParent="false"
+                        android:layout_marginStart="12dp" android:layout_marginLeft="12dp"
+                        android:layout_marginRight="12dp" android:layout_marginEnd="12dp"
+                        android:layout_centerHorizontal="false" android:layout_centerVertical="true"/>
+
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp" android:layout_marginTop="8dp"
+                />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+        <TextView
+                android:id="@+id/note_details_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Content"
+                android:textSize="18sp"
+                android:textColor="#EE3F51B5"
+                android:textAlignment="viewStart"
+                android:gravity="start"
+                android:layout_marginLeft="18dp" android:layout_marginRight="18dp"
+                android:layout_marginBottom="8dp" android:layout_marginTop="8dp"/>
+
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="1.5dp"
+                android:background="#15000000" android:layout_marginLeft="12dp"
+                android:layout_marginRight="12dp" android:visibility="gone"/>
+
+        <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+            <RelativeLayout
+                    android:id="@+id/note_details_like_it_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:layout_centerVertical="true">
+
+                <pl.itomaszjanik.test.ExtendedComponents.CustomImage
+                        android:id="@+id/note_details_top_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        app:srcCompat="@drawable/icon_top_active_12dp"
+                        android:layout_marginLeft="12dp" android:layout_marginStart="12dp"/>
+
+                <TextView
+                        android:id="@+id/note_details_like_number"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="4dp"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginRight="4dp"
+                        android:layout_marginEnd="4dp"
+                        android:layout_toRightOf="@id/note_details_top_icon"
+                        android:layout_toEndOf="@id/note_details_top_icon"
+                        android:textSize="14sp"
+                        android:text="330" android:textColor="@color/black" android:layout_centerVertical="true"/>
+
+                <TextView
+                        android:id="@+id/note_details_like_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@id/note_details_like_number"
+                        android:layout_toEndOf="@id/note_details_like_number"
+                        android:layout_marginLeft="4dp"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginRight="12dp"
+                        android:layout_marginEnd="12dp"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginTop="8dp"
+                        android:textSize="14sp"
+                        android:text="Lubię to!"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                    android:id="@+id/note_details_comment_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:layout_toRightOf="@id/note_details_like_it_layout"
+                    android:layout_toEndOf="@id/note_details_like_it_layout"
+                    android:layout_centerVertical="true">
+
+                <pl.itomaszjanik.test.ExtendedComponents.CustomImage
+                        android:id="@+id/note_details_comment_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="12dp"
+                        android:layout_marginStart="12dp"
+                        android:layout_centerVertical="true"
+                        app:srcCompat="@drawable/icon_comments_gray_12dp"/>
+
+                <TextView
+                        android:id="@+id/note_details_comments_number"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="4dp"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginRight="4dp"
+                        android:layout_marginEnd="4dp"
+                        android:layout_toRightOf="@id/note_details_comment_icon"
+                        android:layout_toEndOf="@id/note_details_comment_icon"
+                        android:textSize="14sp"
+                        android:text="33" android:textColor="@color/black" android:layout_centerVertical="true"/>
+
+                <TextView
+                        android:id="@+id/note_details_comment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@+id/note_details_comments_number"
+                        android:layout_toEndOf="@id/note_details_comments_number"
+                        android:layout_marginLeft="4dp"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginRight="12dp"
+                        android:layout_marginEnd="12dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:textSize="14sp"
+                        android:text="Odpowiedz"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                    android:id="@+id/note_details_ellipsis_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true">
+
+                <pl.itomaszjanik.test.ExtendedComponents.CustomImage
+                        android:id="@+id/note_details_ellipsis_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:srcCompat="@drawable/icon_ellipsis_12dp" android:layout_centerInParent="false"
+                        android:layout_marginStart="12dp" android:layout_marginLeft="12dp"
+                        android:layout_marginRight="12dp" android:layout_marginEnd="12dp"
+                        android:layout_centerHorizontal="false" android:layout_centerVertical="true"/>
+
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp" android:layout_marginTop="8dp"/>
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+        <View
+                android:id="@+id/note_divider"
+                android:layout_width="match_parent"
+                android:layout_height="1.5dp"
+                android:background="#15000000"
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="12dp"/>
+
+        <TextView
+                android:id="@+id/note_details_hashes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="#hasz1 #hasz2"
+                android:textAlignment="viewStart"
+                android:gravity="start"
+                android:layout_marginLeft="12dp" android:layout_marginRight="12dp"
+                android:layout_marginTop="8dp" android:layout_marginBottom="8dp"/>
+
+    </LinearLayout>
+
+
+</android.support.v7.widget.CardView>

@@ -1,11 +1,9 @@
 package pl.itomaszjanik.test.Fragments;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
@@ -13,23 +11,18 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-import okhttp3.ResponseBody;
 import org.parceler.Parcels;
-import org.w3c.dom.Text;
 import pl.itomaszjanik.test.*;
 import pl.itomaszjanik.test.BottomPopup.BottomPopup;
 import pl.itomaszjanik.test.Posts.NoteAdapter;
 import pl.itomaszjanik.test.Posts.NoteClickListener;
-import pl.itomaszjanik.test.Remote.FailedCallback;
-import pl.itomaszjanik.test.Remote.NoteService;
+import pl.itomaszjanik.test.Posts.ReactNoteCallback;
 import pl.itomaszjanik.test.Remote.PostService;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -38,7 +31,7 @@ import retrofit2.Response;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ItemFeed extends Fragment implements SwipeRefreshLayout.OnRefreshListener, FailedCallback {
+public class ItemFeed extends Fragment implements ReactNoteCallback, SwipeRefreshLayout.OnRefreshListener {
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private List<Note> posts = new ArrayList<>();
@@ -104,7 +97,7 @@ public class ItemFeed extends Fragment implements SwipeRefreshLayout.OnRefreshLi
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+        recyclerView = view.findViewById(R.id.recyclerView);
 
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
@@ -115,7 +108,7 @@ public class ItemFeed extends Fragment implements SwipeRefreshLayout.OnRefreshLi
         //recyclerView.addItemDecoration(new DividerItemDecoration(view.getContext(), R.drawable.item_separator));
         recyclerView.addItemDecoration(dividerItemDecoration);
 
-        int space = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 64, getResources().getDisplayMetrics());
+        int space = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 68, getResources().getDisplayMetrics());
         recyclerView.addItemDecoration(new SpacesItemDecoration(space));
 
         recyclerView.addOnScrollListener(new ListScrollBottomListener((NavigationController) getActivity().findViewById(R.id.navigation_bottom)));
@@ -165,18 +158,36 @@ public class ItemFeed extends Fragment implements SwipeRefreshLayout.OnRefreshLi
     }
 
     @Override
-    public void likeFailed(){
+    public void reactNoteLikeSucceeded(Note note, View view){
+
+    }
+
+    @Override
+    public void reactNoteUnlikeSucceeded(Note note, View view){
+
+    }
+
+    @Override
+    public void reactNoteLikeFailed(){
         bottomPopup = Utilities.getBottomPopupText(getContext(),
                 R.layout.bottom_popup_text, R.id.bottom_popup_text,
                 getString(R.string.couldnt_like_post), bottomPopup);
     }
 
     @Override
-    public void unlikeFailed(){
+    public void reactNoteUnlikeFailed(){
         bottomPopup = Utilities.getBottomPopupText(getContext(),
                 R.layout.bottom_popup_text, R.id.bottom_popup_text,
                 getString(R.string.couldnt_unlike_post), bottomPopup);
     }
+
+    @Override
+    public void reactNoteNoInternet(){
+        bottomPopup = Utilities.getBottomPopupText(getContext(),
+                R.layout.bottom_popup_text, R.id.bottom_popup_text,
+                getString(R.string.no_internet), bottomPopup);
+    }
+
 
     private void createPosts(){
         if (!Utilities.isNetworkAvailable(getContext())){
@@ -231,8 +242,7 @@ public class ItemFeed extends Fragment implements SwipeRefreshLayout.OnRefreshLi
 
             @Override
             public void onLikeClick(View view, Note note){
-                Utilities.onLikePostClick(getContext(), ItemFeed.this, note, view,
-                        bottomPopup, R.id.note_like_text, R.id.note_like_number);
+
             }
 
             @Override
