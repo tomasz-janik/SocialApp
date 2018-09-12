@@ -4,6 +4,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+
         android:background="#efefef">
 
     <android.support.v4.widget.NestedScrollView
@@ -11,7 +12,6 @@
             xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_width="match_parent"
             android:layout_above="@+id/temp"
-            android:layout_below="@+id/note_details_navigation_top"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:id="@+id/scroll_view_comment_details"
@@ -95,6 +95,7 @@
                     <View
                             android:layout_width="match_parent"
                             android:layout_height="1.5dp"
+                            android:focusableInTouchMode="true"
                             android:background="#15000000"/>
 
                     <android.support.v7.widget.RecyclerView

@@ -69,35 +69,35 @@ public class CommentAdapter extends RecyclerView.Adapter{
             ((CommentAdapter.CommentViewHolder)holder).likeLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    listener.onLikeClick(v, comment);
+                    listener.onCommentLikeClick(v, comment);
                 }
             });
 
             ((CommentAdapter.CommentViewHolder)holder).replayLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    listener.onReplayClick(v, comment);
+                    listener.onCommentReplayClick(v, comment);
                 }
             });
 
             ((CommentAdapter.CommentViewHolder)holder).ellipsisLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    listener.onEllipsisClick(v, ((CommentAdapter.CommentViewHolder)holder).ellipsisLayout);
+                    listener.onCommentEllipsisClick(v, ((CommentAdapter.CommentViewHolder)holder).ellipsisLayout);
                 }
             });
 
             ((CommentAdapter.CommentViewHolder)holder).shareLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    listener.onShareClick(v, comment);
+                    listener.onCommentShareClick(v, comment);
                 }
             });
 
             ((CommentAdapter.CommentViewHolder)holder).itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    listener.onItemClick(v, comment);
+                    listener.onCommentClick(v, comment);
                 }
             });
         }

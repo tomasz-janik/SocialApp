@@ -16,6 +16,7 @@ import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.BackgroundColorSpan;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
@@ -39,7 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CommentDetailsActivity extends Activity implements ReactCommentsCallback, ReplayCommentCallback,
-        GetReplaysCallback, ReactReplayCallback {
+        GetReplaysCallback, ReactReplayCallback, CommentClickListener, ReplaysFooterClickListener, OnEndScrolled {
 
     private Note note;
     private Comment comment;
@@ -52,17 +53,19 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
 
     private CommentNoReplayAdapter mCommentAdapter;
     private RecyclerView recyclerView;
+    private LinearLayoutManager mLayoutManager;
     private NestedScrollView scrollView;
 
-    private boolean loading;
+    private boolean loading = true;
     private int page = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.comment_details);
+        setContentView(R.layout.comment_details_new);
 
         Bundle bundle = getIntent().getExtras();
+        boolean replay;
         if (bundle != null){
             comment = Parcels.unwrap(bundle.getParcelable("comment"));
             note = Parcels.unwrap(bundle.getParcelable("note"));
@@ -72,17 +75,21 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
             if (note == null){
                 note = new Note(0,"TEST", "26.08.2018 22:41:00", "TEST", "#TEST", 0, 0, 0, false);
             }
-            initMainContent(bundle.getBoolean("replay", false));
+            replay = bundle.getBoolean("replay", false);
         }
         else{
             note = new Note(0,"TEST", "26.08.2018 22:41:00", "TEST", "#TEST", 0, 0, 0, false);
             comment = new Comment(1, 1, 1, "admin", "26.08.2018 22:41:00", "TEST", 0, 0, false);
-            initMainContent(false);
+            replay = false;
         }
 
-        initInput();
-        initCommentsNumber();
+        init(replay);
+
         initRecyclerView();
+        mCommentAdapter.insertNull();
+        mCommentAdapter.insertNull();
+        mCommentAdapter.insertNull();
+
         getReplays();
     }
 
@@ -131,10 +138,13 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
                 R.layout.bottom_popup_text, R.id.bottom_popup_text,
                 getString(R.string.comment_post_added), bottomPopup);
 
+        Utilities.hideKeyboard(this);
+        mCommentAdapter.removeLast();
         mCommentAdapter.insert(replay);
-
+        mCommentAdapter.insertFooter();
         comment.incrementReplays();
         updateReplaysNumber();
+        recyclerView.smoothScrollToPosition(mCommentAdapter.getItemCount());
     }
 
     @Override
@@ -156,10 +166,15 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
         if (loading){
             mCommentAdapter.removeLast();
             mCommentAdapter.insert(list);
+            mCommentAdapter.insertFooter();
+            //mCommentAdapter.removeLast();
+            //mCommentAdapter.insertFooter();
+            loading = false;
         }
         else{
             mCommentAdapter.removeAll();
             mCommentAdapter.insert(list);
+            mCommentAdapter.insertNull();
         }
     }
 
@@ -215,19 +230,72 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
                 getString(R.string.no_internet), bottomPopup);
     }
 
-    private void findViews(){
-        ((CustomImage) (findViewById(R.id.comment_details_icon_back))).init(R.drawable.ic_arrow_black_24dp, R.drawable.ic_arrow_black_24dp);
-
-        input = (EditText) findViewById(R.id.comment_insert_text);
-        input.setHint(getResources().getString(R.string.comment_details_hint));
-
-        username = (TextView) findViewById(R.id.comment_username);
-        date = (TextView) findViewById(R.id.comment_date);
-        content = (TextView) findViewById(R.id.comment_content);
+    @Override
+    public void onCommentClick(View view, Comment comment){
 
     }
 
-    private void initInput(){
+    @Override
+    public void onCommentLikeClick(View view, Comment comment){
+        Utilities.onLikeCommentClick(CommentDetailsActivity.this, CommentDetailsActivity.this, view, comment);
+    }
+
+    @Override
+    public void onCommentReplayClick(View view, Comment comment){
+        input.setText("");
+        length = 0;
+        input.setFocusableInTouchMode(true);
+        input.requestFocus();
+        Utilities.showKeyboard(CommentDetailsActivity.this);
+    }
+
+    @Override
+    public void onCommentEllipsisClick(View view, RelativeLayout layout){
+        if (ellipsisPopup == null){
+            ellipsisPopup = new EllipsisPopup(view.getContext(), new EllipsisPopupListener() {
+                @Override
+                public void onClick(View v) {
+                    bottomPopup = Utilities.getBottomPopupText(CommentDetailsActivity.this,
+                            R.layout.bottom_popup_text, R.id.bottom_popup_text,
+                            getString(R.string.report_commited), bottomPopup);
+                }
+            });
+        }
+        ellipsisPopup.showOnAnchor(findViewById(R.id.comment_ellipsis_icon),
+                RelativePopupWindow.VerticalPosition.ABOVE, RelativePopupWindow.HorizontalPosition.ALIGN_RIGHT, true);
+    }
+
+    @Override
+    public void onCommentShareClick(View view, Comment comment){
+        bottomPopup = Utilities.getBottomPopupLoading(CommentDetailsActivity.this,
+                R.layout.bottom_popup_loading, R.id.bottom_popup_text, getString(R.string.loading), bottomPopup);
+        Bitmap screenshot = Utilities.getBitmapComment(CommentDetailsActivity.this, note, comment);
+        Utilities.share(screenshot, CommentDetailsActivity.this);
+    }
+
+    @Override
+    public void onRefreshClick(){
+        recyclerView.smoothScrollToPosition(0);
+        loading = false;
+        page = 0;
+        getReplays();
+    }
+
+    @Override
+    public void onEnd(){
+        if (mCommentAdapter.getItemCount() < comment.getReplays() + 3){
+            if (!loading){
+                page++;
+                loading = true;
+                getReplays();
+            }
+        }
+    }
+
+    private void initInput(boolean replay){
+        input = findViewById(R.id.comment_insert_text);
+
+        input.setHint(getResources().getString(R.string.comment_details_hint));
         input.addTextChangedListener(new TextWatcherBackspace() {
             @Override
             public void afterTextChanged(Editable s, boolean backSpace) {
@@ -241,79 +309,41 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
                 }
             }
         });
-    }
-
-    private void initCommentsNumber(){
-        int noOfComments = comment.getReplays();
-        String noOfCommentsString = noOfComments + " ";
-        if (noOfComments == 1){
-            noOfCommentsString += getResources().getString(R.string.replay_one);
-        }
-        else{
-            noOfCommentsString += getResources().getString(R.string.replay_two);
-        }
-
-        ((TextView)(findViewById(R.id.comment_details_comments_number))).setText(noOfCommentsString);
-        ((TextView)(findViewById(R.id.comment_item_replays))).setText(String.valueOf(comment.getReplays()));
-    }
-
-    private void initMainContent(boolean replay){
-        findViews();
-        initListeners();
-
-        username.setText(comment.getUsername());
-        date.setText(Utilities.decodeDate(comment.getDate(), getApplicationContext()));
-        content.setText(comment.getContent());
-
-        if (comment.getLiked()){
-            ((TextView)findViewById(R.id.comment_like_text)).setTextColor(Color.BLUE);
-        }
-        else{
-            ((TextView)findViewById(R.id.comment_like_text)).setTextColor(Color.parseColor("#747474"));
-        }
-        ((TextView)findViewById(R.id.comment_like_number)).setText(String.valueOf(comment.getLikes()));
-
         if (replay){
             input.setFocusableInTouchMode(true);
             input.requestFocus();
         }
     }
 
+    private void init(boolean replay){
+        initInput(replay);
+        initListeners();
+    }
+
 
     private void initRecyclerView(){
-        recyclerView = (RecyclerView) findViewById(R.id.comment_details_comments_recycler_view);
+        recyclerView = findViewById(R.id.comment_details_comments_recycler_view);
 
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        mLayoutManager = new LinearLayoutManager(CommentDetailsActivity.this);
+        recyclerView.setLayoutManager(mLayoutManager);
 
-        LayoutManagerNoScroll lm = new LayoutManagerNoScroll(this, LinearLayoutManager.VERTICAL,false);
-        lm.setScrollEnabled(false);
-
-        recyclerView.setLayoutManager(lm);
-        recyclerView.setNestedScrollingEnabled(false);
-
-        Drawable divider = ResourcesCompat.getDrawable(getResources(), R.drawable.comments_divider, null);
-        if (divider != null){
-            CommentsDivider dividerItemDecoration = new CommentsDivider(divider);
-            recyclerView.addItemDecoration(dividerItemDecoration);
-        }
-
-        scrollView = findViewById(R.id.scroll_view_comment_details);
-        scrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                View view = (View) scrollView.getChildAt(scrollView.getChildCount() - 1);
-                int diff = (view.getBottom() - (scrollView.getHeight() + scrollView.getScrollY()));
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                int visibleItemCount = mLayoutManager.getChildCount();
+                int totalItemCount = mLayoutManager.getItemCount();
+                int pastVisibleItems = mLayoutManager.findFirstVisibleItemPosition();
 
-                if (diff == 0) {
-                    if (mCommentAdapter.getItemCount() < comment.getReplays()){
+                if (!loading){
+                    if ((visibleItemCount + pastVisibleItems) >= totalItemCount){
                         loading = true;
-                        mCommentAdapter.insertNull();
-                        page++;
-                        getReplays();
                     }
                 }
             }
+
         });
+        recyclerView.getItemAnimator().setChangeDuration(0);
         initCommentAdapter();
     }
 
@@ -376,7 +406,8 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
                 Utilities.share(screenshot, CommentDetailsActivity.this);
             }
 
-        }, this);
+        }, comment, this, this);
+        mCommentAdapter.initListeners(this, this);
         recyclerView.setAdapter(mCommentAdapter);
     }
 
@@ -430,70 +461,19 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
 
             }
         });
-
-        findViewById(R.id.comment_like_it_layout).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Utilities.onLikeCommentClick(CommentDetailsActivity.this, CommentDetailsActivity.this, view, comment);
-            }
-        });
-
-        findViewById(R.id.comment_replay_layout).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                input.setText("");
-                length = 0;
-                input.setFocusableInTouchMode(true);
-                input.requestFocus();
-                Utilities.showKeyboard(CommentDetailsActivity.this);
-            }
-        });
-
-        findViewById(R.id.comment_ellipsis_layout).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (ellipsisPopup == null){
-                    ellipsisPopup = new EllipsisPopup(view.getContext(), new EllipsisPopupListener() {
-                        @Override
-                        public void onClick(View v) {
-                            bottomPopup = Utilities.getBottomPopupText(CommentDetailsActivity.this,
-                                    R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                                    getString(R.string.report_commited), bottomPopup);
-                        }
-                    });
-                }
-                ellipsisPopup.showOnAnchor(findViewById(R.id.comment_ellipsis_icon),
-                        RelativePopupWindow.VerticalPosition.ABOVE, RelativePopupWindow.HorizontalPosition.ALIGN_RIGHT, true);
-            }
-        });
-
-        findViewById(R.id.comment_share_layout).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                bottomPopup = Utilities.getBottomPopupLoading(CommentDetailsActivity.this,
-                        R.layout.bottom_popup_loading, R.id.bottom_popup_text, getString(R.string.loading), bottomPopup);
-                Bitmap screenshot = Utilities.getBitmapComment(CommentDetailsActivity.this, note, comment);
-                Utilities.share(screenshot, CommentDetailsActivity.this);
-            }
-        });
-
-        findViewById(R.id.comment_details_comments_refresh).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                loading = false;
-                scrollView.fullScroll(View.FOCUS_UP);
-                scrollView.smoothScrollTo(0,0);
-                page = 0;
-                getReplays();
-            }
-        });
-
     }
 
     private void updateReplaysNumber(){
         String noOfComments = Utilities.getReplaysVariation(comment.getReplays(), CommentDetailsActivity.this);
-        ((TextView)(findViewById(R.id.comment_details_comments_number))).setText(noOfComments);
-        ((TextView)(findViewById(R.id.comment_item_replays))).setText(String.valueOf(comment.getReplays()));
+
+        RecyclerView.ViewHolder holder = recyclerView.findViewHolderForLayoutPosition(0);
+        if (holder != null){
+            ((TextView)(holder.itemView.findViewById(R.id.comment_item_replays))).setText(String.valueOf(comment.getReplays()));
+        }
+        holder = recyclerView.findViewHolderForLayoutPosition(1);
+        if (holder != null){
+            ((TextView)holder.itemView.findViewById(R.id.comment_details_comments_number)).setText(noOfComments);
+        }
     }
 
     private void getReplays(){

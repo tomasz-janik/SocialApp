@@ -287,7 +287,7 @@ public class NoteDetailsActivity extends Activity implements FailedCallback, Com
     private void updateRecyclerAdapter(){
         mCommentAdapter = new CommentAdapter(comments, new CommentClickListener() {
             @Override
-            public void onItemClick(View v, Comment comment) {
+            public void onCommentClick(View v, Comment comment) {
                 Bundle data = new Bundle();
                 data.putParcelable("comment", Parcels.wrap(comment));
                 data.putParcelable("note", Parcels.wrap(note));
@@ -301,13 +301,13 @@ public class NoteDetailsActivity extends Activity implements FailedCallback, Com
                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             }
             @Override
-            public void onLikeClick(View v, Comment comment){
+            public void onCommentLikeClick(View v, Comment comment){
                 Utilities.onLikeCommentClick(NoteDetailsActivity.this, NoteDetailsActivity.this, v, comment);
                 //bottomPopup = Utilities.getBottomPopupLogin(NoteDetailsActivity.this, R.layout.bottom_popup_login, bottomPopup);
             }
 
             @Override
-            public void onReplayClick(View v, Comment comment){
+            public void onCommentReplayClick(View v, Comment comment){
                 Bundle data = new Bundle();
                 data.putParcelable("comment", Parcels.wrap(comment));
                 data.putParcelable("note", Parcels.wrap(note));
@@ -323,7 +323,7 @@ public class NoteDetailsActivity extends Activity implements FailedCallback, Com
             }
 
             @Override
-            public void onEllipsisClick(View v, RelativeLayout layout){
+            public void onCommentEllipsisClick(View v, RelativeLayout layout){
                 if (ellipsisPopup == null){
                     ellipsisPopup = new EllipsisPopup(v.getContext(), new EllipsisPopupListener(){
                         @Override
@@ -340,7 +340,7 @@ public class NoteDetailsActivity extends Activity implements FailedCallback, Com
             }
 
             @Override
-            public void onShareClick(View v, Comment comment){
+            public void onCommentShareClick(View v, Comment comment){
                 bottomPopup = Utilities.getBottomPopupLoading(NoteDetailsActivity.this,
                         R.layout.bottom_popup_loading, R.id.bottom_popup_text, getString(R.string.loading), bottomPopup);
                 Bitmap screenshot = Utilities.getBitmapComment(NoteDetailsActivity.this, note, comment);
