@@ -411,73 +411,10 @@ public class NoteDetailsActivity extends Activity implements ReactNoteCallback, 
         if (holder != null){
             ((TextView)holder.itemView.findViewById(R.id.note_details_comments_number)).setText(noOfComments);
         }
-        //((TextView)(findViewById(R.id.note_details_comments_number))).setText(noOfComments);
     }
 
     private void initCommentAdapter(){
-        mCommentAdapter = new CommentAdapter(comments, new CommentClickListener() {
-            @Override
-            public void onCommentClick(View v, Comment comment) {
-                Bundle data = new Bundle();
-                data.putParcelable("comment", Parcels.wrap(comment));
-                data.putParcelable("note", Parcels.wrap(note));
-
-                currentView = v;
-                currentComment = comment;
-
-                Intent intent = new Intent(getApplication(), CommentDetailsActivity.class);
-                intent.putExtras(data);
-                startActivity(intent);
-                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-            }
-            @Override
-            public void onCommentLikeClick(View v, Comment comment){
-                Utilities.onLikeCommentClick(NoteDetailsActivity.this, NoteDetailsActivity.this, v, comment);
-                //bottomPopup = Utilities.getBottomPopupLogin(NoteDetailsActivity.this, R.layout.bottom_popup_login, bottomPopup);
-            }
-
-            @Override
-            public void onCommentReplayClick(View v, Comment comment){
-                Bundle data = new Bundle();
-                data.putParcelable("comment", Parcels.wrap(comment));
-                data.putParcelable("note", Parcels.wrap(note));
-                data.putBoolean("replay", true);
-
-                currentView = v;
-                currentComment = comment;
-
-                Intent intent = new Intent(getApplication(), CommentDetailsActivity.class);
-                intent.putExtras(data);
-                startActivity(intent);
-                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-            }
-
-            @Override
-            public void onCommentEllipsisClick(View v, Comment comment, RelativeLayout layout){
-                if (ellipsisPopup == null){
-                    ellipsisPopup = new EllipsisPopup(v.getContext(), new EllipsisPopupListener(){
-                        @Override
-                        public void onClick(View view){
-                            bottomPopup = Utilities.getBottomPopupText(NoteDetailsActivity.this,
-                                    R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                                    getString(R.string.report_commited), bottomPopup);
-                        }
-                    });
-                }
-                ellipsisPopup.showOnAnchor(layout.findViewById(R.id.comment_ellipsis_icon),
-                        RelativePopupWindow.VerticalPosition.ABOVE, RelativePopupWindow.HorizontalPosition.ALIGN_RIGHT, true);
-
-            }
-
-            @Override
-            public void onCommentShareClick(View v, Comment comment){
-                bottomPopup = Utilities.getBottomPopupLoading(NoteDetailsActivity.this,
-                        R.layout.bottom_popup_loading, R.id.bottom_popup_text, getString(R.string.loading), bottomPopup);
-                Bitmap screenshot = Utilities.getBitmapComment(NoteDetailsActivity.this, note, comment);
-                Utilities.share(screenshot, NoteDetailsActivity.this);
-            }
-
-        }, this, note);
+        mCommentAdapter = new CommentAdapter(comments, this, note);
         mCommentAdapter.initListeners(this, this, this, this);
         recyclerView.setAdapter(mCommentAdapter);
     }

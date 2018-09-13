@@ -9,9 +9,10 @@ import java.util.List;
 
 public interface PostService {
 
-    @POST("select.php")
+    @POST("get_posts.php")
     @FormUrlEncoded
-    Call<List<Note>> getPosts(@Field("user_id")  int userID);
+    Call<List<Note>> getPosts(@Field("user_id")  int userID,
+                              @Field("page")     int page);
 
     @POST("get_comments_post.php")
     @FormUrlEncoded

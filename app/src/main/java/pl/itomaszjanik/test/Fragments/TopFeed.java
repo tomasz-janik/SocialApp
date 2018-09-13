@@ -112,7 +112,7 @@ public class TopFeed extends Fragment implements SwipeRefreshLayout.OnRefreshLis
     }
 
     private void recyclerAdapter(){
-        recyclerView.setAdapter(new NoteAdapter(posts, new NoteClickListener() {
+        recyclerView.setAdapter(new NoteAdapter(new NoteClickListener() {
             @Override
             public void onItemClick(View v, Note note) {
                 Bundle data = new Bundle();
@@ -127,17 +127,6 @@ public class TopFeed extends Fragment implements SwipeRefreshLayout.OnRefreshLis
             @Override
             public void onLikeClick(View v, Note note){
                 likePost(note);
-            }
-
-            @Override
-            public void onCommentClick(View v, Note note){
-                Bundle data = new Bundle();
-                data.putParcelable("note", Parcels.wrap(note));
-
-                Intent intent = new Intent(getActivity(), NoteDetailsActivity.class);
-                intent.putExtras(data);
-                startActivity(intent);
-                getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             }
         }, getContext()));
 
@@ -201,7 +190,7 @@ public class TopFeed extends Fragment implements SwipeRefreshLayout.OnRefreshLis
 
     private void createPosts(){
         PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
-        Call<List<Note>> call = service.getPosts(1);
+        Call<List<Note>> call = service.getPosts(1, 0);
         call.enqueue(new Callback<List<Note>>() {
             @Override
             public void onResponse(Call<List<Note>> call, Response<List<Note>> response) {

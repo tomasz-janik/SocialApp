@@ -5,43 +5,62 @@ import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import pl.itomaszjanik.test.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.CustomViewHolder>{
+public class NoteAdapter extends RecyclerView.Adapter{
 
-    private List<Note> notes;
-    NoteClickListener listener;
-    Context context;
+    private List<Note> notes = new ArrayList<>();
+    private NoteClickListener listener;
+    private OnEndScrolled onEndScrolled;
 
-    public class CustomViewHolder extends RecyclerView.ViewHolder{
-        public TextView username, date, content, likedText, likes, noOfComments;
-        public RelativeLayout likeLayout, commentLayout;
+    private Context context;
 
-        public CustomViewHolder(View view) {
+    class CustomViewHolder extends RecyclerView.ViewHolder{
+        TextView username, date, content, likedText, likes, noOfComments;
+        RelativeLayout likeLayout, commentLayout;
+
+        CustomViewHolder(View view) {
             super(view);
-            username = (TextView) view.findViewById(R.id.note_username);
-            date = (TextView) view.findViewById(R.id.note_date);
-            content = (TextView) view.findViewById(R.id.note_content);
-            likes = (TextView) view.findViewById(R.id.note_like_number);
-            likedText = (TextView) view.findViewById(R.id.note_like_text);
-            noOfComments = (TextView) view.findViewById(R.id.note_item_comments_number);
-            likeLayout = (RelativeLayout) view.findViewById(R.id.note_like_layout);
-            commentLayout = (RelativeLayout) view.findViewById(R.id.note_comments_layout);
+            username = view.findViewById(R.id.note_username);
+            date = view.findViewById(R.id.note_date);
+            content = view.findViewById(R.id.note_content);
+            likes = view.findViewById(R.id.note_like_number);
+            likedText = view.findViewById(R.id.note_like_text);
+            noOfComments = view.findViewById(R.id.note_item_comments_number);
+            likeLayout = view.findViewById(R.id.note_like_layout);
+            commentLayout = view.findViewById(R.id.note_comments_layout);
         }
     }
 
     @Override
-    public void onBindViewHolder(final NoteAdapter.CustomViewHolder holder, int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
+        if (position == notes.size() - 1){
+            onEndScrolled.onEnd();
+        }
         final Note note = notes.get(position);
+        initCustomViewHolder((CustomViewHolder)holder, note);
+    }
 
+    public NoteAdapter(NoteClickListener listener, Context context){
+        this.listener = listener;
+        this.context = context;
+    }
+
+    public void initListeners(NoteClickListener noteClickListener, OnEndScrolled onEndScrolled){
+        this.listener = noteClickListener;
+        this.onEndScrolled = onEndScrolled;
+    }
+
+    private void initCustomViewHolder(CustomViewHolder holder, final Note note){
         holder.username.setText(note.getUsername());
         wrapper(note.getContent(), Values.NOTE_VISIBLE_LIMIT, context, holder.content);
         holder.likes.setText(String.valueOf(note.getLikes()));
@@ -65,12 +84,6 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.CustomViewHold
         });
     }
 
-    public NoteAdapter(List<Note> notes, NoteClickListener listener, Context context){
-        this.notes = notes;
-        this.listener = listener;
-        this.context = context;
-    }
-
 
     @Override
     public CustomViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -83,7 +96,29 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.CustomViewHold
         return notes.size();
     }
 
+    @Override
+    public void onViewRecycled(RecyclerView.ViewHolder viewHolder){
+        Log.e("recycled", "" + viewHolder.getAdapterPosition());
+    }
 
+    public void insert(Note note){
+        notes.add(note);
+        notifyItemInserted(notes.size() - 1);
+    }
+
+    public void insert(List<Note> list){
+        for (Note note : list){
+            notes.add(note);
+            notifyItemInserted(notes.size() - 1);
+        }
+    }
+
+    public void removeAll(){
+        int size = notes.size();
+        notes.clear();
+        if (size != 0)
+            notifyItemRangeRemoved(0, size);
+    }
 
     private void wrapper(String text, int wrapLength, Context context, TextView textView){
         int toWrap = text.length();

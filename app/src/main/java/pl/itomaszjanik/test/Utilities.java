@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.support.annotation.Nullable;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.Gravity;
@@ -32,6 +33,7 @@ import pl.itomaszjanik.test.Comments.GetCommentsCallback;
 import pl.itomaszjanik.test.Comments.ReactCommentsCallback;
 import pl.itomaszjanik.test.Comments.ReplayCommentCallback;
 import pl.itomaszjanik.test.Comments.UpdateCommentCallback;
+import pl.itomaszjanik.test.Posts.GetPostsCallback;
 import pl.itomaszjanik.test.Posts.ReactNoteCallback;
 import pl.itomaszjanik.test.Remote.*;
 import pl.itomaszjanik.test.Replays.GetReplaysCallback;
@@ -46,44 +48,6 @@ import java.util.List;
 
 public class Utilities {
 
-    private static void likeResponse(Note note, View view, ResponseBody response, int textID, int numberID){
-        note.setLiked(true);
-        try{
-            if (response != null){
-                String output = response.string();
-                if (output.equals("yes")){
-                    TextView likes_number = view.findViewById(numberID);
-                    int likesNo = Integer.valueOf(likes_number.getText().toString()) + 1;
-                    likes_number.setText(String.valueOf(likesNo));
-                    ((TextView)(view.findViewById(textID))).setTextColor(Color.BLUE);
-                    note.setLikes(likesNo);
-                    note.setLiked(true);
-                }
-            }
-        } catch (Exception e){
-            Log.e(":(",":(");
-        }
-    }
-
-    private static void unlikeResponse(Note note, View view, ResponseBody response, int textID, int numberID){
-        note.setLiked(false);
-        try{
-            if (response != null){
-                String output = response.string();
-                if (output.equals("yes")){
-                    TextView likes_number = view.findViewById(numberID);
-                    int likesNo = Integer.valueOf(likes_number.getText().toString()) - 1;
-                    likes_number.setText(String.valueOf(likesNo));
-                    ((TextView)(view.findViewById(textID))).setTextColor(Color.parseColor("#747474"));
-                    note.setLikes(likesNo);
-                    note.setLiked(false);
-                }
-            }
-        } catch (Exception e){
-            Log.e(":(",":(");
-        }
-    }
-
     public static void onLikeNoteClick(Context context, ReactNoteCallback callback, View view, Note note){
         if (isNetworkAvailable(context)){
             Utilities.reactNoteCall(callback, view, note);
@@ -97,14 +61,14 @@ public class Utilities {
         PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
         Call<ResponseBody> call;
         if (note.getLiked()){
-            call = service.unlikeComment(note.getId(), 1);
+            call = service.unlikePost(note.getId(), 1);
         }
         else{
-            call = service.likeComment(note.getId(), 1);
+            call = service.likePost(note.getId(), 1);
         }
         call.enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            public void onResponse(@Nullable Call<ResponseBody> call, @Nullable Response<ResponseBody> response) {
                 if (note.getLiked()){
                     callback.reactNoteUnlikeSucceeded(note, view);
                 }
@@ -114,7 +78,7 @@ public class Utilities {
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            public void onFailure(@Nullable Call<ResponseBody> call, @Nullable Throwable t) {
                 if (note.getLiked()){
                     callback.reactNoteUnlikeFailed();
                 }
@@ -192,6 +156,33 @@ public class Utilities {
             callback.commentPostNoInternet();
         }
     }
+
+    public static void getPosts(int userID, int page, final GetPostsCallback callback, Context context){
+        if (isNetworkAvailable(context)){
+            PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
+            service.getPosts(userID, page).enqueue(new Callback<List<Note>>() {
+                @Override
+                public void onResponse(@Nullable Call<List<Note>> call, @Nullable Response<List<Note>> response) {
+                    if (response != null && response.isSuccessful()){
+                        if (response.body() != null){
+                            callback.getPostSucceeded(response.body());
+                            return;
+                        }
+                    }
+                    callback.getPostFailed();
+                }
+
+                @Override
+                public void onFailure(@Nullable Call<List<Note>> call, @Nullable Throwable t) {
+                    callback.getPostFailed();
+                }
+            });
+        }
+        else{
+            callback.getPostNoInternet();
+        }
+    }
+
 
     public static void getComments(int userID, int postID, int page, final GetCommentsCallback callback, Context context){
         if (isNetworkAvailable(context)){

@@ -27,7 +27,6 @@ public class CommentAdapter extends RecyclerView.Adapter{
 
     private Note mNote;
     private List<Comment> comments;
-    private CommentClickListener listener;
     private NoteDetailsClickListener noteClickListener;
     private CommentClickListener commentClickListener;
     private CommentsFooterClickListener commentsFooterClickListener;
@@ -237,9 +236,8 @@ public class CommentAdapter extends RecyclerView.Adapter{
         });
     }
 
-    public CommentAdapter(List<Comment> comments, CommentClickListener listener, Context context, Note note){
+    public CommentAdapter(List<Comment> comments, Context context, Note note){
         this.comments = comments;
-        this.listener = listener;
         this.context = context;
         this.mNote = note;
     }
@@ -307,9 +305,8 @@ public class CommentAdapter extends RecyclerView.Adapter{
     }
 
     public void insert(List<Comment> list){
-        int size = list.size();
-        for (int i = 0; i < size; i++){
-            comments.add(list.get(i));
+        for (Comment comment : list){
+            comments.add(comment);
             notifyItemInserted(comments.size() - 1);
         }
     }
