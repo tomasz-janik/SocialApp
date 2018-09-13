@@ -11,7 +11,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,10 +20,6 @@ import org.parceler.Parcels;
 import pl.itomaszjanik.test.*;
 import pl.itomaszjanik.test.BottomPopup.BottomPopup;
 import pl.itomaszjanik.test.Posts.*;
-import pl.itomaszjanik.test.Remote.PostService;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 import java.util.List;
 
@@ -32,7 +27,6 @@ public class ItemFeed extends Fragment implements ReactNoteCallback, NoteClickLi
         UpdatePostCallback, OnEndScrolled, SwipeRefreshLayout.OnRefreshListener {
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
-
 
     private Note currentNote;
     private View currentView;
@@ -95,7 +89,7 @@ public class ItemFeed extends Fragment implements ReactNoteCallback, NoteClickLi
             mSwipeRefreshLayout.setRefreshing(false);
             bottomPopup = Utilities.getBottomPopupText(getContext(),
                     R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                    ("nie ma wiecej :("), bottomPopup);
+                    ("nie ma :("), bottomPopup);
         }
     }
 

@@ -1,6 +1,5 @@
 package pl.itomaszjanik.test;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -9,7 +8,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 
 import com.arlib.floatingsearchview.FloatingSearchView;
 import net.danlew.android.joda.JodaTimeAndroid;
@@ -132,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
             return Values.NO_OF_TABS;
         }
 
-        public Fragment getCurrentFragment() {
+        Fragment getCurrentFragment() {
             return mCurrentFragment;
         }
 
@@ -142,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
         private int currentPage = 0;
         ButtonLogic(){}
 
-        public void clickFeed(){
+        void clickFeed(){
             showNavigation();
             updatePage();
             if (currentPage != Values.INDEX_FEED){
@@ -153,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
             mNavigationControllerBottom.showLayout();
         }
 
-        public void clickAdd(){
+        void clickAdd(){
             updatePage();
             showNavigation();
             if (currentPage != Values.INDEX_ADD){
@@ -164,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        public void clickSearch(){
+        void clickSearch(){
             updatePage();
             showNavigation();
             if (currentPage != Values.INDEX_SEARCH){
@@ -174,11 +172,11 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        public void clickTop(){
+        void clickTop(){
             updatePage();
             showNavigation();
             if (currentPage != Values.INDEX_TOP){
-                hideSoftKeyboard(MainActivity.this);
+                Utilities.hideKeyboard(MainActivity.this);
                 updateColors(currentPage, Values.INDEX_TOP);
                 viewPager.setCurrentItem(Values.INDEX_TOP, true);
                 searchView.setVisibility(View.GONE);
@@ -186,18 +184,21 @@ public class MainActivity extends AppCompatActivity {
                 if (!fragment.getStarted()){
                     fragment.loadPosts();
                 }
-                //viewPager.get
             }
         }
 
-        public void clickProfile(){
+        void clickProfile(){
             updatePage();
             showNavigation();
             if (currentPage != Values.INDEX_PROFILE){
-                hideSoftKeyboard(MainActivity.this);
+                Utilities.hideKeyboard(MainActivity.this);
                 updateColors(currentPage, Values.INDEX_PROFILE);
                 viewPager.setCurrentItem(Values.INDEX_PROFILE, true);
                 searchView.setVisibility(View.GONE);
+                Profile fragment = (Profile)testViewPagerAdapter.getCurrentFragment();
+                if (!fragment.getStarted()){
+                    fragment.loadPosts();
+                }
             }
         }
 
@@ -232,8 +233,4 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private static void hideSoftKeyboard(Activity activity) {
-        InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
-    }
 }

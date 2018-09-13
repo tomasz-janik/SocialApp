@@ -22,6 +22,8 @@ public class Values {
     public static final int COMMENT_EMPTY = -1;
     public static final int COMMENT_TOO_LONG = -2;
 
+    public static final String SHARED_PREFERENCES = "preferences";
+
     public static final String URL = "http://192.168.1.13/test/";
 
 }

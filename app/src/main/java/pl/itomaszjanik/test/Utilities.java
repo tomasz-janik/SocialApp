@@ -6,13 +6,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.v4.content.FileProvider;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -111,7 +109,7 @@ public class Utilities {
         }
         call.enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            public void onResponse(@Nullable Call<ResponseBody> call, @Nullable Response<ResponseBody> response) {
                 if (comment.getLiked()){
                     callback.reactCommentUnlikeSucceeded(comment, view);
                 }
@@ -121,7 +119,7 @@ public class Utilities {
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            public void onFailure(@Nullable Call<ResponseBody> call, @Nullable Throwable t) {
                 if (comment.getLiked()){
                     callback.reactCommentUnlikeFailed();
                 }
@@ -138,9 +136,14 @@ public class Utilities {
             PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
             service.commentPost(postID, userID, username, date, content).enqueue(new Callback<Comment>() {
                 @Override
-                public void onResponse(Call<Comment> call, Response<Comment> response) {
-                    if (response.isSuccessful()){
-                        callback.commentPostSucceeded(response.body());
+                public void onResponse(@Nullable Call<Comment> call, @Nullable Response<Comment> response) {
+                    if (response != null){
+                        if (response.isSuccessful()){
+                            callback.commentPostSucceeded(response.body());
+                        }
+                        else{
+                            callback.commentPostFailed();
+                        }
                     }
                     else{
                         callback.commentPostFailed();
@@ -148,7 +151,7 @@ public class Utilities {
                 }
 
                 @Override
-                public void onFailure(Call<Comment> call, Throwable t) {
+                public void onFailure(@Nullable Call<Comment> call, @Nullable Throwable t) {
                     callback.commentPostFailed();
                 }
             });
@@ -214,6 +217,32 @@ public class Utilities {
         if (isNetworkAvailable(context)){
             PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
             service.getPostsSearch(userID, page, search).enqueue(new Callback<List<Note>>() {
+                @Override
+                public void onResponse(@Nullable Call<List<Note>> call, @Nullable Response<List<Note>> response) {
+                    if (response != null && response.isSuccessful()){
+                        if (response.body() != null){
+                            callback.getPostSucceeded(response.body());
+                            return;
+                        }
+                    }
+                    callback.getPostFailed();
+                }
+
+                @Override
+                public void onFailure(@Nullable Call<List<Note>> call, @Nullable Throwable t) {
+                    callback.getPostFailed();
+                }
+            });
+        }
+        else{
+            callback.getPostNoInternet();
+        }
+    }
+
+    public static void getPostsProfile(int userID, int page, final GetPostsCallback callback, Context context){
+        if (isNetworkAvailable(context)){
+            PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
+            service.getPostsProfile(userID, page).enqueue(new Callback<List<Note>>() {
                 @Override
                 public void onResponse(@Nullable Call<List<Note>> call, @Nullable Response<List<Note>> response) {
                     if (response != null && response.isSuccessful()){

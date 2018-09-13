@@ -28,6 +28,12 @@ public interface PostService {
                                     @Field("search")  String search
     );
 
+    @POST("get_posts_profile.php")
+    @FormUrlEncoded
+    Call<List<Note>> getPostsProfile(@Field("user_id") int userID,
+                                     @Field("page")    int postID
+    );
+
     @POST("get_comments_post.php")
     @FormUrlEncoded
     Call<List<Comment>> getCommentsPost(@Field("userID") int userID,
