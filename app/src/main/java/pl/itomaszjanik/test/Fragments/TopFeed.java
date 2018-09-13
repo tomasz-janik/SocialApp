@@ -342,13 +342,9 @@ public class TopFeed extends Fragment implements ReactNoteCallback, NoteClickLis
             dividerItemDecoration.setDrawable(divider);
         recyclerView.addItemDecoration(dividerItemDecoration);
 
-        int space = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 114, getResources().getDisplayMetrics());
-        recyclerView.addItemDecoration(new SpacesItemDecoration(space));
-
         recyclerView.addOnScrollListener(new ListScrollBottomListener((NavigationController) getActivity().findViewById(R.id.navigation_bottom)));
-        recyclerView.setAdapter(new NoteAdapter(TopFeed.this, getContext()));
 
-        mNoteAdapter = new NoteAdapter(this, getContext());
+        mNoteAdapter = new NoteAdapter(R.layout.note_feed_top_top, getContext());
         mNoteAdapter.initListeners(this, this);
         recyclerView.setAdapter(mNoteAdapter);
     }

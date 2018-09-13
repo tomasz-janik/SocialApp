@@ -3,6 +3,7 @@ package pl.itomaszjanik.test.Posts;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.text.Layout;
 import android.text.Spannable;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
@@ -18,9 +19,14 @@ import java.util.List;
 
 public class NoteAdapter extends RecyclerView.Adapter{
 
+    private static final int VIEW_NOTE_HEADER = 0;
+    private static final int VIEW_NOTE_MIDDLE = 1;
+    private static final int VIEW_NOTE_FOOTER = 2;
+
     private List<Note> notes = new ArrayList<>();
     private NoteClickListener listener;
     private OnEndScrolled onEndScrolled;
+    private int topLayout;
 
     private Context context;
 
@@ -50,8 +56,8 @@ public class NoteAdapter extends RecyclerView.Adapter{
         initCustomViewHolder((CustomViewHolder)holder, note);
     }
 
-    public NoteAdapter(NoteClickListener listener, Context context){
-        this.listener = listener;
+    public NoteAdapter(int layout, Context context){
+        this.topLayout = layout;
         this.context = context;
     }
 
@@ -89,9 +95,31 @@ public class NoteAdapter extends RecyclerView.Adapter{
 
 
     @Override
+    public int getItemViewType(int position) {
+        if (position == 0){
+            return VIEW_NOTE_HEADER;
+        }
+        if (position == notes.size() - 1){
+            return VIEW_NOTE_FOOTER;
+        }
+        return VIEW_NOTE_MIDDLE;
+    }
+
+    @Override
     public CustomViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.note_item, parent, false);
-        return new CustomViewHolder(itemView);
+        if (viewType == VIEW_NOTE_HEADER){
+            View itemView = LayoutInflater.from(parent.getContext()).inflate(topLayout, parent, false);
+            return new CustomViewHolder(itemView);
+        }
+        if (viewType == VIEW_NOTE_MIDDLE){
+            View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.note_item, parent, false);
+            return new CustomViewHolder(itemView);
+        }
+        if (viewType == VIEW_NOTE_FOOTER){
+            View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.note_bottom, parent, false);
+            return new CustomViewHolder(itemView);
+        }
+        return null;
     }
 
     @Override

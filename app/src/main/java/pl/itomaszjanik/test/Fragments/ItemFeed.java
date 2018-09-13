@@ -263,13 +263,9 @@ public class ItemFeed extends Fragment implements ReactNoteCallback, NoteClickLi
             dividerItemDecoration.setDrawable(divider);
         recyclerView.addItemDecoration(dividerItemDecoration);
 
-        int space = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 68, getResources().getDisplayMetrics());
-        recyclerView.addItemDecoration(new SpacesItemDecoration(space));
-
         recyclerView.addOnScrollListener(new ListScrollBottomListener((NavigationController) getActivity().findViewById(R.id.navigation_bottom)));
-        recyclerView.setAdapter(new NoteAdapter(ItemFeed.this, getContext()));
 
-        mNoteAdapter = new NoteAdapter(this, getContext());
+        mNoteAdapter = new NoteAdapter(R.layout.note_feed_top, getContext());
         mNoteAdapter.initListeners(this, this);
         recyclerView.setAdapter(mNoteAdapter);
     }
