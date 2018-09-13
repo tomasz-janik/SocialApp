@@ -272,14 +272,34 @@ public class Search extends Fragment implements MaterialSearchBar.OnSearchAction
                     SharedPreferences.Editor editor = preferences.edit();
                     String suggestion_03 = preferences.getString("suggestion_03", "");
                     String suggestion_02 = preferences.getString("suggestion_02", "");
-
-                    editor.putString("suggestion_03", query);
-                    suggestions.get(2).setDataName(query);
-                    editor.putString("suggestion_02", suggestion_03);
-                    suggestions.get(1).setDataName(suggestion_03);
-                    editor.putString("suggestion_01", suggestion_02);
-                    suggestions.get(0).setDataName(suggestion_02);
-                    editor.apply();
+                    String suggestion_01 = preferences.getString("suggestion_01", "");
+                    if (query.equals(suggestion_02)){
+                        editor.putString("suggestion_03", query);
+                        suggestions.get(2).setDataName(query);
+                        editor.putString("suggestion_02", suggestion_03);
+                        suggestions.get(1).setDataName(suggestion_03);
+                        editor.putString("suggestion_01", suggestion_01);
+                        suggestions.get(0).setDataName(suggestion_01);
+                        editor.apply();
+                    }
+                    else if (query.equals(suggestion_03)){
+                        editor.putString("suggestion_03", suggestion_03);
+                        suggestions.get(2).setDataName(suggestion_03);
+                        editor.putString("suggestion_02", suggestion_02);
+                        suggestions.get(1).setDataName(suggestion_02);
+                        editor.putString("suggestion_01", suggestion_01);
+                        suggestions.get(0).setDataName(suggestion_01);
+                        editor.apply();
+                    }
+                    else{
+                        editor.putString("suggestion_03", query);
+                        suggestions.get(2).setDataName(query);
+                        editor.putString("suggestion_02", suggestion_03);
+                        suggestions.get(1).setDataName(suggestion_03);
+                        editor.putString("suggestion_01", suggestion_02);
+                        suggestions.get(0).setDataName(suggestion_02);
+                        editor.apply();
+                    }
                 }
             }
         });
