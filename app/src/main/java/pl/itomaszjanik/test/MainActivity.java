@@ -1,5 +1,7 @@
 package pl.itomaszjanik.test;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -21,12 +23,17 @@ public class MainActivity extends AppCompatActivity {
     private FloatingSearchView searchView;
     private ViewPager viewPager;
     private ButtonLogic buttonLogic;
+    private SharedPreferences sharedPreferences;
+    private boolean signed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         JodaTimeAndroid.init(this);
+
+        sharedPreferences = getSharedPreferences(Values.SHARED_PREFERENCES, Context.MODE_PRIVATE);
+        signed = sharedPreferences.getBoolean("signed", false);
 
         testViewPagerAdapter = new TestViewPagerAdapter(getSupportFragmentManager());
         viewPager = findViewById(R.id.viewPager);
@@ -112,7 +119,12 @@ public class MainActivity extends AppCompatActivity {
                 case Values.INDEX_TOP:
                     return TopFeed.newInstance();
                 case Values.INDEX_PROFILE:
-                    return Profile.newInstance();
+                    if (signed){
+                        return ProfileSigned.newInstance();
+                    }
+                    else{
+                        return ProfileUnsigned.newInstance();
+                    }
             }
             return null;
         }
@@ -188,6 +200,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         void clickProfile(){
+            signed = sharedPreferences.getBoolean("signed", false);
             updatePage();
             showNavigation();
             if (currentPage != Values.INDEX_PROFILE){
@@ -195,9 +208,11 @@ public class MainActivity extends AppCompatActivity {
                 updateColors(currentPage, Values.INDEX_PROFILE);
                 viewPager.setCurrentItem(Values.INDEX_PROFILE, true);
                 searchView.setVisibility(View.GONE);
-                Profile fragment = (Profile)testViewPagerAdapter.getCurrentFragment();
-                if (!fragment.getStarted()){
-                    fragment.loadPosts();
+                if (signed){
+                    ProfileSigned fragment = (ProfileSigned)testViewPagerAdapter.getCurrentFragment();
+                    if (!fragment.getStarted()){
+                        fragment.loadPosts();
+                    }
                 }
             }
         }

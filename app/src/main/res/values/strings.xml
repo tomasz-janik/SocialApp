@@ -92,9 +92,18 @@
     <string name="comment_post_couldnt">Nie udało się dodać komentarza\nSpróbuj ponownie później!</string>
     <string name="comment_load_couldnt">Nie udało się załadować komentarzy\nSpróbuj ponownie później!</string>
 
+    <string name="username_hint">Login</string>
+    <string name="password_hint">Hasło</string>
+    <string name="accept_rules">Akceptuję <u>Regulamin</u> i <u>Politykę Prywatności</u></string>
+    <string name="create_account"><b>Utwórz konto</b></string>
+    <string name="create_account_google">Zaloguj z Google</string>
 
+    <string name="couldnt_login">Nie udało się zalogować\nSpróbuj ponownie innym sposobem, lub później!</string>
 
     <string name="no_internet">Brak połączenia z internetem!</string>
     <string name="comment">Skomentuj</string>
+
+    <string name="facebook_app_id">2084727258218611</string>
+    <string name="fb_login_protocol_scheme">fb2084727258218611</string>
 
 </resources>
