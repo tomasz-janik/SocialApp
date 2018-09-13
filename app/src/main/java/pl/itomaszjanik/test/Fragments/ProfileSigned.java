@@ -24,7 +24,7 @@ import pl.itomaszjanik.test.Posts.*;
 import java.util.List;
 
 public class ProfileSigned extends Fragment implements NoteClickListener, GetPostsCallback, ReactNoteCallback,
-        UpdatePostCallback, OnEndScrolled {
+        UpdatePostCallback, NoteNoMoreClickListener, OnEndScrolled {
 
     private BottomPopup bottomPopup;
     private RecyclerView recyclerView;
@@ -83,9 +83,7 @@ public class ProfileSigned extends Fragment implements NoteClickListener, GetPos
             }
         }
         else{
-            bottomPopup = Utilities.getBottomPopupText(getContext(),
-                    R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                    ("nie ma :("), bottomPopup);
+            mNoteAdapter.insertNull();
         }
     }
 
@@ -181,6 +179,14 @@ public class ProfileSigned extends Fragment implements NoteClickListener, GetPos
     public void updatePostFailed(){ }
 
     @Override
+    public void onRefreshClick(){
+        recyclerView.smoothScrollToPosition(0);
+        loading = false;
+        page = 0;
+        getPosts();
+    }
+
+    @Override
     public void onEnd(){
         if (!loading && started){
             page++;
@@ -208,7 +214,7 @@ public class ProfileSigned extends Fragment implements NoteClickListener, GetPos
         recyclerView.addOnScrollListener(new ListScrollBottomListener((NavigationController) getActivity().findViewById(R.id.navigation_bottom)));
 
         mNoteAdapter = new NoteAdapter(R.layout.note_feed_top, getContext());
-        mNoteAdapter.initListeners(this, this);
+        mNoteAdapter.initListeners(this, this, this);
         recyclerView.setAdapter(mNoteAdapter);
     }
 

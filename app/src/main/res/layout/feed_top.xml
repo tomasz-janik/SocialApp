@@ -51,6 +51,18 @@
 
     </RelativeLayout>
 
+    <include
+            android:id="@+id/posts_none"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            layout="@layout/note_end_none"/>
+
     <pl.itomaszjanik.test.NavigationController
             android:id="@+id/navigation_feed_top"
             android:layout_width="match_parent"

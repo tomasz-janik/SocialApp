@@ -9,6 +9,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
@@ -31,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Search extends Fragment implements MaterialSearchBar.OnSearchActionListener, GetPostsCallback,
-        NoteClickListener, OnEndScrolled, ReactNoteCallback, UpdatePostCallback,
+        NoteClickListener, OnEndScrolled, ReactNoteCallback, UpdatePostCallback, NoteNoMoreClickListener,
         FloatingSearchView.OnClearSearchActionListener {
 
     private NavigationController mNavigationControllerBottom;
@@ -40,6 +41,7 @@ public class Search extends Fragment implements MaterialSearchBar.OnSearchAction
     private static List<DataSuggestion> suggestions = new ArrayList<>();
 
     private BottomPopup bottomPopup;
+    private CardView nonePosts;
 
     private RecyclerView recyclerView;
     private NoteAdapter mNoteAdapter;
@@ -88,6 +90,7 @@ public class Search extends Fragment implements MaterialSearchBar.OnSearchAction
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         mSearchView = getActivity().findViewById(R.id.floating_search_view);
         mNavigationControllerBottom = getActivity().findViewById(R.id.navigation_bottom);
+        nonePosts = view.findViewById(R.id.posts_none);
         init(view);
     }
 
@@ -109,6 +112,7 @@ public class Search extends Fragment implements MaterialSearchBar.OnSearchAction
 
     @Override
     public void getPostSucceeded(List<Note> list){
+        nonePosts.setVisibility(View.GONE);
         if (list.size() != 0){
             if (loading){
                 mNoteAdapter.insert(list);
@@ -119,10 +123,11 @@ public class Search extends Fragment implements MaterialSearchBar.OnSearchAction
                 mNoteAdapter.insert(list);
             }
         }
-        else{
-            bottomPopup = Utilities.getBottomPopupText(getContext(),
-                    R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                    ("nie ma wiecej :("), bottomPopup);
+        else if (mNoteAdapter.getItemCount() != 0){
+            mNoteAdapter.insertNull();
+        }
+        else if (mNoteAdapter.getItemCount() == 0){
+            nonePosts.setVisibility(View.VISIBLE);
         }
     }
 
@@ -218,6 +223,14 @@ public class Search extends Fragment implements MaterialSearchBar.OnSearchAction
     public void updatePostFailed(){ }
 
     @Override
+    public void onRefreshClick(){
+        recyclerView.smoothScrollToPosition(0);
+        loading = false;
+        page = 0;
+        getPosts(search);
+    }
+
+    @Override
     public void onEnd(){
         if (!loading){
             page++;
@@ -245,7 +258,7 @@ public class Search extends Fragment implements MaterialSearchBar.OnSearchAction
         recyclerView.addOnScrollListener(new ListScrollBottomListener((NavigationController) getActivity().findViewById(R.id.navigation_bottom)));
 
         mNoteAdapter = new NoteAdapter(R.layout.note_search_top, getContext());
-        mNoteAdapter.initListeners(this, this);
+        mNoteAdapter.initListeners(this, this, this);
         recyclerView.setAdapter(mNoteAdapter);
     }
 
@@ -265,6 +278,9 @@ public class Search extends Fragment implements MaterialSearchBar.OnSearchAction
                 search = query;
                 getPosts(search);
 
+                if (query == null || query.equals("")){
+                    return;
+                }
                 query = "#" + query;
 
                 int size = preferences.getInt("suggestion_size", 0);

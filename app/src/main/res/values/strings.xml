@@ -103,6 +103,10 @@
     <string name="no_internet">Brak połączenia z internetem!</string>
     <string name="comment">Skomentuj</string>
 
+    <string name="posts_refresh">ODŚWIEŻ POSTY</string>
+    <string name="no_more_posts">\nNiestety, nie ma już więcej postów\n</string>
+    <string name="none_posts">\nNiestety, nie ma takich postów\n</string>
+
     <string name="facebook_app_id">2084727258218611</string>
     <string name="fb_login_protocol_scheme">fb2084727258218611</string>
 

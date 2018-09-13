@@ -24,7 +24,7 @@ import pl.itomaszjanik.test.Posts.*;
 import java.util.List;
 
 public class ItemFeed extends Fragment implements ReactNoteCallback, NoteClickListener, GetPostsCallback,
-        UpdatePostCallback, OnEndScrolled, SwipeRefreshLayout.OnRefreshListener {
+        UpdatePostCallback, OnEndScrolled, NoteNoMoreClickListener, SwipeRefreshLayout.OnRefreshListener {
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
@@ -87,9 +87,7 @@ public class ItemFeed extends Fragment implements ReactNoteCallback, NoteClickLi
         }
         else{
             mSwipeRefreshLayout.setRefreshing(false);
-            bottomPopup = Utilities.getBottomPopupText(getContext(),
-                    R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                    ("nie ma :("), bottomPopup);
+            mNoteAdapter.insertNull();
         }
     }
 
@@ -194,6 +192,14 @@ public class ItemFeed extends Fragment implements ReactNoteCallback, NoteClickLi
     public void updatePostFailed(){ }
 
     @Override
+    public void onRefreshClick(){
+        recyclerView.smoothScrollToPosition(0);
+        loading = false;
+        page = 0;
+        getPosts();
+    }
+
+    @Override
     public void onEnd(){
         if (!loading){
             page++;
@@ -260,7 +266,7 @@ public class ItemFeed extends Fragment implements ReactNoteCallback, NoteClickLi
         recyclerView.addOnScrollListener(new ListScrollBottomListener((NavigationController) getActivity().findViewById(R.id.navigation_bottom)));
 
         mNoteAdapter = new NoteAdapter(R.layout.note_feed_top, getContext());
-        mNoteAdapter.initListeners(this, this);
+        mNoteAdapter.initListeners(this, this, this);
         recyclerView.setAdapter(mNoteAdapter);
     }
 

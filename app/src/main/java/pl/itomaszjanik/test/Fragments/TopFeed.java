@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
@@ -25,7 +26,7 @@ import pl.itomaszjanik.test.Posts.*;
 import java.util.List;
 
 public class TopFeed extends Fragment implements ReactNoteCallback, NoteClickListener, GetPostsCallback,
-        UpdatePostCallback, OnEndScrolled, SwipeRefreshLayout.OnRefreshListener {
+        UpdatePostCallback, OnEndScrolled, NoteNoMoreClickListener, SwipeRefreshLayout.OnRefreshListener {
 
     private static final String TYPE_DAILY = "get_posts_top_daily.php";
     private static final String TYPE_WEEKLY = "get_posts_top_weekly.php";
@@ -46,6 +47,9 @@ public class TopFeed extends Fragment implements ReactNoteCallback, NoteClickLis
 
     private RecyclerView recyclerView;
     private NoteAdapter mNoteAdapter;
+
+    private CardView nonePosts;
+
     private boolean loading = false;
     private int page = 0;
 
@@ -75,6 +79,7 @@ public class TopFeed extends Fragment implements ReactNoteCallback, NoteClickLis
         init(view);
         ((TextViewClickable) (view.findViewById(R.id.top_daily_text))).changeState();
         currentClicked = view.findViewById(R.id.top_daily_text);
+        nonePosts = view.findViewById(R.id.posts_none);
         initListeners(view, R.id.top_daily);
         initListeners(view, R.id.top_weekly);
         initListeners(view, R.id.top_monthly);
@@ -92,6 +97,7 @@ public class TopFeed extends Fragment implements ReactNoteCallback, NoteClickLis
 
     @Override
     public void getPostSucceeded(List<Note> list){
+        nonePosts.setVisibility(View.GONE);
         if (list.size() != 0){
             refreshLayout.setVisibility(View.GONE);
             if (loading){
@@ -104,9 +110,12 @@ public class TopFeed extends Fragment implements ReactNoteCallback, NoteClickLis
             }
             mSwipeRefreshLayout.setRefreshing(false);
         }
-        else{
+        else if (mNoteAdapter.getItemCount() != 0){
             mSwipeRefreshLayout.setRefreshing(false);
-
+            mNoteAdapter.insertNull();
+        }
+        else if (mNoteAdapter.getItemCount() == 0){
+            nonePosts.setVisibility(View.VISIBLE);
         }
     }
 
@@ -211,6 +220,14 @@ public class TopFeed extends Fragment implements ReactNoteCallback, NoteClickLis
 
     @Override
     public void updatePostFailed(){ }
+
+    @Override
+    public void onRefreshClick(){
+        recyclerView.smoothScrollToPosition(0);
+        loading = false;
+        page = 0;
+        getPosts(TYPE_CURRENT);
+    }
 
     @Override
     public void onEnd(){
@@ -343,7 +360,7 @@ public class TopFeed extends Fragment implements ReactNoteCallback, NoteClickLis
         recyclerView.addOnScrollListener(new ListScrollBottomListener((NavigationController) getActivity().findViewById(R.id.navigation_bottom)));
 
         mNoteAdapter = new NoteAdapter(R.layout.note_feed_top_top, getContext());
-        mNoteAdapter.initListeners(this, this);
+        mNoteAdapter.initListeners(this, this, this);
         recyclerView.setAdapter(mNoteAdapter);
     }
 
