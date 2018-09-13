@@ -11,8 +11,6 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import pl.itomaszjanik.test.*;
-import pl.itomaszjanik.test.Posts.NoteAdapter;
-import pl.itomaszjanik.test.Posts.NoteClickListener;
 import pl.itomaszjanik.test.Posts.NoteDetailsClickListener;
 
 import java.util.List;
@@ -33,7 +31,7 @@ public class CommentAdapter extends RecyclerView.Adapter{
     private OnEndScrolled onEndScrolled;
     private Context context;
 
-    static class HeaderViewHolder extends RecyclerView.ViewHolder{
+    class HeaderViewHolder extends RecyclerView.ViewHolder{
         TextView username, date, content, likes, likeText, comments, tags;
         RelativeLayout likeLayout, commentLayout, ellipsisLayout, shareLayout;
 
@@ -53,7 +51,7 @@ public class CommentAdapter extends RecyclerView.Adapter{
         }
     }
 
-    static class CommentsHeaderViewHolder extends RecyclerView.ViewHolder {
+    class CommentsHeaderViewHolder extends RecyclerView.ViewHolder {
         TextView replays;
 
         CommentsHeaderViewHolder(View v) {
@@ -62,7 +60,7 @@ public class CommentAdapter extends RecyclerView.Adapter{
         }
     }
 
-    static class CommentsMiddleViewHolder extends RecyclerView.ViewHolder{
+    class CommentsMiddleViewHolder extends RecyclerView.ViewHolder{
         TextView username, date, content, likes, likeText, replays;
         RelativeLayout likeLayout, replayLayout, ellipsisLayout, shareLayout;
 
@@ -81,7 +79,7 @@ public class CommentAdapter extends RecyclerView.Adapter{
         }
     }
 
-    static class CommentsFooterViewHolder extends RecyclerView.ViewHolder {
+    class CommentsFooterViewHolder extends RecyclerView.ViewHolder {
         RelativeLayout refreshLayout;
 
         CommentsFooterViewHolder(View v){
@@ -91,7 +89,7 @@ public class CommentAdapter extends RecyclerView.Adapter{
     }
 
 
-    static class ProgressViewHolder extends RecyclerView.ViewHolder {
+    class ProgressViewHolder extends RecyclerView.ViewHolder {
         ProgressBar progressBar;
 
         ProgressViewHolder(View v) {
@@ -138,6 +136,9 @@ public class CommentAdapter extends RecyclerView.Adapter{
 
         if (mNote.getLiked()){
             holder.likeText.setTextColor(Color.BLUE);
+        }
+        else{
+            holder.likeText.setTextColor(Color.parseColor("#747474"));
         }
 
         holder.likeLayout.setOnClickListener(new View.OnClickListener() {
@@ -189,6 +190,9 @@ public class CommentAdapter extends RecyclerView.Adapter{
 
         if (comment.getLiked()){
             holder.likeText.setTextColor(Color.BLUE);
+        }
+        else{
+            holder.likeText.setTextColor(Color.parseColor("#747474"));
         }
 
         holder.likeLayout.setOnClickListener(new View.OnClickListener() {

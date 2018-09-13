@@ -35,6 +35,7 @@ import pl.itomaszjanik.test.Comments.ReplayCommentCallback;
 import pl.itomaszjanik.test.Comments.UpdateCommentCallback;
 import pl.itomaszjanik.test.Posts.GetPostsCallback;
 import pl.itomaszjanik.test.Posts.ReactNoteCallback;
+import pl.itomaszjanik.test.Posts.UpdatePostCallback;
 import pl.itomaszjanik.test.Remote.*;
 import pl.itomaszjanik.test.Replays.GetReplaysCallback;
 import pl.itomaszjanik.test.Replays.ReactReplayCallback;
@@ -183,6 +184,79 @@ public class Utilities {
         }
     }
 
+    public static void getPostsTop(int userID, int page, String type, final GetPostsCallback callback, Context context){
+        if (isNetworkAvailable(context)){
+            PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
+            service.getPostsTop(type, userID, page).enqueue(new Callback<List<Note>>() {
+                @Override
+                public void onResponse(@Nullable Call<List<Note>> call, @Nullable Response<List<Note>> response) {
+                    if (response != null && response.isSuccessful()){
+                        if (response.body() != null){
+                            callback.getPostSucceeded(response.body());
+                            return;
+                        }
+                    }
+                    callback.getPostFailed();
+                }
+
+                @Override
+                public void onFailure(@Nullable Call<List<Note>> call, @Nullable Throwable t) {
+                    callback.getPostFailed();
+                }
+            });
+        }
+        else{
+            callback.getPostNoInternet();
+        }
+    }
+
+    public static void getPostsSearch(int userID, int page, String search, final GetPostsCallback callback, Context context){
+        if (isNetworkAvailable(context)){
+            PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
+            service.getPostsSearch(userID, page, search).enqueue(new Callback<List<Note>>() {
+                @Override
+                public void onResponse(@Nullable Call<List<Note>> call, @Nullable Response<List<Note>> response) {
+                    if (response != null && response.isSuccessful()){
+                        if (response.body() != null){
+                            callback.getPostSucceeded(response.body());
+                            return;
+                        }
+                    }
+                    callback.getPostFailed();
+                }
+
+                @Override
+                public void onFailure(@Nullable Call<List<Note>> call, @Nullable Throwable t) {
+                    callback.getPostFailed();
+                }
+            });
+        }
+        else{
+            callback.getPostNoInternet();
+        }
+    }
+
+    public static void updatePost(final UpdatePostCallback callback, Note note){
+        PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
+        Call<Note> call = service.updatePost(note.getId(), 1);
+        call.enqueue(new Callback<Note>() {
+            @Override
+            public void onResponse(@Nullable Call<Note> call, @Nullable Response<Note> response) {
+                if (response != null){
+                    callback.updatePostSucceeded(response.body());
+                }
+                else{
+                    callback.updatePostFailed();
+                }
+
+            }
+
+            @Override
+            public void onFailure(@Nullable Call<Note> call, @Nullable Throwable t) {
+                callback.updatePostFailed();
+            }
+        });
+    }
 
     public static void getComments(int userID, int postID, int page, final GetCommentsCallback callback, Context context){
         if (isNetworkAvailable(context)){
@@ -444,95 +518,102 @@ public class Utilities {
     }
 
     public static String decodeDate(String date, Context context){
-        DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("yyyy/MM/dd HH:mm:ss");
-        DateTime creationTime = dateTimeFormatter.parseDateTime(date);
-
-        Interval interval = new Interval(creationTime, new Instant());
-        Duration duration = interval.toDuration();
         String output = "";
-        if (duration.getStandardDays() >= 356){
-            long years = duration.getStandardDays()/356;
-            if (years == 1){
-                output += context.getResources().getString(R.string.year_one);
+
+        try{
+            DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+            DateTime creationTime = dateTimeFormatter.parseDateTime(date);
+
+            Interval interval = new Interval(creationTime, new Instant());
+            Duration duration = interval.toDuration();
+            if (duration.getStandardDays() >= 356){
+                long years = duration.getStandardDays()/356;
+                if (years == 1){
+                    output += context.getResources().getString(R.string.year_one);
+                }
+                else if (years < 5){
+                    output += years + " ";
+                    output += context.getResources().getString(R.string.year_two);
+                }
+                else{
+                    output += years + " ";
+                    output += context.getResources().getString(R.string.year_five);
+                }
             }
-            else if (years < 5){
-                output += years + " ";
-                output += context.getResources().getString(R.string.year_two);
+            else if (duration.getStandardDays() >= 31){
+                long months = duration.getStandardDays() / 31;
+                if (months == 1){
+                    output += context.getResources().getString(R.string.month_one);
+                }
+                else if (months < 5){
+                    output += months + " ";
+                    output += context.getResources().getString(R.string.month_two);
+                }
+                else{
+                    output += months + " ";
+                    output += context.getResources().getString(R.string.month_five);
+                }
+            }
+            else if (duration.getStandardDays() >= 7){
+                long weeks = duration.getStandardDays() / 7;
+                if (weeks == 1){
+                    output += context.getResources().getString(R.string.week_one);
+                }
+                else if (weeks < 5){
+                    output += weeks + " ";
+                    output += context.getResources().getString(R.string.week_two);
+                }
+                else{
+                    output += weeks + " ";
+                    output += context.getResources().getString(R.string.week_five);
+                }
+            }
+            else if (duration.getStandardDays() >= 1){
+                long days = duration.getStandardDays();
+                if (days == 1){
+                    output += context.getResources().getString(R.string.day_one);
+                }
+                else{
+                    output += days + " ";
+                    output += context.getResources().getString(R.string.day_two);
+                }
+            }
+            else if (duration.getStandardHours() >= 1){
+                long hours = duration.getStandardHours();
+                if (hours == 1){
+                    output += context.getResources().getString(R.string.hour_one);
+                }
+                else if (hours < 5){
+                    output += hours + " ";
+                    output += context.getResources().getString(R.string.hour_two);
+                }
+                else{
+                    output += hours + " ";
+                    output += context.getResources().getString(R.string.hour_five);
+                }
+            }
+            else if (duration.getStandardMinutes() >= 1){
+                long minutes = duration.getStandardMinutes();
+                if (minutes == 1){
+                    output += context.getResources().getString(R.string.minute_one);
+                }
+                else if (minutes < 5){
+                    output += minutes + " ";
+                    output += context.getResources().getString(R.string.minute_two);
+                }
+                else{
+                    output += minutes + " ";
+                    output += context.getResources().getString(R.string.minute_five);
+                }
             }
             else{
-                output += years + " ";
-                output += context.getResources().getString(R.string.year_five);
+                output += context.getResources().getString(R.string.second);
             }
         }
-        else if (duration.getStandardDays() >= 31){
-            long months = duration.getStandardDays() / 31;
-            if (months == 1){
-                output += context.getResources().getString(R.string.month_one);
-            }
-            else if (months < 5){
-                output += months + " ";
-                output += context.getResources().getString(R.string.month_two);
-            }
-            else{
-                output += months + " ";
-                output += context.getResources().getString(R.string.month_five);
-            }
+        catch (Exception e){
+            output += context.getString(R.string.second);
         }
-        else if (duration.getStandardDays() >= 7){
-            long weeks = duration.getStandardDays() / 7;
-            if (weeks == 1){
-                output += context.getResources().getString(R.string.week_one);
-            }
-            else if (weeks < 5){
-                output += weeks + " ";
-                output += context.getResources().getString(R.string.week_two);
-            }
-            else{
-                output += weeks + " ";
-                output += context.getResources().getString(R.string.week_five);
-            }
-        }
-        else if (duration.getStandardDays() >= 1){
-            long days = duration.getStandardDays();
-            if (days == 1){
-                output += context.getResources().getString(R.string.day_one);
-            }
-            else{
-                output += days + " ";
-                output += context.getResources().getString(R.string.day_two);
-            }
-        }
-        else if (duration.getStandardHours() >= 1){
-            long hours = duration.getStandardHours();
-            if (hours == 1){
-                output += context.getResources().getString(R.string.hour_one);
-            }
-            else if (hours < 5){
-                output += hours + " ";
-                output += context.getResources().getString(R.string.hour_two);
-            }
-            else{
-                output += hours + " ";
-                output += context.getResources().getString(R.string.hour_five);
-            }
-        }
-        else if (duration.getStandardMinutes() >= 1){
-            long minutes = duration.getStandardMinutes();
-            if (minutes == 1){
-                output += context.getResources().getString(R.string.minute_one);
-            }
-            else if (minutes < 5){
-                output += minutes + " ";
-                output += context.getResources().getString(R.string.minute_two);
-            }
-            else{
-                output += minutes + " ";
-                output += context.getResources().getString(R.string.minute_five);
-            }
-        }
-        else{
-            output += context.getResources().getString(R.string.second);
-        }
+
         return (output + " temu");
     }
 

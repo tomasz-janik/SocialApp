@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 
 import com.arlib.floatingsearchview.FloatingSearchView;
@@ -30,13 +31,13 @@ public class MainActivity extends AppCompatActivity {
         JodaTimeAndroid.init(this);
 
         testViewPagerAdapter = new TestViewPagerAdapter(getSupportFragmentManager());
-        viewPager = (ViewPager) findViewById(R.id.viewPager);
+        viewPager = findViewById(R.id.viewPager);
         viewPager.setAdapter(testViewPagerAdapter);
         viewPager.setOffscreenPageLimit(4);
 
-        mNavigationControllerTop = (NavigationController) findViewById(R.id.navigation_top);
-        mNavigationControllerBottom = (NavigationController) findViewById(R.id.navigation_bottom);
-        searchView = (FloatingSearchView) findViewById(R.id.floating_search_view);
+        mNavigationControllerTop = findViewById(R.id.navigation_top);
+        mNavigationControllerBottom = findViewById(R.id.navigation_bottom);
+        searchView = findViewById(R.id.floating_search_view);
 
         buttonLogic = new ButtonLogic();
         initImages();
@@ -95,6 +96,8 @@ public class MainActivity extends AppCompatActivity {
 
     private class TestViewPagerAdapter extends FragmentPagerAdapter {
 
+        private Fragment mCurrentFragment;
+
         TestViewPagerAdapter(FragmentManager fm) {
             super(fm);
         }
@@ -117,9 +120,22 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
+        public void setPrimaryItem(ViewGroup container, int position, Object object) {
+            if (getCurrentFragment() != object) {
+                mCurrentFragment = ((Fragment) object);
+            }
+            super.setPrimaryItem(container, position, object);
+        }
+
+        @Override
         public int getCount() {
             return Values.NO_OF_TABS;
         }
+
+        public Fragment getCurrentFragment() {
+            return mCurrentFragment;
+        }
+
     }
 
     private class ButtonLogic{
@@ -166,6 +182,11 @@ public class MainActivity extends AppCompatActivity {
                 updateColors(currentPage, Values.INDEX_TOP);
                 viewPager.setCurrentItem(Values.INDEX_TOP, true);
                 searchView.setVisibility(View.GONE);
+                TopFeed fragment = (TopFeed)testViewPagerAdapter.getCurrentFragment();
+                if (!fragment.getStarted()){
+                    fragment.loadPosts();
+                }
+                //viewPager.get
             }
         }
 

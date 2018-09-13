@@ -466,7 +466,7 @@ public class NoteDetailsActivity extends Activity implements ReactNoteCallback, 
                         hideKeyboard(NoteDetailsActivity.this);
                         input.clearFocus();
                         DateTime dateTime = new DateTime();
-                        String time = dateTime.toString("yyyy/MM/dd HH:mm:ss");
+                        String time = dateTime.toString("yyyy-MM-dd HH:mm:ss");
                         Utilities.commentPost(note.getId(), 1, "admin", time,  input.getText().toString(),
                                 NoteDetailsActivity.this, NoteDetailsActivity.this);
                     }

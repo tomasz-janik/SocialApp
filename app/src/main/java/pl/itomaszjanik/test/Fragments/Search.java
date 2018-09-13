@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
+import android.util.Log;
 import android.view.*;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -14,19 +15,29 @@ import com.arlib.floatingsearchview.FloatingSearchView;
 import com.arlib.floatingsearchview.suggestions.SearchSuggestionsAdapter;
 import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion;
 import com.mancj.materialsearchbar.MaterialSearchBar;
+import pl.itomaszjanik.test.BottomPopup.BottomPopup;
+import pl.itomaszjanik.test.Note;
+import pl.itomaszjanik.test.Posts.GetPostsCallback;
 import pl.itomaszjanik.test.Search.DataSuggestion;
 import pl.itomaszjanik.test.NavigationController;
 import pl.itomaszjanik.test.R;
+import pl.itomaszjanik.test.Utilities;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Search extends Fragment implements MaterialSearchBar.OnSearchActionListener, FloatingSearchView.OnClearSearchActionListener {
+public class Search extends Fragment implements MaterialSearchBar.OnSearchActionListener, GetPostsCallback,
+        FloatingSearchView.OnClearSearchActionListener {
 
     private NavigationController mNavigationControllerBottom;
     private FloatingSearchView mSearchView;
     private SharedPreferences preferences;
     private static List<DataSuggestion> suggestions = new ArrayList<>();
+
+    private BottomPopup bottomPopup;
+
+    private int page = 0;
+    private boolean loading = false;
 
     public Search() {
     }
@@ -76,6 +87,39 @@ public class Search extends Fragment implements MaterialSearchBar.OnSearchAction
         return inflater.inflate(R.layout.search, container, false);
     }
 
+    @Override
+    public void getPostSucceeded(List<Note> list){
+        if (list.size() != 0){
+            if (loading){
+                //mNoteAdapter.insert(list);
+                loading = false;
+            }
+            else{
+                //mNoteAdapter.removeAll();
+                //mNoteAdapter.insert(list);
+            }
+        }
+        else{
+            bottomPopup = Utilities.getBottomPopupText(getContext(),
+                    R.layout.bottom_popup_text, R.id.bottom_popup_text,
+                    ("nie ma wiecej :("), bottomPopup);
+        }
+    }
+
+    @Override
+    public void getPostFailed(){
+        bottomPopup = Utilities.getBottomPopupText(getContext(),
+                R.layout.bottom_popup_text, R.id.bottom_popup_text,
+                getString(R.string.couldnt_refresh), bottomPopup);
+    }
+
+    @Override
+    public void getPostNoInternet(){
+        bottomPopup = Utilities.getBottomPopupText(getContext(),
+                R.layout.bottom_popup_text, R.id.bottom_popup_text,
+                getString(R.string.no_internet), bottomPopup);
+    }
+
     private void initSearch() {
         mSearchView.setOnSearchListener(new FloatingSearchView.OnSearchListener() {
             @Override
@@ -86,7 +130,7 @@ public class Search extends Fragment implements MaterialSearchBar.OnSearchAction
 
             @Override
             public void onSearchAction(String query) {
-                //todo query on server
+                getPosts(query);
 
                 query = "#" + query;
 
@@ -146,14 +190,10 @@ public class Search extends Fragment implements MaterialSearchBar.OnSearchAction
         mSearchView.setOnBindSuggestionCallback(new SearchSuggestionsAdapter.OnBindSuggestionCallback() {
             @Override
             public void onBindSuggestion(View suggestionView, ImageView leftIcon, TextView textView, SearchSuggestion item, int itemPosition) {
-                //DataSuggestion colorSuggestion = (DataSuggestion) item;
-
-                String textColor = "#000000";
                 String textLight = "#787878";
 
                 leftIcon.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_history_black_24dp, null));
                 leftIcon.setAlpha(.36f);
-
 
                 textView.setTextColor(Color.parseColor(textLight));
 
@@ -175,7 +215,6 @@ public class Search extends Fragment implements MaterialSearchBar.OnSearchAction
 
     @Override
     public void onSearchConfirmed(CharSequence text) {
-
     }
 
     @Override
@@ -191,6 +230,10 @@ public class Search extends Fragment implements MaterialSearchBar.OnSearchAction
                 //mSearchView.disableSearch();
                 break;
         }
+    }
+
+    private void getPosts(String search){
+        Utilities.getPostsSearch(1, page, search, this, getContext());
     }
 
 

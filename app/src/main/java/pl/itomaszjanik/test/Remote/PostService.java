@@ -14,6 +14,20 @@ public interface PostService {
     Call<List<Note>> getPosts(@Field("user_id")  int userID,
                               @Field("page")     int page);
 
+    @POST("{type}")
+    @FormUrlEncoded
+    Call<List<Note>> getPostsTop(@Path("type")    String type,
+                                 @Field("user_id") int userID,
+                                 @Field("page")   int page
+    );
+
+    @POST("get_posts_search.php")
+    @FormUrlEncoded
+    Call<List<Note>> getPostsSearch(@Field("user_id") int userID,
+                                    @Field("page")    int postID,
+                                    @Field("search")  String search
+    );
+
     @POST("get_comments_post.php")
     @FormUrlEncoded
     Call<List<Comment>> getCommentsPost(@Field("userID") int userID,

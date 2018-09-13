@@ -20,20 +20,16 @@ import android.widget.TextView;
 import org.parceler.Parcels;
 import pl.itomaszjanik.test.*;
 import pl.itomaszjanik.test.BottomPopup.BottomPopup;
-import pl.itomaszjanik.test.Posts.GetPostsCallback;
-import pl.itomaszjanik.test.Posts.NoteAdapter;
-import pl.itomaszjanik.test.Posts.NoteClickListener;
-import pl.itomaszjanik.test.Posts.ReactNoteCallback;
+import pl.itomaszjanik.test.Posts.*;
 import pl.itomaszjanik.test.Remote.PostService;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ItemFeed extends Fragment implements ReactNoteCallback, NoteClickListener, GetPostsCallback,
-        OnEndScrolled, SwipeRefreshLayout.OnRefreshListener {
+        UpdatePostCallback, OnEndScrolled, SwipeRefreshLayout.OnRefreshListener {
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
@@ -64,41 +60,7 @@ public class ItemFeed extends Fragment implements ReactNoteCallback, NoteClickLi
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.feed, container,false);
-
-        refreshLayout = rootView.findViewById(R.id.feed_refresh_layout);
-        refreshLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mSwipeRefreshLayout.setRefreshing(true);
-                recyclerView.smoothScrollToPosition(0);
-                loading = false;
-                page = 0;
-                getPosts();
-            }
-        });
-
-        mSwipeRefreshLayout = rootView.findViewById(R.id.swipe_container);
-        mSwipeRefreshLayout.setOnRefreshListener(this);
-        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary,
-                android.R.color.holo_green_dark,
-                android.R.color.holo_orange_dark,
-                android.R.color.holo_blue_dark);
-        mSwipeRefreshLayout.setProgressViewOffset(false,
-                getResources().getDimensionPixelSize(R.dimen.refresher_offset),
-                getResources().getDimensionPixelSize(R.dimen.refresher_offset_end));
-
-        mSwipeRefreshLayout.post(new Runnable() {
-
-            @Override
-            public void run() {
-                mSwipeRefreshLayout.setRefreshing(true);
-                loading = true;
-                page = 0;
-                getPosts();
-            }
-        });
-        return rootView;
+        return inflater.inflate(R.layout.feed, container,false);
     }
 
     @Override
@@ -111,50 +73,30 @@ public class ItemFeed extends Fragment implements ReactNoteCallback, NoteClickLi
     public void onResume(){
         super.onResume();
         if (currentNote != null){
-            PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
-            Call<Note> call = service.updatePost(currentNote.getId(), 1);
-            call.enqueue(new Callback<Note>() {
-                @Override
-                public void onResponse(Call<Note> call, Response<Note> response) {
-                    if (currentView != null){
-                        Note note = response.body();
-                        if (note != null){
-                            currentNote.setLiked(note.getLiked());
-                            currentNote.setLikes(note.getLikes());
-                            currentNote.setComments(note.getComments());
-                            ((TextView)(currentView.findViewById(R.id.note_item_comments_number))).setText(String.valueOf(note.getComments()));
-                            TextView likes_number = currentView.findViewById(R.id.note_like_number);
-                            likes_number.setText(String.valueOf(note.getLikes()));
-                            if (note.getLiked()){
-                                ((TextView)(currentView.findViewById(R.id.note_like_text))).setTextColor(Color.BLUE);
-                            }
-                            else{
-                                ((TextView)(currentView.findViewById(R.id.note_like_text))).setTextColor(Color.parseColor("#747474"));
-                            }
-                        }
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<Note> call, Throwable t) {
-
-                }
-            });
+            Utilities.updatePost(this, currentNote);
         }
     }
 
     @Override
     public void getPostSucceeded(List<Note> list){
-        refreshLayout.setVisibility(View.GONE);
-        if (loading){
-            mNoteAdapter.insert(list);
-            loading = false;
+        if (list.size() != 0){
+            refreshLayout.setVisibility(View.GONE);
+            if (loading){
+                mNoteAdapter.insert(list);
+                loading = false;
+            }
+            else{
+                mNoteAdapter.removeAll();
+                mNoteAdapter.insert(list);
+            }
+            mSwipeRefreshLayout.setRefreshing(false);
         }
         else{
-            mNoteAdapter.removeAll();
-            mNoteAdapter.insert(list);
+            mSwipeRefreshLayout.setRefreshing(false);
+            bottomPopup = Utilities.getBottomPopupText(getContext(),
+                    R.layout.bottom_popup_text, R.id.bottom_popup_text,
+                    ("nie ma wiecej :("), bottomPopup);
         }
-        mSwipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
@@ -237,18 +179,77 @@ public class ItemFeed extends Fragment implements ReactNoteCallback, NoteClickLi
     }
 
     @Override
-    public void onEnd(){
-        if (mNoteAdapter.getItemCount() < 10){
-            if (!loading){
-                page++;
-                loading = true;
-                getPosts();
+    public void updatePostSucceeded(Note note){
+        if (currentView != null && note != null){
+            currentNote.setLiked(note.getLiked());
+            currentNote.setLikes(note.getLikes());
+            currentNote.setComments(note.getComments());
+            ((TextView)(currentView.findViewById(R.id.note_item_comments_number))).setText(String.valueOf(note.getComments()));
+            TextView likes_number = currentView.findViewById(R.id.note_like_number);
+            likes_number.setText(String.valueOf(note.getLikes()));
+            if (note.getLiked()){
+                ((TextView)(currentView.findViewById(R.id.note_like_text))).setTextColor(Color.BLUE);
             }
+            else{
+                ((TextView)(currentView.findViewById(R.id.note_like_text))).setTextColor(Color.parseColor("#747474"));
+            }
+        }
+    }
+
+    @Override
+    public void updatePostFailed(){ }
+
+    @Override
+    public void onEnd(){
+        if (!loading){
+            page++;
+            loading = true;
+            getPosts();
         }
     }
 
     private void init(View view){
         initRecyclerView(view);
+        initRefreshLayout(view);
+        initSwipeRefreshLayout(view);
+    }
+
+    private void initSwipeRefreshLayout(View view){
+        mSwipeRefreshLayout = view.findViewById(R.id.swipe_container);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary,
+                android.R.color.holo_green_dark,
+                android.R.color.holo_orange_dark,
+                android.R.color.holo_blue_dark);
+        mSwipeRefreshLayout.setProgressViewOffset(false,
+                getResources().getDimensionPixelSize(R.dimen.refresher_offset),
+                getResources().getDimensionPixelSize(R.dimen.refresher_offset_end));
+
+        mSwipeRefreshLayout.post(new Runnable() {
+
+            @Override
+            public void run() {
+                mSwipeRefreshLayout.setRefreshing(true);
+                loading = true;
+                page = 0;
+                getPosts();
+            }
+        });
+    }
+
+    private void initRefreshLayout(View view){
+        refreshLayout = view.findViewById(R.id.feed_refresh_layout);
+        refreshLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mSwipeRefreshLayout.setRefreshing(true);
+                recyclerView.smoothScrollToPosition(0);
+                loading = false;
+                page = 0;
+                getPosts();
+            }
+        });
+
     }
 
     private void initRecyclerView(View view){
@@ -276,7 +277,5 @@ public class ItemFeed extends Fragment implements ReactNoteCallback, NoteClickLi
     private void getPosts(){
         Utilities.getPosts(1, page, this, getContext());
     }
-
-
 
 }

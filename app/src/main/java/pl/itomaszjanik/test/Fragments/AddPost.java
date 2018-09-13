@@ -232,7 +232,7 @@ public class AddPost extends Fragment {
                 else{
                     Instant now = new Instant();
                     DateTime dateTime = new DateTime();
-                    String time = dateTime.toString("yyyy/MM/dd HH:mm:ss");
+                    String time = dateTime.toString("yyyy-MM-dd HH:mm:ss");
                     //String hashesh = addedTagView.getTags();
 
                     sendPost("admin", time, mContent.getText().toString(), hashesh, 0);

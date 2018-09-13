@@ -7,6 +7,9 @@
     <dimen name="refresher_offset">0dp</dimen>
     <dimen name="refresher_offset_end">80dp</dimen>
 
+    <dimen name="refresher_offset_top">46dp</dimen>
+    <dimen name="refresher_offset_end_top">126dp</dimen>
+
     <dimen name="refresher_top_offset">0dp</dimen>
     <dimen name="refresher_top_offset_end">34dp</dimen>
 

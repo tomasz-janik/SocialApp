@@ -112,7 +112,6 @@ public class AddCommentActivity extends FragmentActivity implements ConfirmExitD
             }
         });
 
-        final Context context = this;
         findViewById(R.id.add_comment_commit).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

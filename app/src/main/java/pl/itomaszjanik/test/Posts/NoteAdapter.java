@@ -68,6 +68,9 @@ public class NoteAdapter extends RecyclerView.Adapter{
         if (note.getLiked()){
             holder.likedText.setTextColor(Color.BLUE);
         }
+        else{
+            holder.likedText.setTextColor(Color.parseColor("#747474"));
+        }
 
         holder.likeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,6 +110,7 @@ public class NoteAdapter extends RecyclerView.Adapter{
     }
 
     public void insert(List<Note> list){
+
         for (Note note : list){
             notes.add(note);
             notifyItemInserted(notes.size() - 1);

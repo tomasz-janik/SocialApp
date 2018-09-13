@@ -418,7 +418,7 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
                     int checkComment = Utilities.checkComment(input.getText().toString(), CommentDetailsActivity.this);
                     if (checkComment > 0){
                         DateTime dateTime = new DateTime();
-                        String time = dateTime.toString("yyyy/MM/dd HH:mm:ss");
+                        String time = dateTime.toString("yyyy-MM-dd HH:mm:ss");
                         Utilities.replayComment(comment.getCommentID(), 1, "admin",
                                 time, input.getText().toString(), CommentDetailsActivity.this, CommentDetailsActivity.this);
                     }

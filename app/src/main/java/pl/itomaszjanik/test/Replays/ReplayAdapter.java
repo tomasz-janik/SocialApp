@@ -191,6 +191,9 @@ public class ReplayAdapter extends RecyclerView.Adapter{
         if (mComment.getLiked()){
             holder.like.setTextColor(Color.BLUE);
         }
+        else{
+            holder.like.setTextColor(Color.parseColor("#747474"));
+        }
 
         holder.likeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -233,6 +236,9 @@ public class ReplayAdapter extends RecyclerView.Adapter{
 
         if (replay.getLiked()){
             holder.like.setTextColor(Color.BLUE);
+        }
+        else{
+            holder.like.setTextColor(Color.parseColor("#747474"));
         }
 
         holder.likeLayout.setOnClickListener(new View.OnClickListener() {
@@ -292,9 +298,8 @@ public class ReplayAdapter extends RecyclerView.Adapter{
     }
 
     public void insert(List<Replay> list){
-        int size = list.size();
-        for (int i = 0; i < size; i++){
-            comments.add(list.get(i));
+        for (Replay replay : list){
+            comments.add(replay);
             notifyItemInserted(comments.size() - 1);
         }
     }
