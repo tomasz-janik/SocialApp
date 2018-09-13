@@ -1,6 +1,5 @@
 package pl.itomaszjanik.test.Fragments;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -27,7 +26,7 @@ public class AddCommentActivity extends FragmentActivity implements ConfirmExitD
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_comment);
 
-        input = (EditText) findViewById(R.id.add_comment_edit_text);
+        input = findViewById(R.id.add_comment_edit_text);
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null){
@@ -118,12 +117,12 @@ public class AddCommentActivity extends FragmentActivity implements ConfirmExitD
                 input.clearFocus();
                 Utilities.hideKeyboard(AddCommentActivity.this);
 
-                int checkComment = Utilities.checkComment(input.getText().toString(), AddCommentActivity.this);
+                int checkComment = Utilities.checkComment(input.getText().toString());
                 if (checkComment > 0){
                     bottomPopup = Utilities.getBottomPopupLogin(AddCommentActivity.this, R.layout.bottom_popup_login, bottomPopup);
                 }
                 else{
-                    bottomPopup = Utilities.errorComment(checkComment, AddCommentActivity.this, R.layout.bottom_popup_login, bottomPopup);
+                    bottomPopup = Utilities.errorComment(checkComment, AddCommentActivity.this, bottomPopup);
                 }
             }
         });
@@ -131,12 +130,12 @@ public class AddCommentActivity extends FragmentActivity implements ConfirmExitD
         findViewById(R.id.add_comment_commit_top).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int checkComment = Utilities.checkComment(input.getText().toString(), AddCommentActivity.this);
+                int checkComment = Utilities.checkComment(input.getText().toString());
                 if (checkComment > 0){
                     bottomPopup = Utilities.getBottomPopupLogin(AddCommentActivity.this, R.layout.bottom_popup_login, bottomPopup);
                 }
                 else{
-                    bottomPopup = Utilities.errorComment(checkComment, AddCommentActivity.this, R.layout.bottom_popup_login, bottomPopup);
+                    bottomPopup = Utilities.errorComment(checkComment, AddCommentActivity.this, bottomPopup);
                 }
             }
         });

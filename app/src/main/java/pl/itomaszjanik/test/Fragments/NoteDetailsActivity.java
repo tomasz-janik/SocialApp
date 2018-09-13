@@ -12,7 +12,6 @@ import android.view.*;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.labo.kaji.relativepopupwindow.RelativePopupWindow;
 import org.joda.time.DateTime;
 import org.parceler.Parcels;
@@ -461,7 +460,7 @@ public class NoteDetailsActivity extends Activity implements ReactNoteCallback, 
             @Override
             public void onClick(View view) {
                 if (input != null){
-                    int checkComment = Utilities.checkComment(input.getText().toString(), NoteDetailsActivity.this);
+                    int checkComment = Utilities.checkComment(input.getText().toString());
                     if (checkComment > 0){
                         hideKeyboard(NoteDetailsActivity.this);
                         input.clearFocus();
@@ -471,7 +470,7 @@ public class NoteDetailsActivity extends Activity implements ReactNoteCallback, 
                                 NoteDetailsActivity.this, NoteDetailsActivity.this);
                     }
                     else{
-                        bottomPopup = Utilities.errorComment(checkComment, NoteDetailsActivity.this, R.layout.bottom_popup_login, bottomPopup);
+                        bottomPopup = Utilities.errorComment(checkComment, NoteDetailsActivity.this, bottomPopup);
                     }
                 }
 

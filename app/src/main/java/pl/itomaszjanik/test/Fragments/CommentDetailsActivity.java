@@ -11,7 +11,6 @@ import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.BackgroundColorSpan;
-import android.util.Log;
 import android.view.View;
 import android.widget.*;
 import com.labo.kaji.relativepopupwindow.RelativePopupWindow;
@@ -415,7 +414,7 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
                 if (input != null){
                     input.clearFocus();
                     Utilities.hideKeyboard(CommentDetailsActivity.this);
-                    int checkComment = Utilities.checkComment(input.getText().toString(), CommentDetailsActivity.this);
+                    int checkComment = Utilities.checkComment(input.getText().toString());
                     if (checkComment > 0){
                         DateTime dateTime = new DateTime();
                         String time = dateTime.toString("yyyy-MM-dd HH:mm:ss");
@@ -423,7 +422,7 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
                                 time, input.getText().toString(), CommentDetailsActivity.this, CommentDetailsActivity.this);
                     }
                     else{
-                        bottomPopup = Utilities.errorComment(checkComment, CommentDetailsActivity.this, R.layout.bottom_popup_login, bottomPopup);
+                        bottomPopup = Utilities.errorComment(checkComment, CommentDetailsActivity.this, bottomPopup);
                     }
                 }
 

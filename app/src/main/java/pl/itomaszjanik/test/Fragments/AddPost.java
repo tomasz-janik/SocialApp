@@ -1,6 +1,5 @@
 package pl.itomaszjanik.test.Fragments;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.KeyEvent;
@@ -8,18 +7,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import org.joda.time.DateTime;
 import org.joda.time.Instant;
-import org.joda.time.Interval;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import pl.itomaszjanik.test.*;
 import pl.itomaszjanik.test.AddPostTags.AddedTagView;
 import pl.itomaszjanik.test.BottomPopup.BottomPopup;
 import pl.itomaszjanik.test.ExtendedComponents.EditTextKeyboard;
-import pl.itomaszjanik.test.Remote.NoteService;
 import pl.itomaszjanik.test.Remote.PostService;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -53,7 +47,7 @@ public class AddPost extends Fragment {
         // Inflate the layout for this fragment
         final View root = inflater.inflate(R.layout.add_post, container, false);
 
-        mNavigationControllerBottom = (NavigationController) getActivity().findViewById(R.id.navigation_bottom);
+        mNavigationControllerBottom = getActivity().findViewById(R.id.navigation_bottom);
         scrollView = root.findViewById(R.id.scroll_view);
         init(root);
 
@@ -70,7 +64,7 @@ public class AddPost extends Fragment {
     }
 
     private void initContent(final View view){
-        mContent = (EditTextKeyboard) view.findViewById(R.id.add_content);
+        mContent = view.findViewById(R.id.add_content);
 
         mContent.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,17 +101,12 @@ public class AddPost extends Fragment {
     }
 
     private void initTags(final View view){
-        tags = (EditTextKeyboard) view.findViewById(R.id.add_hashes);
-        //tags.setImeActionLabel("OK", KeyEvent.KEYCODE_ENTER);
-
+        tags = view.findViewById(R.id.add_hashes);
 
         tags.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mNavigationControllerBottom.hideLayoutInstant();
-                if (tags.getText().toString().equals("")){
-                    //tags.setText("#");
-                }
             }
         });
 
@@ -187,17 +176,17 @@ public class AddPost extends Fragment {
     }
 
     private void initAddedTags(View view){
-        addedTagView = (AddedTagView) view.findViewById(R.id.add_added_tag_view);
+        addedTagView = view.findViewById(R.id.add_added_tag_view);
     }
 
     private void initMainLayout(View view){
-        RelativeLayout mainLayout = (RelativeLayout) view.findViewById(R.id.add_main_layout);
+        RelativeLayout mainLayout = view.findViewById(R.id.add_main_layout);
         mainLayout.requestFocusFromTouch();
 
         mainLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                hideSoftKeyboard(getActivity());
+                Utilities.hideKeyboard(getActivity());
                 mNavigationControllerBottom.showLayoutInstant();
             }
         });
@@ -206,7 +195,7 @@ public class AddPost extends Fragment {
             @Override
             public void onFocusChange(View view, boolean b) {
                 if (b){
-                    hideSoftKeyboard(getActivity());
+                    Utilities.hideKeyboard(getActivity());
                     mNavigationControllerBottom.showLayoutInstant();
                 }
             }
@@ -214,7 +203,7 @@ public class AddPost extends Fragment {
     }
 
     private void initAdd(final View view) {
-        final RelativeLayout addPost = (RelativeLayout) view.findViewById(R.id.add_commit);
+        final RelativeLayout addPost = view.findViewById(R.id.add_commit);
 
         addPost.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -230,10 +219,8 @@ public class AddPost extends Fragment {
                             getString(R.string.add_empty_tags), bottomPopup);
                 }
                 else{
-                    Instant now = new Instant();
                     DateTime dateTime = new DateTime();
                     String time = dateTime.toString("yyyy-MM-dd HH:mm:ss");
-                    //String hashesh = addedTagView.getTags();
 
                     sendPost("admin", time, mContent.getText().toString(), hashesh, 0);
                 }
@@ -241,10 +228,6 @@ public class AddPost extends Fragment {
         });
     }
 
-    private static void hideSoftKeyboard(Activity activity) {
-        InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
-    }
 
     private void sendPost(String username, String date, String content, String hashesh, int comment) {
         if (!Utilities.isNetworkAvailable(getContext())){

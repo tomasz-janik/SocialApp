@@ -292,8 +292,8 @@ public class Utilities {
             PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
             service.getCommentsPost(userID, postID, page).enqueue(new Callback<List<Comment>>() {
                 @Override
-                public void onResponse(Call<List<Comment>> call, Response<List<Comment>> response) {
-                    if (response.isSuccessful()){
+                public void onResponse(@Nullable Call<List<Comment>> call, @Nullable Response<List<Comment>> response) {
+                    if (response != null && response.isSuccessful()){
                         if (response.body() != null){
                             callback.getCommentSucceeded(response.body());
                         }
@@ -307,7 +307,7 @@ public class Utilities {
                 }
 
                 @Override
-                public void onFailure(Call<List<Comment>> call, Throwable t) {
+                public void onFailure(@Nullable Call<List<Comment>> call, @Nullable Throwable t) {
                     callback.getCommentFailed();
                 }
             });
@@ -322,12 +322,17 @@ public class Utilities {
         Call<Comment> call = service.updateComment(comment.getCommentID(), 1);
         call.enqueue(new Callback<Comment>() {
             @Override
-            public void onResponse(Call<Comment> call, Response<Comment> response) {
-                callback.updateCommentSucceeded(response.body());
+            public void onResponse(@Nullable Call<Comment> call, @Nullable Response<Comment> response) {
+                if (response != null){
+                    callback.updateCommentSucceeded(response.body());
+                }
+                else{
+                    callback.updateCommentFailed();
+                }
             }
 
             @Override
-            public void onFailure(Call<Comment> call, Throwable t) {
+            public void onFailure(@Nullable Call<Comment> call, @Nullable Throwable t) {
                 callback.updateCommentFailed();
             }
         });
@@ -338,8 +343,8 @@ public class Utilities {
             PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
             service.getReplaysComment(userID, commentID, page).enqueue(new Callback<List<Replay>>() {
                 @Override
-                public void onResponse(Call<List<Replay>> call, Response<List<Replay>> response) {
-                    if (response.isSuccessful()) {
+                public void onResponse(@Nullable Call<List<Replay>> call, @Nullable Response<List<Replay>> response) {
+                    if (response != null && response.isSuccessful()) {
                         if (response.body() != null) {
                             callback.getReplaySucceeded(response.body());
                         } else {
@@ -351,7 +356,7 @@ public class Utilities {
                 }
 
                 @Override
-                public void onFailure(Call<List<Replay>> call, Throwable t) {
+                public void onFailure(@Nullable Call<List<Replay>> call, @Nullable Throwable t) {
                     callback.getReplayFailed();
                 }
             });
@@ -366,8 +371,8 @@ public class Utilities {
             PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
             service.replayComment(commentID, userID, username, date, content).enqueue(new Callback<Replay>() {
                 @Override
-                public void onResponse(Call<Replay> call, Response<Replay> response) {
-                    if (response.isSuccessful()){
+                public void onResponse(@Nullable Call<Replay> call, @Nullable Response<Replay> response) {
+                    if (response != null && response.isSuccessful()){
                         callback.replayCommentSucceeded(response.body());
                     }
                     else{
@@ -376,7 +381,7 @@ public class Utilities {
                 }
 
                 @Override
-                public void onFailure(Call<Replay> call, Throwable t) {
+                public void onFailure(@Nullable Call<Replay> call, @Nullable Throwable t) {
                     callback.replayCommentFailed();
                 }
             });
@@ -406,7 +411,7 @@ public class Utilities {
         }
         call.enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            public void onResponse(@Nullable Call<ResponseBody> call, @Nullable Response<ResponseBody> response) {
                 if (replay.getLiked()){
                     callback.reactReplayUnlikeSucceeded(replay, view);
                 }
@@ -416,7 +421,7 @@ public class Utilities {
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            public void onFailure(@Nullable Call<ResponseBody> call, @Nullable Throwable t) {
                 if (replay.getLiked()){
                     callback.reactReplayUnlikeFailed();
                 }
@@ -427,7 +432,7 @@ public class Utilities {
         });
     }
 
-    public static int checkComment(String string, Context context){
+    public static int checkComment(String string){
         if (string == null || string.equals("")){
             return Values.COMMENT_EMPTY;
         }
@@ -437,7 +442,7 @@ public class Utilities {
         return 1;
     }
 
-    public static BottomPopup errorComment(int error, Context context, int layout, BottomPopup popup){
+    public static BottomPopup errorComment(int error, Context context, BottomPopup popup){
         switch (error){
             case Values.COMMENT_EMPTY:
                 popup = getBottomPopupText(context, R.layout.bottom_popup_text, R.id.bottom_popup_text, context.getString(R.string.comment_invalid), popup);
@@ -451,18 +456,20 @@ public class Utilities {
 
     public static void hideKeyboard(Activity activity) {
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        //Find the currently focused view, so we can grab the correct window token from it.
         View view = activity.getCurrentFocus();
+
         //If no view currently has focus, create a new one, just so we can grab a window token from it
         if (view == null) {
             view = new View(activity);
         }
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        if (imm != null)
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     public static void showKeyboard(Activity activity){
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT,0);
+        if (imm != null)
+            imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT,0);
     }
 
     public static BottomPopup getBottomPopupLogin(Context context, int layout, BottomPopup popup){
@@ -501,22 +508,6 @@ public class Utilities {
         return popup;
     }
 
-    public static BottomPopup getBottomPopupText(Context context, int layout, int textView, String text, BottomPopup popup, boolean dismiss){
-        if (popup == null || popup.getText() == null || popup.getText().equals(context.getString(R.string.loading))){
-            popup = new BottomPopup.Builder(context)
-                    .setContentView(layout)
-                    .setString(text, textView)
-                    .setAutoDismiss(dismiss)
-                    .setGravity(Gravity.BOTTOM)
-                    .build();
-        }
-        else if (!popup.getText().equals(text)){
-            popup.setTextView(text);
-        }
-        popup.show();
-
-        return popup;
-    }
 
     public static BottomPopup getBottomPopupLoading(Context context, int layout, int textView, String text, BottomPopup popup){
         if (popup == null || popup.getText() == null || !popup.getText().equals(text)){
@@ -524,20 +515,6 @@ public class Utilities {
                     .setContentView(layout)
                     .setString(text, textView)
                     .setAutoDismiss(true)
-                    .setGravity(Gravity.BOTTOM)
-                    .build();
-        }
-        popup.show();
-
-        return popup;
-    }
-
-    public static BottomPopup getBottomPopupLoading(boolean dismiss, Context context, int layout, int textView, String text, BottomPopup popup){
-        if (popup == null || popup.getText() == null || !popup.getText().equals(text)){
-            popup = new BottomPopup.Builder(context)
-                    .setContentView(layout)
-                    .setString(text, textView)
-                    .setAutoDismiss(dismiss)
                     .setGravity(Gravity.BOTTOM)
                     .build();
         }
@@ -667,7 +644,6 @@ public class Utilities {
         intent.setType("image/*");
         intent.setDataAndType(uri, activity.getContentResolver().getType(uri));
         intent.putExtra(Intent.EXTRA_SUBJECT, "");
-        //intent.putExtra(Intent.EXTRA_TEXT, "");
         intent.putExtra(Intent.EXTRA_STREAM, uri);
 
         try {
@@ -692,7 +668,6 @@ public class Utilities {
 
         //Cause the view to re-layout
         view.measure(measuredWidth, measuredHeight);
-        //view.measure(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
 
         //Create a bitmap backed Canvas to draw the view into
@@ -711,7 +686,7 @@ public class Utilities {
         setNoteDetails(view, note);
         ((TextView)(view.findViewById(R.id.note_details_comments_number))).setText(String.valueOf(note.getComments()));
 
-        RelativeLayout commentMain = ((RelativeLayout)view.findViewById(R.id.comment_main));
+        RelativeLayout commentMain = view.findViewById(R.id.comment_main);
         setCommentDetails(commentMain, comment, activity);
 
         View rootView = activity.getWindow().getDecorView().findViewById(android.R.id.content);
@@ -744,10 +719,10 @@ public class Utilities {
         setNoteDetails(view, note);
         ((TextView)(view.findViewById(R.id.note_details_comments_number))).setText(String.valueOf(note.getComments()));
 
-        RelativeLayout commentMain = ((RelativeLayout)view.findViewById(R.id.comment_main));
+        RelativeLayout commentMain = view.findViewById(R.id.comment_main);
         setCommentDetails(commentMain, comment, activity);
 
-        RelativeLayout commentReplay = ((RelativeLayout)view.findViewById(R.id.comment_replay));
+        RelativeLayout commentReplay = view.findViewById(R.id.comment_replay);
         setReplayDetails(commentReplay, replay, activity);
 
 
@@ -807,23 +782,12 @@ public class Utilities {
     }
 
     public static boolean isNetworkAvailable(Context context) {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
-    public static String prepareHashesText(List<String> list){
-        StringBuilder buffer = new StringBuilder();
-        for (String temp: list) {
-            if (temp.startsWith("#")){
-                temp = temp + " ";
-            }
-            else{
-                temp = "#" + temp + " ";
-            }
-            buffer.append(temp);
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager != null){
+            NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+            return activeNetworkInfo != null && activeNetworkInfo.isConnected();
         }
-        return buffer.toString();
+        return false;
     }
 
     public static String getCommentVariation(int noOfComments, Context context){
