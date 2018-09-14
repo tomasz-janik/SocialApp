@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#efefef">
+
+    <android.support.v7.widget.CardView
+            android:id="@+id/username_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="16dp" android:layout_marginStart="16dp"
+            android:layout_marginRight="16dp" android:layout_marginEnd="16dp"
+            app:cardElevation="4dp"
+            app:cardCornerRadius="10dp">
+
+        <pl.itomaszjanik.test.ExtendedComponents.EditTextKeyboard
+                android:id="@+id/username"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textNoSuggestions"
+                android:maxLength="20"
+                android:hint="@string/username_hint"
+                android:textAlignment="viewStart"
+                android:gravity="start"
+                android:ems="10"
+                android:background="@android:color/transparent"
+                android:layout_centerHorizontal="true"
+                android:padding="10dp"/>
+
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+            android:id="@+id/password_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/username_card"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="16dp" android:layout_marginStart="16dp"
+            android:layout_marginRight="16dp" android:layout_marginEnd="16dp"
+            app:cardElevation="4dp"
+            app:cardCornerRadius="10dp">
+
+        <pl.itomaszjanik.test.ExtendedComponents.EditTextKeyboard
+                android:id="@+id/password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:backgroundTint="#ffffff"
+                android:inputType="textPassword"
+                android:maxLength="20"
+                android:hint="@string/password_hint"
+                android:textAlignment="viewStart"
+                android:gravity="start"
+                android:ems="10"
+                android:background="@android:color/transparent"
+                android:padding="10dp"/>
+
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+            android:id="@+id/login_card"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_below="@id/password_card"
+            android:layout_centerInParent="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:layout_marginTop="28dp"
+            android:layout_marginBottom="128dp"
+            android:layout_marginEnd="16dp" android:layout_marginRight="16dp"
+            android:layout_marginStart="16dp" android:layout_marginLeft="16dp"
+            android:padding="4dp" android:clipToPadding="false"
+            app:cardCornerRadius="2dp"
+            app:cardElevation="4dp">
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="@string/login"
+                android:layout_gravity="center"
+                android:textAlignment="center"
+                android:clickable="false"/>
+
+    </android.support.v7.widget.CardView>
+
+
+    <TextView
+            android:visibility="gone"
+            android:id="@+id/or"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/login_card"
+            android:text="- lub zaloguj się używając -"
+            android:layout_centerInParent="true"
+            android:textAlignment="center"
+            android:layout_marginTop="8dp" android:layout_marginBottom="8dp"/>
+
+    <com.google.android.gms.common.SignInButton
+            android:visibility="gone"
+            android:id="@+id/sign_in_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/or"
+            android:layout_marginEnd="16dp" android:layout_marginRight="16dp"
+            android:layout_marginStart="16dp" android:layout_marginLeft="16dp"
+            app:buttonSize="wide"/>
+
+</RelativeLayout>

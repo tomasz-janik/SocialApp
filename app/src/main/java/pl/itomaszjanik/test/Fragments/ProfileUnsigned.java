@@ -1,43 +1,26 @@
 package pl.itomaszjanik.test.Fragments;
 
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.res.ResourcesCompat;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.Task;
-import org.parceler.Parcels;
-import pl.itomaszjanik.test.BottomPopup.BottomPopup;
 import pl.itomaszjanik.test.*;
-import pl.itomaszjanik.test.Posts.*;
-
-import java.util.List;
 
 public class ProfileUnsigned extends Fragment {
 
-    private SharedPreferences sharedPreferences;
-    private BottomPopup bottomPopup;
-    private GoogleSignInClient mGoogleSignInClient;
-    private EditText username, password;
-    int RC_SIGN_IN = 0;
+    private static final int VIEW_LOGIN = 0;
+    private static final int VIEW_REGISTER = 1;
+
+    private int currentPosition = VIEW_LOGIN;
+    private RelativeLayout login, register;
+    private TextView loginText, registerText;
 
     public ProfileUnsigned() {
     }
@@ -49,11 +32,6 @@ public class ProfileUnsigned extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        sharedPreferences = getContext().getSharedPreferences(Values.SHARED_PREFERENCES, Context.MODE_PRIVATE);
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .build();
-        mGoogleSignInClient = GoogleSignIn.getClient(getContext(), gso);
     }
 
     @Nullable
@@ -68,54 +46,66 @@ public class ProfileUnsigned extends Fragment {
         init(view);
     }
 
-
     @Override
     public void onResume(){
         super.onResume();
     }
 
     private void init(View view){
-        username = view.findViewById(R.id.username);
-        password = view.findViewById(R.id.password);
+        initNavigation(view);
+        switchFragments();
+    }
 
-        view.findViewById(R.id.sign_in_button).setOnClickListener(new View.OnClickListener() {
+    private void initNavigation(View view){
+        login = view.findViewById(R.id.login);
+        register = view.findViewById(R.id.register);
+        loginText = view.findViewById(R.id.login_text);
+        registerText = view.findViewById(R.id.register_text);
+
+        login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                signIn();
+                if (currentPosition != VIEW_LOGIN){
+                    currentPosition = VIEW_LOGIN;
+                    loginText.setTextColor(ContextCompat.getColor(getContext(), R.color.colorTextActive));
+                    registerText.setTextColor(ContextCompat.getColor(getContext(), R.color.colorTextInactive));
+                    switchFragments();
+                }
             }
         });
 
-        view.findViewById(R.id.login_card).setOnClickListener(new View.OnClickListener() {
+        register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                if (currentPosition != VIEW_REGISTER){
+                    currentPosition = VIEW_REGISTER;
+                    loginText.setTextColor(ContextCompat.getColor(getContext(), R.color.colorTextInactive));
+                    registerText.setTextColor(ContextCompat.getColor(getContext(), R.color.colorTextActive));
+                    switchFragments();
+                }
             }
         });
+
     }
 
-    private void signIn(){
-        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        startActivityForResult(signInIntent, RC_SIGN_IN);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
-        if (requestCode == RC_SIGN_IN) {
-            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            try {
-                task.getResult(ApiException.class);
-            }
-            //if this happens user couldn't login
-            catch (ApiException e) {
-                bottomPopup = Utilities.getBottomPopupText(getContext(),
-                        R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                        getString(R.string.couldnt_login), bottomPopup);
-            }
+    private void switchFragments(){
+        FragmentTransaction mTransaction = getChildFragmentManager().beginTransaction();
+        Fragment fragment;
+        switch (currentPosition){
+            case VIEW_LOGIN:
+                fragment = new ProfileUnsignedLogin();
+                break;
+            case VIEW_REGISTER:
+                fragment = new ProfileUnsignedRegister();
+                break;
+            default:
+                fragment = new ProfileUnsignedLogin();
+                break;
         }
+        mTransaction.replace(R.id.main_fragment, fragment, fragment.getClass().getName());
+        mTransaction.commit();
     }
+
 
 }
 

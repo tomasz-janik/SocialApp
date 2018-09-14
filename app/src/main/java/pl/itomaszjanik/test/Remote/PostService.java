@@ -123,9 +123,16 @@ public interface PostService {
                                     @Field("user_id")     int userID
     );
 
-/*    @GET("POSTS/{postID}/COMMENTS/{pageID}.json")
-    Call<List<Comment>> getCommentsPost(@Path("postID") String postID,
-                                        @Path("pageID") String pageID
-    );*/
+    @POST("register.php")
+    @FormUrlEncoded
+    Call<ResponseBody> register(@Field("username")   String username,
+                                @Field("password")   String password
+    );
+
+    @POST("login.php")
+    @FormUrlEncoded
+    Call<ResponseBody> login(@Field("username")   String username,
+                             @Field("password")   String password
+    );
 
 }

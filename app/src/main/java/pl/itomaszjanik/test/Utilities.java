@@ -27,10 +27,7 @@ import org.joda.time.Interval;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import pl.itomaszjanik.test.BottomPopup.BottomPopup;
-import pl.itomaszjanik.test.Comments.GetCommentsCallback;
-import pl.itomaszjanik.test.Comments.ReactCommentsCallback;
-import pl.itomaszjanik.test.Comments.ReplayCommentCallback;
-import pl.itomaszjanik.test.Comments.UpdateCommentCallback;
+import pl.itomaszjanik.test.Comments.*;
 import pl.itomaszjanik.test.Posts.GetPostsCallback;
 import pl.itomaszjanik.test.Posts.ReactNoteCallback;
 import pl.itomaszjanik.test.Posts.UpdatePostCallback;
@@ -131,7 +128,7 @@ public class Utilities {
     }
 
     public static void commentPost(int postID, int userID, String username, String date, String content,
-                                          final CommentPostCallback callback, Context context){
+                                   final CommentPostCallback callback, Context context){
         if (isNetworkAvailable(context)){
             PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
             service.commentPost(postID, userID, username, date, content).enqueue(new Callback<Comment>() {
@@ -430,6 +427,42 @@ public class Utilities {
                 }
             }
         });
+    }
+
+    public static void register(String username, String password, final RegisterCallback registerCallback, Context context){
+        if (isNetworkAvailable(context)){
+            PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
+            service.register(username, password).enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(@Nullable Call<ResponseBody> call, @Nullable Response<ResponseBody> response) {
+                    if (response != null && response.body() != null && response.isSuccessful()){
+                        String output = response.body().toString();
+                        switch (output){
+                            case "success":
+                                registerCallback.onRegisterSucceeded();
+                                break;
+                            case "as":
+                                registerCallback.onRegisterNotUnique();
+                                break;
+                            default:
+                                registerCallback.onRegisterFailed();
+                                break;
+                        }
+                    }
+                    else{
+                        registerCallback.onRegisterFailed();
+                    }
+                }
+
+                @Override
+                public void onFailure(@Nullable Call<ResponseBody> call, @Nullable Throwable t) {
+                    registerCallback.onRegisterFailed();
+                }
+            });
+        }
+        else{
+            registerCallback.onRegisterNoInternet();
+        }
     }
 
     public static int checkComment(String string){

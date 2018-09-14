@@ -63,7 +63,7 @@
     <string name="second">kilka sekund</string>
 
     <string name="not_logged">Musisz być zalogowany, aby\nmóc to zrobić</string>
-    <string name="login">ZALOGUJ</string>
+    <string name="login"><b>ZALOGUJ</b></string>
 
     <string name="dialog_title">Anulować komentarz?</string>
     <string name="dialog_content">Stracisz niezapisane dane!</string>
@@ -109,5 +109,8 @@
 
     <string name="facebook_app_id">2084727258218611</string>
     <string name="fb_login_protocol_scheme">fb2084727258218611</string>
+
+    <string name="login_text">ZALOGUJ</string>
+    <string name="register_text">ZAREJESTRUJ</string>
 
 </resources>

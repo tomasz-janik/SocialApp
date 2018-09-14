@@ -22,7 +22,6 @@ import pl.itomaszjanik.test.EllipsisPopup.EllipsisPopup;
 import pl.itomaszjanik.test.EllipsisPopup.EllipsisPopupListener;
 import pl.itomaszjanik.test.Posts.NoteDetailsClickListener;
 import pl.itomaszjanik.test.Posts.ReactNoteCallback;
-import pl.itomaszjanik.test.Remote.*;
 
 import java.util.ArrayList;
 import java.util.List;
