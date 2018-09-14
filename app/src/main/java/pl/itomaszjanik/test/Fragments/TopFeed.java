@@ -98,6 +98,7 @@ public class TopFeed extends Fragment implements ReactNoteCallback, NoteClickLis
     @Override
     public void getPostSucceeded(List<Note> list){
         nonePosts.setVisibility(View.GONE);
+        recyclerView.setVisibility(View.VISIBLE);
         if (list.size() != 0){
             refreshLayout.setVisibility(View.GONE);
             if (loading){
@@ -111,11 +112,16 @@ public class TopFeed extends Fragment implements ReactNoteCallback, NoteClickLis
             mSwipeRefreshLayout.setRefreshing(false);
         }
         else if (mNoteAdapter.getItemCount() != 0){
+            if (page == 0){
+                recyclerView.setVisibility(View.GONE);
+                nonePosts.setVisibility(View.VISIBLE);
+            }
             mSwipeRefreshLayout.setRefreshing(false);
             mNoteAdapter.insertNull();
         }
         else if (mNoteAdapter.getItemCount() == 0){
             nonePosts.setVisibility(View.VISIBLE);
+            refreshLayout.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -248,6 +254,8 @@ public class TopFeed extends Fragment implements ReactNoteCallback, NoteClickLis
                     currentClicked.changeState();
                     textView.changeState();
                     currentClicked = textView;
+                    currentNote = null;
+                    currentView = null;
                     loading = false;
                     page = 0;
                     switch (value){
