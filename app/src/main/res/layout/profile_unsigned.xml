@@ -36,6 +36,7 @@
                     android:layout_centerInParent="true"
                     android:text="@string/login_text"
                     android:textAlignment="center"
+                    android:textColor="@color/colorTextActive"
                     android:textSize="18sp"
                     android:id="@+id/login_text"/>
 

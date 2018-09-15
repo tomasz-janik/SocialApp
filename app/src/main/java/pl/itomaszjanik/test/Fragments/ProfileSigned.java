@@ -72,70 +72,86 @@ public class ProfileSigned extends Fragment implements NoteClickListener, GetPos
 
     @Override
     public void getPostSucceeded(List<Note> list){
-        if (list.size() != 0){
-            if (loading){
-                mNoteAdapter.insert(list);
-                loading = false;
+        if (isAdded()){
+            if (list.size() != 0){
+                if (loading){
+                    mNoteAdapter.insert(list);
+                    loading = false;
+                }
+                else{
+                    mNoteAdapter.removeAll();
+                    mNoteAdapter.insert(list);
+                }
             }
             else{
-                mNoteAdapter.removeAll();
-                mNoteAdapter.insert(list);
+                mNoteAdapter.insertNull();
             }
-        }
-        else{
-            mNoteAdapter.insertNull();
         }
     }
 
     @Override
     public void getPostFailed(){
-        bottomPopup = Utilities.getBottomPopupText(getContext(),
-                R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                getString(R.string.couldnt_refresh), bottomPopup);
+        if (isAdded()){
+            bottomPopup = Utilities.getBottomPopupText(getContext(),
+                    R.layout.bottom_popup_text, R.id.bottom_popup_text,
+                    getString(R.string.couldnt_refresh), bottomPopup);
+        }
     }
 
     @Override
     public void getPostNoInternet(){
-        bottomPopup = Utilities.getBottomPopupText(getContext(),
-                R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                getString(R.string.no_internet), bottomPopup);
+        if (isAdded()){
+            bottomPopup = Utilities.getBottomPopupText(getContext(),
+                    R.layout.bottom_popup_text, R.id.bottom_popup_text,
+                    getString(R.string.no_internet), bottomPopup);
+        }
     }
 
     @Override
     public void reactNoteLikeSucceeded(Note note, View view){
-        note.changeLiked();
-        note.incrementLikes();
-        ((TextView)view.findViewById(R.id.note_like_number)).setText(String.valueOf(note.getLikes()));
-        ((TextView)view.findViewById(R.id.note_like_text)).setTextColor(Color.BLUE);
+        if (isAdded()){
+            note.changeLiked();
+            note.incrementLikes();
+            ((TextView)view.findViewById(R.id.note_like_number)).setText(String.valueOf(note.getLikes()));
+            ((TextView)view.findViewById(R.id.note_like_text)).setTextColor(Color.BLUE);
+        }
     }
 
     @Override
     public void reactNoteUnlikeSucceeded(Note note, View view){
-        note.changeLiked();
-        note.decrementLikes();
-        ((TextView)view.findViewById(R.id.note_like_number)).setText(String.valueOf(note.getLikes()));
-        ((TextView)view.findViewById(R.id.note_like_text)).setTextColor(Color.parseColor("#747474"));
+        if (isAdded()){
+            note.changeLiked();
+            note.decrementLikes();
+            ((TextView)view.findViewById(R.id.note_like_number)).setText(String.valueOf(note.getLikes()));
+            ((TextView)view.findViewById(R.id.note_like_text)).setTextColor(Color.parseColor("#747474"));
+        }
     }
 
     @Override
     public void reactNoteLikeFailed(){
-        bottomPopup = Utilities.getBottomPopupText(getContext(),
-                R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                getString(R.string.couldnt_like_post), bottomPopup);
+        if (isAdded()){
+            bottomPopup = Utilities.getBottomPopupText(getContext(),
+                    R.layout.bottom_popup_text, R.id.bottom_popup_text,
+                    getString(R.string.couldnt_like_post), bottomPopup);
+        }
     }
 
     @Override
     public void reactNoteUnlikeFailed(){
-        bottomPopup = Utilities.getBottomPopupText(getContext(),
-                R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                getString(R.string.couldnt_unlike_post), bottomPopup);
+        if (isAdded()){
+            bottomPopup = Utilities.getBottomPopupText(getContext(),
+                    R.layout.bottom_popup_text, R.id.bottom_popup_text,
+                    getString(R.string.couldnt_unlike_post), bottomPopup);
+        }
     }
 
     @Override
     public void reactNoteNoInternet(){
-        bottomPopup = Utilities.getBottomPopupText(getContext(),
-                R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                getString(R.string.no_internet), bottomPopup);
+        if (isAdded()){
+            bottomPopup = Utilities.getBottomPopupText(getContext(),
+                    R.layout.bottom_popup_text, R.id.bottom_popup_text,
+                    getString(R.string.no_internet), bottomPopup);
+        }
     }
 
     @Override
@@ -154,12 +170,14 @@ public class ProfileSigned extends Fragment implements NoteClickListener, GetPos
 
     @Override
     public void onLikeClick(View view, Note note){
+        currentView = view;
+        currentNote = note;
         Utilities.onLikeNoteClick(getContext(), ProfileSigned.this, view, note);
     }
 
     @Override
     public void updatePostSucceeded(Note note){
-        if (currentView != null && note != null){
+        if (isAdded() && currentView != null && note != null){
             currentNote.setLiked(note.getLiked());
             currentNote.setLikes(note.getLikes());
             currentNote.setComments(note.getComments());
