@@ -222,7 +222,7 @@ public class TopFeed extends Fragment implements ReactNoteCallback, NoteClickLis
     public void onLikeClick(View view, Note note){
         currentView = view;
         currentNote = note;
-        Utilities.onLikeNoteClick(getContext(), TopFeed.this, view, note);
+        Utilities.onLikeNoteClick(1, getContext(), TopFeed.this, view, note);
     }
 
     @Override

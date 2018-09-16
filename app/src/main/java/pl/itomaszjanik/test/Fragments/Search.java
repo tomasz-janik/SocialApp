@@ -166,7 +166,7 @@ public class Search extends Fragment implements MaterialSearchBar.OnSearchAction
     public void onLikeClick(View view, Note note){
         currentView = view;
         currentNote = note;
-        Utilities.onLikeNoteClick(getContext(), Search.this, view, note);
+        Utilities.onLikeNoteClick(1, getContext(), Search.this, view, note);
     }
 
     @Override

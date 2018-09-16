@@ -1,6 +1,8 @@
 package pl.itomaszjanik.test.Fragments;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -20,11 +22,15 @@ import org.parceler.Parcels;
 import pl.itomaszjanik.test.*;
 import pl.itomaszjanik.test.BottomPopup.BottomPopup;
 import pl.itomaszjanik.test.Posts.*;
+import pl.itomaszjanik.test.Remote.GenerateIDCallback;
 
 import java.util.List;
 
 public class ItemFeed extends Fragment implements ReactNoteCallback, NoteClickListener, GetPostsCallback,
-        UpdatePostCallback, OnEndScrolled, NoteNoMoreClickListener, SwipeRefreshLayout.OnRefreshListener {
+        UpdatePostCallback, OnEndScrolled, NoteNoMoreClickListener, GenerateIDCallback, SwipeRefreshLayout.OnRefreshListener {
+
+    private static final int GEN_LOAD = 0;
+    private static final int GEN_REACT = 1;
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
@@ -36,8 +42,11 @@ public class ItemFeed extends Fragment implements ReactNoteCallback, NoteClickLi
     private boolean loading = true;
     private int page = 0;
 
+    private int userID;
+
     private RelativeLayout refreshLayout;
     private BottomPopup bottomPopup;
+    private SharedPreferences sharedPreferences;
 
     public ItemFeed(){
     }
@@ -185,7 +194,14 @@ public class ItemFeed extends Fragment implements ReactNoteCallback, NoteClickLi
     public void onLikeClick(View view, Note note){
         currentView = view;
         currentNote = note;
-        Utilities.onLikeNoteClick(getContext(), ItemFeed.this, view, note);
+
+        int userID = sharedPreferences.getInt("userID",0);
+        if (userID == 0){
+            Utilities.generateID(GEN_REACT, this, getContext());
+        }
+        else{
+            Utilities.onLikeNoteClick(userID, getContext(), ItemFeed.this, view, note);
+        }
     }
 
     @Override
@@ -210,6 +226,49 @@ public class ItemFeed extends Fragment implements ReactNoteCallback, NoteClickLi
     public void updatePostFailed(){ }
 
     @Override
+    public void onGenerateSuccess(String username, int userID, int task){
+        this.userID = userID;
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("username", username);
+        editor.putInt("userID", userID);
+        editor.apply();
+
+        switch (task){
+            case GEN_LOAD:
+                getPosts();
+                break;
+            case GEN_REACT:
+                onLikeClick(currentView, currentNote);
+                break;
+        }
+    }
+
+    @Override
+    public void onGenerateFailed(int task){
+        switch (task){
+            case GEN_LOAD:
+                getPostFailed();
+                break;
+            case GEN_REACT:
+                reactNoteLikeFailed();
+                break;
+        }
+    }
+
+    @Override
+    public void onGenerateNoInternet(int task){
+        switch (task){
+            case GEN_LOAD:
+                getPostNoInternet();
+                break;
+            case GEN_REACT:
+                reactNoteNoInternet();
+                break;
+        }
+    }
+
+    @Override
     public void onRefreshClick(){
         recyclerView.smoothScrollToPosition(0);
         loading = false;
@@ -230,6 +289,9 @@ public class ItemFeed extends Fragment implements ReactNoteCallback, NoteClickLi
         initRecyclerView(view);
         initRefreshLayout(view);
         initSwipeRefreshLayout(view);
+
+        sharedPreferences = getContext().getSharedPreferences(Values.SHARED_PREFERENCES, Context.MODE_PRIVATE);
+        userID = sharedPreferences.getInt("userID", 0);
     }
 
     private void initSwipeRefreshLayout(View view){
@@ -289,7 +351,13 @@ public class ItemFeed extends Fragment implements ReactNoteCallback, NoteClickLi
     }
 
     private void getPosts(){
-        Utilities.getPosts(1, page, this, getContext());
+        //this means that user is not signed and also has no ID
+        if (userID == 0){
+            Utilities.generateID(GEN_LOAD,this, getContext());
+        }
+        else{
+            Utilities.getPosts(userID, page, this, getContext());
+        }
     }
 
 }

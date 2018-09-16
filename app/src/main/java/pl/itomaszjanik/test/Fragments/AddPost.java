@@ -1,5 +1,7 @@
 package pl.itomaszjanik.test.Fragments;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.KeyEvent;
@@ -219,17 +221,22 @@ public class AddPost extends Fragment {
                             getString(R.string.add_empty_tags), bottomPopup);
                 }
                 else{
+                    SharedPreferences sharedPreferences = getContext().getSharedPreferences(Values.SHARED_PREFERENCES, Context.MODE_PRIVATE);
                     DateTime dateTime = new DateTime();
                     String time = dateTime.toString("yyyy-MM-dd HH:mm:ss");
-
-                    sendPost("admin", time, mContent.getText().toString(), hashesh, 0);
+                    if (sharedPreferences.getBoolean("signed", false)){
+                        sendPost(sharedPreferences.getString("username", "Anonim"), time, mContent.getText().toString(), hashesh);
+                    }
+                    else{
+                        sendPost("Anonim", time, mContent.getText().toString(), hashesh);
+                    }
                 }
             }
         });
     }
 
 
-    private void sendPost(String username, String date, String content, String hashesh, int comment) {
+    private void sendPost(String username, String date, String content, String hashesh) {
         if (!Utilities.isNetworkAvailable(getContext())){
             bottomPopup = Utilities.getBottomPopupText(getContext(),
                     R.layout.bottom_popup_text, R.id.bottom_popup_text,
@@ -237,7 +244,7 @@ public class AddPost extends Fragment {
             return;
         }
 
-        postService.savePost(username, date, content, hashesh, comment).enqueue(new Callback<Note>() {
+        postService.savePost(username, date, content, hashesh).enqueue(new Callback<Note>() {
             @Override
             public void onResponse(Call<Note> call, Response<Note> response) {
                 //Toast.makeText(getContext(), ":)", Toast.LENGTH_SHORT).show();

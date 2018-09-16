@@ -251,7 +251,7 @@ public class NoteDetailsActivity extends Activity implements ReactNoteCallback, 
 
     @Override
     public void onNoteLikeClick(View view, Note note){
-        Utilities.onLikeNoteClick(this, this, view, note);
+        Utilities.onLikeNoteClick(1, this, this, view, note);
     }
 
     @Override

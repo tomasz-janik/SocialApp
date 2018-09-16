@@ -44,23 +44,23 @@ import java.util.List;
 
 public class Utilities {
 
-    public static void onLikeNoteClick(Context context, ReactNoteCallback callback, View view, Note note){
+    public static void onLikeNoteClick(int userID, Context context, ReactNoteCallback callback, View view, Note note){
         if (isNetworkAvailable(context)){
-            Utilities.reactNoteCall(callback, view, note);
+            Utilities.reactNoteCall(userID, callback, view, note);
         }
         else{
             callback.reactNoteNoInternet();
         }
     }
 
-    private static void reactNoteCall(final ReactNoteCallback callback, final View view, final Note note){
+    private static void reactNoteCall(int userID, final ReactNoteCallback callback, final View view, final Note note){
         PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
         Call<ResponseBody> call;
         if (note.getLiked()){
-            call = service.unlikePost(note.getId(), 1);
+            call = service.unlikePost(note.getId(), userID);
         }
         else{
-            call = service.likePost(note.getId(), 1);
+            call = service.likePost(note.getId(), userID);
         }
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -236,10 +236,10 @@ public class Utilities {
         }
     }
 
-    public static void getPostsProfile(int userID, int page, final GetPostsCallback callback, Context context){
+    public static void getPostsProfile(int userID, String username, int page, final GetPostsCallback callback, Context context){
         if (isNetworkAvailable(context)){
             PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
-            service.getPostsProfile(userID, page).enqueue(new Callback<List<Note>>() {
+            service.getPostsProfile(userID, username, page).enqueue(new Callback<List<Note>>() {
                 @Override
                 public void onResponse(@Nullable Call<List<Note>> call, @Nullable Response<List<Note>> response) {
                     if (response != null && response.isSuccessful()){
@@ -429,24 +429,30 @@ public class Utilities {
         });
     }
 
-    public static void register(String username, String password, final RegisterCallback registerCallback, Context context){
+    public static void register(final String username, String password, final RegisterCallback registerCallback, final Context context){
         if (isNetworkAvailable(context)){
             PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
             service.register(username, password).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(@Nullable Call<ResponseBody> call, @Nullable Response<ResponseBody> response) {
                     if (response != null && response.body() != null && response.isSuccessful()){
-                        String output = response.body().toString();
-                        switch (output){
-                            case "success":
-                                registerCallback.onRegisterSucceeded();
-                                break;
-                            case "as":
-                                registerCallback.onRegisterNotUnique();
-                                break;
-                            default:
-                                registerCallback.onRegisterFailed();
-                                break;
+                        String output;
+                        try{
+                            output = response.body().string();
+                        }
+                        catch (Exception e){
+                            output = "";
+                        }
+
+                        if (output.startsWith("success")){
+                            int userID = Integer.valueOf(output.substring(7));
+                            registerCallback.onRegisterSucceeded(username, userID);
+                        }
+                        else if (output.equals("not unique")){
+                            registerCallback.onRegisterNotUnique();
+                        }
+                        else{
+                            registerCallback.onRegisterFailed();
                         }
                     }
                     else{
@@ -462,6 +468,90 @@ public class Utilities {
         }
         else{
             registerCallback.onRegisterNoInternet();
+        }
+    }
+
+    public static void login(final String username, String password, final LoginCallback loginCallback, final Context context){
+        if (isNetworkAvailable(context)){
+            PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
+            service.login(username, password).enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(@Nullable Call<ResponseBody> call, @Nullable Response<ResponseBody> response) {
+                    if (response != null && response.body() != null && response.isSuccessful()){
+                        String output;
+                        try{
+                            output = response.body().string();
+                        }
+                        catch (Exception e){
+                            output = "";
+                        }
+
+                        if (output.startsWith("success")){
+                            int userID = Integer.valueOf(output.substring(7));
+                            loginCallback.onLoginSucceeded(username, userID);
+                        }
+                        else if (output.equals("error")){
+                            loginCallback.onLoginWrongPassword();
+                        }
+                        else{
+                            loginCallback.onLoginFailed();
+                        }
+                    }
+                    else{
+                        loginCallback.onLoginFailed();
+                    }
+                }
+
+                @Override
+                public void onFailure(@Nullable Call<ResponseBody> call, @Nullable Throwable t) {
+                    loginCallback.onLoginFailed();
+                }
+            });
+        }
+        else{
+            loginCallback.onLoginNoInternet();
+        }
+    }
+
+    public static void generateID(final int task, final GenerateIDCallback generateIDCallback, final Context context){
+        if (isNetworkAvailable(context)){
+            PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
+            service.generateID().enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(@Nullable Call<ResponseBody> call, @Nullable Response<ResponseBody> response) {
+                    if (response != null && response.body() != null && response.isSuccessful()){
+                        String output;
+                        try{
+                            output = response.body().string();
+                        }
+                        catch (Exception e){
+                            output = "";
+                        }
+
+                        if (output.startsWith("success")){
+                            int userID = Integer.valueOf(output.substring(7));
+                            generateIDCallback.onGenerateSuccess(output.substring(0, 6), userID, task);
+                        }
+                        else if (output.equals("error")){
+                            generateIDCallback.onGenerateFailed(task);
+                        }
+                        else{
+                            generateIDCallback.onGenerateFailed(task);
+                        }
+                    }
+                    else{
+                        generateIDCallback.onGenerateFailed(task);
+                    }
+                }
+
+                @Override
+                public void onFailure(@Nullable Call<ResponseBody> call, @Nullable Throwable t) {
+                    generateIDCallback.onGenerateFailed(task);
+                }
+            });
+        }
+        else{
+            generateIDCallback.onGenerateNoInternet(task);
         }
     }
 

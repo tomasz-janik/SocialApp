@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
@@ -29,6 +30,7 @@ public class ProfileSigned extends Fragment implements NoteClickListener, GetPos
     private BottomPopup bottomPopup;
     private RecyclerView recyclerView;
     private NoteAdapter mNoteAdapter;
+    private CardView nonePosts;
 
     private Note currentNote;
     private View currentView;
@@ -36,6 +38,8 @@ public class ProfileSigned extends Fragment implements NoteClickListener, GetPos
     private boolean started = false;
     private boolean loading = true;
     private int page = 0;
+
+    private SharedPreferences sharedPreferences;
 
     public ProfileSigned() {
     }
@@ -59,6 +63,12 @@ public class ProfileSigned extends Fragment implements NoteClickListener, GetPos
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         init(view);
+        Bundle bundle = getArguments();
+        if (bundle != null){
+            if (bundle.getBoolean("refresh", false)){
+                getPosts();
+            }
+        }
     }
 
 
@@ -73,6 +83,8 @@ public class ProfileSigned extends Fragment implements NoteClickListener, GetPos
     @Override
     public void getPostSucceeded(List<Note> list){
         if (isAdded()){
+            nonePosts.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
             if (list.size() != 0){
                 if (loading){
                     mNoteAdapter.insert(list);
@@ -83,8 +95,8 @@ public class ProfileSigned extends Fragment implements NoteClickListener, GetPos
                     mNoteAdapter.insert(list);
                 }
             }
-            else{
-                mNoteAdapter.insertNull();
+            else if (mNoteAdapter.getItemCount() == 0){
+                nonePosts.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -172,7 +184,7 @@ public class ProfileSigned extends Fragment implements NoteClickListener, GetPos
     public void onLikeClick(View view, Note note){
         currentView = view;
         currentNote = note;
-        Utilities.onLikeNoteClick(getContext(), ProfileSigned.this, view, note);
+        Utilities.onLikeNoteClick(1, getContext(), ProfileSigned.this, view, note);
     }
 
     @Override
@@ -215,6 +227,10 @@ public class ProfileSigned extends Fragment implements NoteClickListener, GetPos
 
 
     private void init(View view){
+        nonePosts = view.findViewById(R.id.posts_none);
+
+        sharedPreferences = getContext().getSharedPreferences(Values.SHARED_PREFERENCES, Context.MODE_PRIVATE);
+
         initRecyclerView(view);
     }
 
@@ -236,19 +252,21 @@ public class ProfileSigned extends Fragment implements NoteClickListener, GetPos
         recyclerView.setAdapter(mNoteAdapter);
     }
 
-    public void loadPosts(){
-        if (!started){
-            Utilities.getPostsProfile(1, page, this, getContext());
+    void loadPosts(){
+        if (!started && isAdded()){
+            Utilities.getPostsProfile(sharedPreferences.getInt("userID", 0), sharedPreferences.getString("username", "a"),
+                    page, this, getContext());
             started = true;
         }
     }
 
-    public boolean getStarted(){
+    boolean getStarted(){
         return started;
     }
 
     private void getPosts(){
-        Utilities.getPostsProfile(1, page, this, getContext());
+        Utilities.getPostsProfile(sharedPreferences.getInt("userID", 0), sharedPreferences.getString("username", "a"),
+                page, this, getContext());
     }
 
 }

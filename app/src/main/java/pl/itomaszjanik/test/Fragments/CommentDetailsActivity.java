@@ -1,7 +1,9 @@
 package pl.itomaszjanik.test.Fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -21,13 +23,19 @@ import pl.itomaszjanik.test.BottomPopup.BottomPopup;
 import pl.itomaszjanik.test.Comments.*;
 import pl.itomaszjanik.test.EllipsisPopup.EllipsisPopup;
 import pl.itomaszjanik.test.EllipsisPopup.EllipsisPopupListener;
+import pl.itomaszjanik.test.Remote.GenerateIDCallback;
 import pl.itomaszjanik.test.Replays.*;
 import pl.itomaszjanik.test.Replays.ReplaysFooterClickListener;
 
 import java.util.List;
 
 public class CommentDetailsActivity extends Activity implements ReactCommentsCallback, ReplayCommentCallback,
-        GetReplaysCallback, ReactReplayCallback, CommentClickListener, ReplaysFooterClickListener, OnEndScrolled {
+        GetReplaysCallback, ReactReplayCallback, CommentClickListener, ReplaysFooterClickListener,
+        GenerateIDCallback, OnEndScrolled {
+
+    private static final int GEN_LOAD = 0;
+    private static final int GEN_REACT_COMMENT = 1;
+    private static final int GEN_REACT_REPLAY = 2;
 
     private Note note;
     private Comment comment;
@@ -39,10 +47,15 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
 
     private ReplayAdapter mCommentAdapter;
     private RecyclerView recyclerView;
-    private LinearLayoutManager mLayoutManager;
+
+    private View currentReplayView, currentCommentView;
+    private Replay currentReplay;
 
     private boolean loading = true;
     private int page = 0;
+
+    private SharedPreferences sharedPreferences;
+    private int userID;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -129,7 +142,6 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
         mCommentAdapter.insertFooter();
         comment.incrementReplays();
         updateReplaysNumber();
-        //recyclerView.smoothScrollToPosition(mCommentAdapter.getItemCount());
     }
 
     @Override
@@ -222,7 +234,13 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
 
     @Override
     public void onCommentLikeClick(View view, Comment comment){
-        Utilities.onLikeCommentClick(CommentDetailsActivity.this, CommentDetailsActivity.this, view, comment);
+        currentCommentView = view;
+        if (userID == 0){
+            Utilities.generateID(GEN_REACT_COMMENT, this, this);
+        }
+        else{
+            Utilities.onLikeCommentClick(this, this, view, comment);
+        }
     }
 
     @Override
@@ -256,6 +274,55 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
                 R.id.bottom_popup_text, getString(R.string.loading), bottomPopup);
         Bitmap screenshot = Utilities.getBitmapComment(this, note, comment);
         Utilities.share(screenshot, this);
+    }
+
+    @Override
+    public void onGenerateSuccess(String username, int userID, int task){
+        this.userID = userID;
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("username", username);
+        editor.putInt("userID", userID);
+        editor.apply();
+
+        switch (task){
+            case GEN_LOAD:
+                getReplays();
+                break;
+            case GEN_REACT_COMMENT:
+                onCommentLikeClick(currentCommentView, comment);
+                break;
+            case GEN_REACT_REPLAY:
+                Utilities.onLikeReplayClick(this, this, currentReplayView, currentReplay);
+                break;
+        }
+    }
+
+    @Override
+    public void onGenerateFailed(int task){
+        switch (task){
+            case GEN_LOAD:
+
+                break;
+            case GEN_REACT_COMMENT:
+                break;
+            case GEN_REACT_REPLAY:
+                break;
+        }
+    }
+
+    @Override
+    public void onGenerateNoInternet(int task){
+        switch (task){
+            case GEN_LOAD:
+
+                break;
+            case GEN_REACT_COMMENT:
+
+                break;
+            case GEN_REACT_REPLAY:
+                break;
+        }
     }
 
     @Override
@@ -303,12 +370,15 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
     private void init(boolean replay){
         initInput(replay);
         initListeners();
+
+        sharedPreferences = getSharedPreferences(Values.SHARED_PREFERENCES, Context.MODE_PRIVATE);
+        userID = sharedPreferences.getInt("userID", 0);
     }
 
     private void initRecyclerView(){
         recyclerView = findViewById(R.id.comment_details_comments_recycler_view);
 
-        mLayoutManager = new LinearLayoutManager(CommentDetailsActivity.this);
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager(CommentDetailsActivity.this);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.getItemAnimator().setChangeDuration(0);
         initCommentAdapter();
@@ -326,9 +396,17 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
             public void onItemClick(View v, Replay replay){}
 
             @Override
-            public void onLikeClick(View v, Replay comment){
-                Utilities.onLikeReplayClick(CommentDetailsActivity.this, CommentDetailsActivity.this,
-                        v, comment);
+            public void onLikeClick(View v, Replay replay){
+                currentReplayView = v;
+                currentReplay = replay;
+                if (userID == 0){
+                    Utilities.generateID(GEN_REACT_REPLAY, CommentDetailsActivity.this,
+                            CommentDetailsActivity.this);
+                }
+                else{
+                    Utilities.onLikeReplayClick(CommentDetailsActivity.this, CommentDetailsActivity.this,
+                            v, replay);
+                }
             }
 
             @Override
@@ -381,6 +459,8 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
 
 
     private void initListeners(){
+        final SharedPreferences sharedPreferences = getSharedPreferences(Values.SHARED_PREFERENCES, Context.MODE_PRIVATE);
+
         findViewById(R.id.comment_details_button_back).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -416,10 +496,16 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
                     Utilities.hideKeyboard(CommentDetailsActivity.this);
                     int checkComment = Utilities.checkComment(input.getText().toString());
                     if (checkComment > 0){
-                        DateTime dateTime = new DateTime();
-                        String time = dateTime.toString("yyyy-MM-dd HH:mm:ss");
-                        Utilities.replayComment(comment.getCommentID(), 1, "admin",
-                                time, input.getText().toString(), CommentDetailsActivity.this, CommentDetailsActivity.this);
+                        if (sharedPreferences.getBoolean("signed", false)){
+                            DateTime dateTime = new DateTime();
+                            String time = dateTime.toString("yyyy-MM-dd HH:mm:ss");
+                            Utilities.replayComment(comment.getCommentID(), userID, sharedPreferences.getString("username", "Anonim"),
+                                    time, input.getText().toString(), CommentDetailsActivity.this, CommentDetailsActivity.this);
+                        }
+                        else{
+                            bottomPopup = Utilities.getBottomPopupLogin(CommentDetailsActivity.this,
+                                    R.layout.bottom_popup_text, bottomPopup);
+                        }
                     }
                     else{
                         bottomPopup = Utilities.errorComment(checkComment, CommentDetailsActivity.this, bottomPopup);
@@ -444,8 +530,12 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
     }
 
     private void getReplays(){
-        Utilities.getReplays(1, comment.getCommentID(), page, CommentDetailsActivity.this,
-                CommentDetailsActivity.this);
+        if (userID == 0){
+            Utilities.generateID(GEN_LOAD, this, this);
+        }
+        else{
+            Utilities.getReplays(userID, comment.getCommentID(), page, this, this);
+        }
     }
 
 }

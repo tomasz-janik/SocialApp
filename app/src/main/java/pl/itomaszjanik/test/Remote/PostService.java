@@ -30,8 +30,9 @@ public interface PostService {
 
     @POST("get_posts_profile.php")
     @FormUrlEncoded
-    Call<List<Note>> getPostsProfile(@Field("user_id") int userID,
-                                     @Field("page")    int postID
+    Call<List<Note>> getPostsProfile(@Field("user_id")  int userID,
+                                     @Field("username") String username,
+                                     @Field("page")     int postID
     );
 
     @POST("get_comments_post.php")
@@ -53,8 +54,7 @@ public interface PostService {
     Call<Note> savePost(@Field("username")  String username,
                         @Field("date")      String date,
                         @Field("content")   String content,
-                        @Field("hashesh")   String hashesh,
-                        @Field("comment")   int comment
+                        @Field("tags")      String tags
                         );
 
     @POST("update_post.php")
@@ -134,5 +134,8 @@ public interface PostService {
     Call<ResponseBody> login(@Field("username")   String username,
                              @Field("password")   String password
     );
+
+    @POST("generateID.php")
+    Call<ResponseBody> generateID();
 
 }

@@ -13,7 +13,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import pl.itomaszjanik.test.*;
 
-public class ProfileUnsigned extends Fragment {
+public class ProfileUnsigned extends Fragment implements SwitchLogged{
 
     private static final int VIEW_LOGIN = 0;
     private static final int VIEW_REGISTER = 1;
@@ -21,6 +21,8 @@ public class ProfileUnsigned extends Fragment {
     private int currentPosition = VIEW_LOGIN;
     private RelativeLayout login, register;
     private TextView loginText, registerText;
+    private ProfileUnsignedLogin profileUnsignedLogin;
+    private ProfileUnsignedRegister profileUnsignedRegister;
 
     public ProfileUnsigned() {
     }
@@ -49,6 +51,11 @@ public class ProfileUnsigned extends Fragment {
     @Override
     public void onResume(){
         super.onResume();
+    }
+
+    @Override
+    public void switchLogged(){
+        ((SwitchLogged)getParentFragment()).switchLogged();
     }
 
     private void init(View view){
@@ -91,17 +98,20 @@ public class ProfileUnsigned extends Fragment {
     private void switchFragments(){
         FragmentTransaction mTransaction = getChildFragmentManager().beginTransaction();
         Fragment fragment;
-        switch (currentPosition){
-            case VIEW_LOGIN:
-                fragment = new ProfileUnsignedLogin();
-                break;
-            case VIEW_REGISTER:
-                fragment = new ProfileUnsignedRegister();
-                break;
-            default:
-                fragment = new ProfileUnsignedLogin();
-                break;
+
+        if (currentPosition == VIEW_LOGIN){
+            if (profileUnsignedLogin == null){
+                profileUnsignedLogin = ProfileUnsignedLogin.newInstance();
+            }
+            fragment = profileUnsignedLogin;
         }
+        else{
+            if (profileUnsignedRegister == null){
+                profileUnsignedRegister = ProfileUnsignedRegister.newInstance();
+            }
+            fragment = profileUnsignedRegister;
+        }
+
         mTransaction.replace(R.id.main_fragment, fragment, fragment.getClass().getName());
         mTransaction.commit();
     }

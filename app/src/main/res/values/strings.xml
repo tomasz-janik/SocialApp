@@ -106,6 +106,7 @@
     <string name="posts_refresh">ODŚWIEŻ POSTY</string>
     <string name="no_more_posts">\nNiestety, nie ma już więcej postów\n</string>
     <string name="none_posts">\nNiestety, nie ma takich postów\n</string>
+    <string name="none_posts_user">"\nNie dodałeś jeszcze żadnych postów\n</string>
 
     <string name="facebook_app_id">2084727258218611</string>
     <string name="fb_login_protocol_scheme">fb2084727258218611</string>
@@ -114,5 +115,12 @@
     <string name="register_text">ZAREJESTRUJ</string>
     <string name="register_not_unique">Ten login jest już zajęty!</string>
     <string name="register_failed">Nie udało się zarejestrować\nSpróbuj ponownie później!</string>
+
+    <string name="login_failed">Nie udało się zalogować\nSpróbuj ponownie później!</string>
+    <string name="login_wrong_password">Podane hasło nie pasuje do tego konta!</string>
+
+    <string name="username_too_short">Login musi być dłuższy niż 3 znaki!</string>
+    <string name="password_too_short">Hasło musi być dłuższe niż 5 znaków!</string>
+    <string name="checkbox_not_checked">Musisz zaakceptować regulamin!</string>
 
 </resources>

@@ -119,12 +119,7 @@ public class MainActivity extends AppCompatActivity {
                 case Values.INDEX_TOP:
                     return TopFeed.newInstance();
                 case Values.INDEX_PROFILE:
-                    if (signed){
-                        return ProfileSigned.newInstance();
-                    }
-                    else{
-                        return ProfileUnsigned.newInstance();
-                    }
+                    return Profile.newInstance();
             }
             return null;
         }
@@ -209,7 +204,7 @@ public class MainActivity extends AppCompatActivity {
                 viewPager.setCurrentItem(Values.INDEX_PROFILE, true);
                 searchView.setVisibility(View.GONE);
                 if (signed){
-                    ProfileSigned fragment = (ProfileSigned)testViewPagerAdapter.getCurrentFragment();
+                    Profile fragment = (Profile) testViewPagerAdapter.getCurrentFragment();
                     if (!fragment.getStarted()){
                         fragment.loadPosts();
                     }
