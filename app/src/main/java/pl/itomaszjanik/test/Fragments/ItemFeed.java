@@ -42,11 +42,11 @@ public class ItemFeed extends Fragment implements ReactNoteCallback, NoteClickLi
     private boolean loading = true;
     private int page = 0;
 
-    private int userID;
-
     private RelativeLayout refreshLayout;
     private BottomPopup bottomPopup;
+
     private SharedPreferences sharedPreferences;
+    private int userID;
 
     public ItemFeed(){
     }
@@ -118,6 +118,7 @@ public class ItemFeed extends Fragment implements ReactNoteCallback, NoteClickLi
     @Override
     public void getPostNoInternet(){
         if (isAdded()){
+            mSwipeRefreshLayout.setRefreshing(false);
             bottomPopup = Utilities.getBottomPopupText(getContext(),
                     R.layout.bottom_popup_text, R.id.bottom_popup_text,
                     getString(R.string.no_internet), bottomPopup);

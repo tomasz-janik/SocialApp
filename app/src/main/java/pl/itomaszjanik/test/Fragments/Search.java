@@ -13,8 +13,6 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.util.TypedValue;
 import android.view.*;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -26,6 +24,7 @@ import org.parceler.Parcels;
 import pl.itomaszjanik.test.*;
 import pl.itomaszjanik.test.BottomPopup.BottomPopup;
 import pl.itomaszjanik.test.Posts.*;
+import pl.itomaszjanik.test.Remote.GenerateIDCallback;
 import pl.itomaszjanik.test.Search.DataSuggestion;
 
 import java.util.ArrayList;
@@ -33,11 +32,13 @@ import java.util.List;
 
 public class Search extends Fragment implements MaterialSearchBar.OnSearchActionListener, GetPostsCallback,
         NoteClickListener, OnEndScrolled, ReactNoteCallback, UpdatePostCallback, NoteNoMoreClickListener,
-        FloatingSearchView.OnClearSearchActionListener {
+        GenerateIDCallback, FloatingSearchView.OnClearSearchActionListener {
+
+    private static final int GEN_LOAD = 0;
+    private static final int GEN_REACT = 1;
 
     private NavigationController mNavigationControllerBottom;
     private FloatingSearchView mSearchView;
-    private SharedPreferences preferences;
     private static List<DataSuggestion> suggestions = new ArrayList<>();
 
     private BottomPopup bottomPopup;
@@ -48,6 +49,9 @@ public class Search extends Fragment implements MaterialSearchBar.OnSearchAction
 
     private Note currentNote;
     private View currentView;
+
+    private SharedPreferences sharedPreferences;
+    private int userID;
 
     private int page = 0;
     private boolean loading = false;
@@ -63,26 +67,26 @@ public class Search extends Fragment implements MaterialSearchBar.OnSearchAction
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        int size = preferences.getInt("suggestion_size",0);
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        int size = sharedPreferences.getInt("suggestion_size",0);
 
         if (size == 0){
-            SharedPreferences.Editor editor = preferences.edit();
+            SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putString("suggestion_01", "#krakow");
             editor.putString("suggestion_02", "#warszawa");
             editor.putString("suggestion_03", "#mpk");
             editor.putInt("suggestion_size", 3);
             editor.apply();
             if (suggestions.size() == 0){
-                suggestions.add(new DataSuggestion(preferences.getString("suggestion_03", "#mpk")));
-                suggestions.add(new DataSuggestion(preferences.getString("suggestion_02", "#warszawa")));
-                suggestions.add(new DataSuggestion(preferences.getString("suggestion_01", "#krakow")));
+                suggestions.add(new DataSuggestion(sharedPreferences.getString("suggestion_03", "#mpk")));
+                suggestions.add(new DataSuggestion(sharedPreferences.getString("suggestion_02", "#warszawa")));
+                suggestions.add(new DataSuggestion(sharedPreferences.getString("suggestion_01", "#krakow")));
             }
         }
         else if (suggestions.size() == 0){
-            suggestions.add(new DataSuggestion(preferences.getString("suggestion_01", "#mpk")));
-            suggestions.add(new DataSuggestion(preferences.getString("suggestion_02", "#warszawa")));
-            suggestions.add(new DataSuggestion(preferences.getString("suggestion_03", "#krakow")));
+            suggestions.add(new DataSuggestion(sharedPreferences.getString("suggestion_01", "#mpk")));
+            suggestions.add(new DataSuggestion(sharedPreferences.getString("suggestion_02", "#warszawa")));
+            suggestions.add(new DataSuggestion(sharedPreferences.getString("suggestion_03", "#krakow")));
         }
     }
 
@@ -166,7 +170,14 @@ public class Search extends Fragment implements MaterialSearchBar.OnSearchAction
     public void onLikeClick(View view, Note note){
         currentView = view;
         currentNote = note;
-        Utilities.onLikeNoteClick(1, getContext(), Search.this, view, note);
+        userID = sharedPreferences.getInt("userID", 0);
+
+        if (userID == 0){
+            Utilities.generateID(GEN_REACT, this, getContext());
+        }
+        else{
+            Utilities.onLikeNoteClick(1, getContext(), Search.this, view, note);
+        }
     }
 
     @Override
@@ -238,6 +249,49 @@ public class Search extends Fragment implements MaterialSearchBar.OnSearchAction
     public void updatePostFailed(){ }
 
     @Override
+    public void onGenerateSuccess(String username, int userID, int task){
+        this.userID = userID;
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("username", username);
+        editor.putInt("userID", userID);
+        editor.apply();
+
+        switch (task){
+            case GEN_LOAD:
+                getPosts(search);
+                break;
+            case GEN_REACT:
+                onLikeClick(currentView, currentNote);
+                break;
+        }
+    }
+
+    @Override
+    public void onGenerateFailed(int task){
+        switch (task){
+            case GEN_LOAD:
+                getPostFailed();
+                break;
+            case GEN_REACT:
+                reactNoteLikeFailed();
+                break;
+        }
+    }
+
+    @Override
+    public void onGenerateNoInternet(int task){
+        switch (task){
+            case GEN_LOAD:
+                getPostNoInternet();
+                break;
+            case GEN_REACT:
+                reactNoteNoInternet();
+                break;
+        }
+    }
+
+    @Override
     public void onRefreshClick(){
         recyclerView.smoothScrollToPosition(0);
         loading = false;
@@ -257,6 +311,8 @@ public class Search extends Fragment implements MaterialSearchBar.OnSearchAction
     private void init(View view){
         initSearch();
         initRecyclerView(view);
+
+        userID = sharedPreferences.getInt("userID", 0);
     }
 
     private void initRecyclerView(View view){
@@ -298,12 +354,12 @@ public class Search extends Fragment implements MaterialSearchBar.OnSearchAction
                 }
                 query = "#" + query;
 
-                int size = preferences.getInt("suggestion_size", 0);
+                int size = sharedPreferences.getInt("suggestion_size", 0);
                 if (size == 3){
-                    SharedPreferences.Editor editor = preferences.edit();
-                    String suggestion_03 = preferences.getString("suggestion_03", "");
-                    String suggestion_02 = preferences.getString("suggestion_02", "");
-                    String suggestion_01 = preferences.getString("suggestion_01", "");
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    String suggestion_03 = sharedPreferences.getString("suggestion_03", "");
+                    String suggestion_02 = sharedPreferences.getString("suggestion_02", "");
+                    String suggestion_01 = sharedPreferences.getString("suggestion_01", "");
                     if (query.equals(suggestion_02)){
                         editor.putString("suggestion_03", query);
                         suggestions.get(2).setDataName(query);
@@ -417,7 +473,13 @@ public class Search extends Fragment implements MaterialSearchBar.OnSearchAction
     }
 
     private void getPosts(String search){
-        Utilities.getPostsSearch(1, page, search, this, getContext());
+        userID = sharedPreferences.getInt("userID", 0);
+        if (userID == 0){
+            Utilities.generateID(GEN_LOAD, this, getContext());
+        }
+        else{
+            Utilities.getPostsSearch(userID, page, search, this, getContext());
+        }
     }
 
 

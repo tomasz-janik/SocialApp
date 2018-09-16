@@ -235,6 +235,7 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
     @Override
     public void onCommentLikeClick(View view, Comment comment){
         currentCommentView = view;
+        userID = sharedPreferences.getInt("userID", 0);
         if (userID == 0){
             Utilities.generateID(GEN_REACT_COMMENT, this, this);
         }
@@ -302,11 +303,13 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
     public void onGenerateFailed(int task){
         switch (task){
             case GEN_LOAD:
-
+                getReplayFailed();
                 break;
             case GEN_REACT_COMMENT:
+                reactCommentLikeFailed();
                 break;
             case GEN_REACT_REPLAY:
+                reactReplayLikeFailed();
                 break;
         }
     }
@@ -315,12 +318,13 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
     public void onGenerateNoInternet(int task){
         switch (task){
             case GEN_LOAD:
-
+                getReplayNoInternet();
                 break;
             case GEN_REACT_COMMENT:
-
+                reactCommentNoInternet();
                 break;
             case GEN_REACT_REPLAY:
+                reactReplayNoInternet();
                 break;
         }
     }
@@ -492,15 +496,20 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
             @Override
             public void onClick(View view) {
                 if (input != null){
-                    input.clearFocus();
-                    Utilities.hideKeyboard(CommentDetailsActivity.this);
                     int checkComment = Utilities.checkComment(input.getText().toString());
+
                     if (checkComment > 0){
+                        input.clearFocus();
+                        Utilities.hideKeyboard(CommentDetailsActivity.this);
+
                         if (sharedPreferences.getBoolean("signed", false)){
                             DateTime dateTime = new DateTime();
                             String time = dateTime.toString("yyyy-MM-dd HH:mm:ss");
-                            Utilities.replayComment(comment.getCommentID(), userID, sharedPreferences.getString("username", "Anonim"),
-                                    time, input.getText().toString(), CommentDetailsActivity.this, CommentDetailsActivity.this);
+                            userID = sharedPreferences.getInt("userID", 0);
+
+                            Utilities.replayComment(comment.getCommentID(), userID,
+                                    sharedPreferences.getString("username", "Anonim"), time, input.getText().toString(),
+                                    CommentDetailsActivity.this, CommentDetailsActivity.this);
                         }
                         else{
                             bottomPopup = Utilities.getBottomPopupLogin(CommentDetailsActivity.this,

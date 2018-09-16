@@ -1,6 +1,8 @@
 package pl.itomaszjanik.test.Fragments;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -22,17 +24,23 @@ import pl.itomaszjanik.test.*;
 import pl.itomaszjanik.test.BottomPopup.BottomPopup;
 import pl.itomaszjanik.test.ExtendedComponents.TextViewClickable;
 import pl.itomaszjanik.test.Posts.*;
+import pl.itomaszjanik.test.Remote.GenerateIDCallback;
 
 import java.util.List;
 
 public class TopFeed extends Fragment implements ReactNoteCallback, NoteClickListener, GetPostsCallback,
-        UpdatePostCallback, OnEndScrolled, NoteNoMoreClickListener, SwipeRefreshLayout.OnRefreshListener {
+        UpdatePostCallback, OnEndScrolled, NoteNoMoreClickListener,
+        GenerateIDCallback, SwipeRefreshLayout.OnRefreshListener {
 
     private static final String TYPE_DAILY = "get_posts_top_daily.php";
     private static final String TYPE_WEEKLY = "get_posts_top_weekly.php";
     private static final String TYPE_MONTHLY = "get_posts_top_monthly.php";
     private static final String TYPE_ALL = "get_posts_top_all.php";
     private static final String TYPE_COMMENTED = "get_posts_top_daily.php";
+
+    private static final int GEN_LOAD = 0;
+    private static final int GEN_START = 1;
+    private static final int GEN_REACT = 2;
 
     private String TYPE_CURRENT = TYPE_DAILY;
 
@@ -55,6 +63,9 @@ public class TopFeed extends Fragment implements ReactNoteCallback, NoteClickLis
 
     private RelativeLayout refreshLayout;
     private BottomPopup bottomPopup;
+
+    private SharedPreferences sharedPreferences;
+    private int userID;
 
     public TopFeed(){
     }
@@ -144,6 +155,7 @@ public class TopFeed extends Fragment implements ReactNoteCallback, NoteClickLis
     @Override
     public void getPostNoInternet(){
         if (isAdded()){
+            mSwipeRefreshLayout.setRefreshing(false);
             bottomPopup = Utilities.getBottomPopupText(getContext(),
                     R.layout.bottom_popup_text, R.id.bottom_popup_text,
                     getString(R.string.no_internet), bottomPopup);
@@ -222,7 +234,14 @@ public class TopFeed extends Fragment implements ReactNoteCallback, NoteClickLis
     public void onLikeClick(View view, Note note){
         currentView = view;
         currentNote = note;
-        Utilities.onLikeNoteClick(1, getContext(), TopFeed.this, view, note);
+        userID = sharedPreferences.getInt("userID", 0);
+
+        if (userID == 0){
+            Utilities.generateID(GEN_REACT, this, getContext());
+        }
+        else{
+            Utilities.onLikeNoteClick(userID, getContext(), TopFeed.this, view, note);
+        }
     }
 
     @Override
@@ -245,6 +264,58 @@ public class TopFeed extends Fragment implements ReactNoteCallback, NoteClickLis
 
     @Override
     public void updatePostFailed(){ }
+
+    @Override
+    public void onGenerateSuccess(String username, int userID, int task){
+        this.userID = userID;
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("username", username);
+        editor.putInt("userID", userID);
+        editor.apply();
+
+        switch (task){
+            case GEN_LOAD:
+                getPosts(TYPE_CURRENT);
+                break;
+            case GEN_START:
+                loadPosts();
+                break;
+            case GEN_REACT:
+                onLikeClick(currentView, currentNote);
+                break;
+        }
+    }
+
+    @Override
+    public void onGenerateFailed(int task){
+        switch (task){
+            case GEN_LOAD:
+                getPostFailed();
+                break;
+            case GEN_START:
+                getPostFailed();
+                break;
+            case GEN_REACT:
+                reactNoteLikeFailed();
+                break;
+        }
+    }
+
+    @Override
+    public void onGenerateNoInternet(int task){
+        switch (task){
+            case GEN_LOAD:
+                getPostNoInternet();
+                break;
+            case GEN_START:
+                getPostNoInternet();
+                break;
+            case GEN_REACT:
+                reactNoteNoInternet();
+                break;
+        }
+    }
 
     @Override
     public void onRefreshClick(){
@@ -343,6 +414,9 @@ public class TopFeed extends Fragment implements ReactNoteCallback, NoteClickLis
         initRecyclerView(view);
         initRefreshLayout(view);
         initSwipeRefreshLayout(view);
+
+        sharedPreferences = getContext().getSharedPreferences(Values.SHARED_PREFERENCES, Context.MODE_PRIVATE);
+        userID = sharedPreferences.getInt("userID", 0);
     }
 
     private void initSwipeRefreshLayout(View view){
@@ -393,7 +467,14 @@ public class TopFeed extends Fragment implements ReactNoteCallback, NoteClickLis
 
     public void loadPosts(){
         if (!started){
-            Utilities.getPostsTop(1, page, TYPE_CURRENT, this, getContext());
+            userID = sharedPreferences.getInt("userID", 0);
+
+            if (userID == 0){
+                Utilities.generateID(GEN_START, this, getContext());
+            }
+            else{
+                Utilities.getPostsTop(userID, page, TYPE_CURRENT, this, getContext());
+            }
             mSwipeRefreshLayout.setRefreshing(true);
             started = true;
         }
@@ -404,7 +485,13 @@ public class TopFeed extends Fragment implements ReactNoteCallback, NoteClickLis
     }
 
     private void getPosts(String type){
-        Utilities.getPostsTop(1, page, type, this, getContext());
+        userID = sharedPreferences.getInt("userID", 0);
+        if (userID == 0){
+            Utilities.generateID(GEN_LOAD, this, getContext());
+        }
+        else{
+            Utilities.getPostsTop(userID, page, type, this, getContext());
+        }
     }
 
 }

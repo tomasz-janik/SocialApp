@@ -1,7 +1,9 @@
 package pl.itomaszjanik.test.Fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -22,31 +24,35 @@ import pl.itomaszjanik.test.EllipsisPopup.EllipsisPopup;
 import pl.itomaszjanik.test.EllipsisPopup.EllipsisPopupListener;
 import pl.itomaszjanik.test.Posts.NoteDetailsClickListener;
 import pl.itomaszjanik.test.Posts.ReactNoteCallback;
+import pl.itomaszjanik.test.Remote.GenerateIDCallback;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static pl.itomaszjanik.test.Utilities.hideKeyboard;
-
 public class NoteDetailsActivity extends Activity implements ReactNoteCallback, CommentPostCallback, GetCommentsCallback,
-        ReactCommentsCallback, UpdateCommentCallback, NoteDetailsClickListener, OnEndScrolled,
+        ReactCommentsCallback, UpdateCommentCallback, NoteDetailsClickListener, OnEndScrolled, GenerateIDCallback,
         CommentClickListener, CommentsFooterClickListener, SwipeRefreshLayout.OnRefreshListener{
+
+    private static final int GEN_LOAD = 0;
+    private static final int GEN_REACT_POST = 1;
+    private static final int GEN_REACT_COMMENT = 2;
 
     private Note note;
     private EditText input;
     private BottomPopup bottomPopup;
     private EllipsisPopup ellipsisPopup;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
 
-    private LinearLayoutManager mLayoutManager;
     private int page;
 
     private Comment currentComment;
-    private View currentView;
+    private View currentCommentView, currentNoteView;
 
     private RecyclerView recyclerView;
     private CommentAdapter mCommentAdapter;
     private boolean loading = true;
+
+    private SharedPreferences sharedPreferences;
+    private int userID;
 
     private List<Comment> comments = new ArrayList<>();
 
@@ -63,7 +69,6 @@ public class NoteDetailsActivity extends Activity implements ReactNoteCallback, 
             }
         }
 
-        //prepareView();
         init();
         initListeners();
         initRecyclerView();
@@ -228,17 +233,17 @@ public class NoteDetailsActivity extends Activity implements ReactNoteCallback, 
 
     @Override
     public void updateCommentSucceeded(Comment comment){
-        if (currentView != null){
+        if (currentCommentView != null){
             currentComment.setLiked(comment.getLiked());
             currentComment.setLikes(comment.getLikes());
             currentComment.setReplays(comment.getReplays());
-            ((TextView)currentView.findViewById(R.id.comment_item_replays)).setText(String.valueOf(comment.getReplays()));
-            ((TextView)currentView.findViewById(R.id.comment_like_number)).setText(String.valueOf(comment.getLikes()));
+            ((TextView)currentCommentView.findViewById(R.id.comment_item_replays)).setText(String.valueOf(comment.getReplays()));
+            ((TextView)currentCommentView.findViewById(R.id.comment_like_number)).setText(String.valueOf(comment.getLikes()));
             if (comment.getLiked()){
-                ((TextView)(currentView.findViewById(R.id.comment_like_text))).setTextColor(Color.BLUE);
+                ((TextView)(currentCommentView.findViewById(R.id.comment_like_text))).setTextColor(Color.BLUE);
             }
             else{
-                ((TextView)(currentView.findViewById(R.id.comment_like_text))).setTextColor(Color.parseColor("#747474"));
+                ((TextView)(currentCommentView.findViewById(R.id.comment_like_text))).setTextColor(Color.parseColor("#747474"));
             }
         }
     }
@@ -251,7 +256,15 @@ public class NoteDetailsActivity extends Activity implements ReactNoteCallback, 
 
     @Override
     public void onNoteLikeClick(View view, Note note){
-        Utilities.onLikeNoteClick(1, this, this, view, note);
+        currentNoteView = view;
+        userID = sharedPreferences.getInt("userID", 0);
+
+        if (userID == 0){
+            Utilities.generateID(GEN_REACT_POST, this, this);
+        }
+        else{
+            Utilities.onLikeNoteClick(userID, this, this, view, note);
+        }
     }
 
     @Override
@@ -300,7 +313,7 @@ public class NoteDetailsActivity extends Activity implements ReactNoteCallback, 
         data.putParcelable("comment", Parcels.wrap(comment));
         data.putParcelable("note", Parcels.wrap(note));
 
-        currentView = v;
+        currentCommentView = v;
         currentComment = comment;
 
         Intent intent = new Intent(getApplication(), CommentDetailsActivity.class);
@@ -311,7 +324,15 @@ public class NoteDetailsActivity extends Activity implements ReactNoteCallback, 
 
     @Override
     public void onCommentLikeClick(View v, Comment comment){
-        Utilities.onLikeCommentClick(NoteDetailsActivity.this, NoteDetailsActivity.this, v, comment);
+        currentCommentView = v;
+        currentComment = comment;
+        userID = sharedPreferences.getInt("userID", 0);
+        if (userID == 0){
+            Utilities.generateID(GEN_REACT_COMMENT, this, this);
+        }
+        else{
+            Utilities.onLikeCommentClick(this, this, v, comment);
+        }
     }
 
     @Override
@@ -320,7 +341,7 @@ public class NoteDetailsActivity extends Activity implements ReactNoteCallback, 
         data.putParcelable("comment", Parcels.wrap(comment));
         data.putParcelable("note", Parcels.wrap(note));
 
-        currentView = v;
+        currentCommentView = v;
         currentComment = comment;
 
         Intent intent = new Intent(getApplication(), CommentDetailsActivity.class);
@@ -355,6 +376,58 @@ public class NoteDetailsActivity extends Activity implements ReactNoteCallback, 
     }
 
     @Override
+    public void onGenerateSuccess(String username, int userID, int task){
+        this.userID = userID;
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("username", username);
+        editor.putInt("userID", userID);
+        editor.apply();
+
+        switch (task){
+            case GEN_LOAD:
+                getComments();
+                break;
+            case GEN_REACT_POST:
+                onNoteLikeClick(currentNoteView, note);
+                break;
+            case GEN_REACT_COMMENT:
+                onCommentLikeClick(currentCommentView, currentComment);
+                break;
+        }
+    }
+
+    @Override
+    public void onGenerateFailed(int task){
+        switch (task){
+            case GEN_LOAD:
+                getCommentFailed();
+                break;
+            case GEN_REACT_POST:
+                reactNoteLikeFailed();
+                break;
+            case GEN_REACT_COMMENT:
+                reactCommentLikeFailed();
+                break;
+        }
+    }
+
+    @Override
+    public void onGenerateNoInternet(int task){
+        switch (task){
+            case GEN_LOAD:
+                getCommentNoInternet();
+                break;
+            case GEN_REACT_POST:
+                reactNoteNoInternet();
+                break;
+            case GEN_REACT_COMMENT:
+                reactCommentNoInternet();
+                break;
+        }
+    }
+
+    @Override
     public void onEnd(){
         if (mCommentAdapter.getItemCount() < note.getComments() + 3){
             if (!loading){
@@ -367,35 +440,13 @@ public class NoteDetailsActivity extends Activity implements ReactNoteCallback, 
 
     private void init(){
         initInput();
+
+        sharedPreferences = getSharedPreferences(Values.SHARED_PREFERENCES, Context.MODE_PRIVATE);
+        userID = sharedPreferences.getInt("userID", 0);
     }
 
     private void initInput(){
-
         input = findViewById(R.id.comment_insert_text);
-        //updateCommentsNumber();
-        //initRefreshLayout();
-    }
-
-    private void initRefreshLayout(){
-        mSwipeRefreshLayout = findViewById(R.id.swipe_container);
-        mSwipeRefreshLayout.setOnRefreshListener(this);
-        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary,
-                android.R.color.holo_green_dark,
-                android.R.color.holo_orange_dark,
-                android.R.color.holo_blue_dark);
-        mSwipeRefreshLayout.setProgressViewOffset(false,
-                getResources().getDimensionPixelSize(R.dimen.refresher_offset),
-                getResources().getDimensionPixelSize(R.dimen.refresher_offset_end));
-
-        mSwipeRefreshLayout.post(new Runnable() {
-
-            @Override
-            public void run() {
-                mSwipeRefreshLayout.setRefreshing(true);
-                page = 0;
-                getComments();
-            }
-        });
     }
 
     private void updateCommentsNumber(){
@@ -420,7 +471,7 @@ public class NoteDetailsActivity extends Activity implements ReactNoteCallback, 
     private void initRecyclerView(){
         recyclerView = findViewById(R.id.note_details_recycler_view);
 
-        mLayoutManager = new LinearLayoutManager(this);
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(mLayoutManager);
 
         recyclerView.getItemAnimator().setChangeDuration(0);
@@ -460,13 +511,24 @@ public class NoteDetailsActivity extends Activity implements ReactNoteCallback, 
             public void onClick(View view) {
                 if (input != null){
                     int checkComment = Utilities.checkComment(input.getText().toString());
+
                     if (checkComment > 0){
-                        hideKeyboard(NoteDetailsActivity.this);
                         input.clearFocus();
-                        DateTime dateTime = new DateTime();
-                        String time = dateTime.toString("yyyy-MM-dd HH:mm:ss");
-                        Utilities.commentPost(note.getId(), 1, "admin", time,  input.getText().toString(),
-                                NoteDetailsActivity.this, NoteDetailsActivity.this);
+                        Utilities.hideKeyboard(NoteDetailsActivity.this);
+
+                        if (sharedPreferences.getBoolean("signed", false)){
+                            DateTime dateTime = new DateTime();
+                            String time = dateTime.toString("yyyy-MM-dd HH:mm:ss");
+                            userID = sharedPreferences.getInt("userID", 0);
+
+                            Utilities.commentPost(note.getId(), userID, sharedPreferences.getString("username", "Anonim"),
+                                    time, input.getText().toString(), NoteDetailsActivity.this,
+                                    NoteDetailsActivity.this);
+                        }
+                        else{
+                            bottomPopup = Utilities.getBottomPopupLogin(NoteDetailsActivity.this,
+                                    R.layout.bottom_popup_text, bottomPopup);
+                        }
                     }
                     else{
                         bottomPopup = Utilities.errorComment(checkComment, NoteDetailsActivity.this, bottomPopup);
@@ -478,8 +540,12 @@ public class NoteDetailsActivity extends Activity implements ReactNoteCallback, 
     }
 
     private void getComments(){
-        Utilities.getComments(1, note.getId(), page, NoteDetailsActivity.this,
-                NoteDetailsActivity.this);
+        if (userID == 0){
+            Utilities.generateID(GEN_LOAD, this, this);
+        }
+        else{
+            Utilities.getComments(1, note.getId(), page, this, this);
+        }
     }
 
 }

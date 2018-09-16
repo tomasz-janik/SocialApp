@@ -21,11 +21,16 @@ import org.parceler.Parcels;
 import pl.itomaszjanik.test.BottomPopup.BottomPopup;
 import pl.itomaszjanik.test.*;
 import pl.itomaszjanik.test.Posts.*;
+import pl.itomaszjanik.test.Remote.GenerateIDCallback;
 
 import java.util.List;
 
 public class ProfileSigned extends Fragment implements NoteClickListener, GetPostsCallback, ReactNoteCallback,
-        UpdatePostCallback, NoteNoMoreClickListener, OnEndScrolled {
+        UpdatePostCallback, NoteNoMoreClickListener, GenerateIDCallback, OnEndScrolled {
+
+    private static final int GEN_LOAD = 0;
+    private static final int GEN_START = 1;
+    private static final int GEN_REACT = 2;
 
     private BottomPopup bottomPopup;
     private RecyclerView recyclerView;
@@ -40,6 +45,7 @@ public class ProfileSigned extends Fragment implements NoteClickListener, GetPos
     private int page = 0;
 
     private SharedPreferences sharedPreferences;
+    private int userID;
 
     public ProfileSigned() {
     }
@@ -184,7 +190,13 @@ public class ProfileSigned extends Fragment implements NoteClickListener, GetPos
     public void onLikeClick(View view, Note note){
         currentView = view;
         currentNote = note;
-        Utilities.onLikeNoteClick(1, getContext(), ProfileSigned.this, view, note);
+        userID = sharedPreferences.getInt("userID", 0);
+        if (userID == 0){
+            Utilities.generateID(GEN_REACT, this, getContext());
+        }
+        else{
+            Utilities.onLikeNoteClick(userID, getContext(), ProfileSigned.this, view, note);
+        }
     }
 
     @Override
@@ -209,6 +221,58 @@ public class ProfileSigned extends Fragment implements NoteClickListener, GetPos
     public void updatePostFailed(){ }
 
     @Override
+    public void onGenerateSuccess(String username, int userID, int task){
+        this.userID = userID;
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("username", username);
+        editor.putInt("userID", userID);
+        editor.apply();
+
+        switch (task){
+            case GEN_LOAD:
+                getPosts();
+                break;
+            case GEN_START:
+                loadPosts();
+                break;
+            case GEN_REACT:
+                onLikeClick(currentView, currentNote);
+                break;
+        }
+    }
+
+    @Override
+    public void onGenerateFailed(int task){
+        switch (task){
+            case GEN_LOAD:
+                getPostFailed();
+                break;
+            case GEN_START:
+                getPostFailed();
+                break;
+            case GEN_REACT:
+                reactNoteLikeFailed();
+                break;
+        }
+    }
+
+    @Override
+    public void onGenerateNoInternet(int task){
+        switch (task){
+            case GEN_LOAD:
+                getPostNoInternet();
+                break;
+            case GEN_START:
+                getPostNoInternet();
+                break;
+            case GEN_REACT:
+                reactNoteNoInternet();
+                break;
+        }
+    }
+
+    @Override
     public void onRefreshClick(){
         recyclerView.smoothScrollToPosition(0);
         loading = false;
@@ -230,6 +294,7 @@ public class ProfileSigned extends Fragment implements NoteClickListener, GetPos
         nonePosts = view.findViewById(R.id.posts_none);
 
         sharedPreferences = getContext().getSharedPreferences(Values.SHARED_PREFERENCES, Context.MODE_PRIVATE);
+        userID = sharedPreferences.getInt("userID", 0);
 
         initRecyclerView(view);
     }
@@ -254,9 +319,16 @@ public class ProfileSigned extends Fragment implements NoteClickListener, GetPos
 
     void loadPosts(){
         if (!started && isAdded()){
-            Utilities.getPostsProfile(sharedPreferences.getInt("userID", 0), sharedPreferences.getString("username", "a"),
-                    page, this, getContext());
-            started = true;
+            userID = sharedPreferences.getInt("userID", 0);
+
+            if (userID == 0){
+                Utilities.generateID(GEN_START, this, getContext());
+            }
+            else{
+                Utilities.getPostsProfile(userID, sharedPreferences.getString("username", "a"),
+                        page, this, getContext());
+                started = true;
+            }
         }
     }
 
@@ -265,8 +337,14 @@ public class ProfileSigned extends Fragment implements NoteClickListener, GetPos
     }
 
     private void getPosts(){
-        Utilities.getPostsProfile(sharedPreferences.getInt("userID", 0), sharedPreferences.getString("username", "a"),
-                page, this, getContext());
+        userID = sharedPreferences.getInt("userID", 0);
+        if (userID == 0){
+            Utilities.generateID(GEN_LOAD, this, getContext());
+        }
+        else{
+            Utilities.getPostsProfile(userID, sharedPreferences.getString("username", "a"),
+                    page, this, getContext());
+        }
     }
 
 }
