@@ -76,7 +76,8 @@ public class ItemFeed extends Fragment implements ReactNoteCallback, NoteClickLi
     public void onResume(){
         super.onResume();
         if (currentNote != null){
-            Utilities.updatePost(this, currentNote);
+            userID = sharedPreferences.getInt("userID", 0);
+            Utilities.updatePost(userID,this, currentNote);
         }
     }
 

@@ -262,9 +262,9 @@ public class Utilities {
         }
     }
 
-    public static void updatePost(final UpdatePostCallback callback, Note note){
+    public static void updatePost(int userID, final UpdatePostCallback callback, Note note){
         PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
-        Call<Note> call = service.updatePost(note.getId(), 1);
+        Call<Note> call = service.updatePost(note.getId(), userID);
         call.enqueue(new Callback<Note>() {
             @Override
             public void onResponse(@Nullable Call<Note> call, @Nullable Response<Note> response) {
