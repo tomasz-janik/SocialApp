@@ -86,23 +86,23 @@ public class Utilities {
     }
 
 
-    public static void onLikeCommentClick(Context context, ReactCommentsCallback callback, View view, Comment comment){
+    public static void onLikeCommentClick(int userID, Context context, ReactCommentsCallback callback, View view, Comment comment){
         if (isNetworkAvailable(context)){
-            Utilities.reactCommentCall(callback, view, comment);
+            Utilities.reactCommentCall(userID, callback, view, comment);
         }
         else{
             callback.reactCommentNoInternet();
         }
     }
 
-    private static void reactCommentCall(final ReactCommentsCallback callback, final View view, final Comment comment){
+    private static void reactCommentCall(int userID, final ReactCommentsCallback callback, final View view, final Comment comment){
         PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
         Call<ResponseBody> call;
         if (comment.getLiked()){
-            call = service.unlikeComment(comment.getCommentID(), 1);
+            call = service.unlikeComment(comment.getCommentID(), userID);
         }
         else{
-            call = service.likeComment(comment.getCommentID(), 1);
+            call = service.likeComment(comment.getCommentID(), userID);
         }
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -314,9 +314,9 @@ public class Utilities {
         }
     }
 
-    public static void updateCommentCall(final UpdateCommentCallback callback, Comment comment){
+    public static void updateCommentCall(int userID, final UpdateCommentCallback callback, Comment comment){
         PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
-        Call<Comment> call = service.updateComment(comment.getCommentID(), 1);
+        Call<Comment> call = service.updateComment(comment.getCommentID(), userID);
         call.enqueue(new Callback<Comment>() {
             @Override
             public void onResponse(@Nullable Call<Comment> call, @Nullable Response<Comment> response) {
@@ -388,23 +388,23 @@ public class Utilities {
         }
     }
 
-    public static void onLikeReplayClick(Context context, ReactReplayCallback callback, View view, Replay replay){
+    public static void onLikeReplayClick(int userID, Context context, ReactReplayCallback callback, View view, Replay replay){
         if (isNetworkAvailable(context)){
-            Utilities.reactReplayCall(callback, view, replay);
+            Utilities.reactReplayCall(userID, callback, view, replay);
         }
         else{
             callback.reactReplayNoInternet();
         }
     }
 
-    private static void reactReplayCall(final ReactReplayCallback callback, final View view, final Replay replay){
+    private static void reactReplayCall(int userID, final ReactReplayCallback callback, final View view, final Replay replay){
         PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
         Call<ResponseBody> call;
         if (replay.getLiked()){
-            call = service.unlikeReplay(replay.getReplayID(), 1);
+            call = service.unlikeReplay(replay.getReplayID(), userID);
         }
         else{
-            call = service.likeReplay(replay.getReplayID(), 1);
+            call = service.likeReplay(replay.getReplayID(), userID);
         }
         call.enqueue(new Callback<ResponseBody>() {
             @Override

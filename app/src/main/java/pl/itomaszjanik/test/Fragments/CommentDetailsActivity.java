@@ -240,7 +240,7 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
             Utilities.generateID(GEN_REACT_COMMENT, this, this);
         }
         else{
-            Utilities.onLikeCommentClick(this, this, view, comment);
+            Utilities.onLikeCommentClick(userID, this, this, view, comment);
         }
     }
 
@@ -294,7 +294,7 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
                 onCommentLikeClick(currentCommentView, comment);
                 break;
             case GEN_REACT_REPLAY:
-                Utilities.onLikeReplayClick(this, this, currentReplayView, currentReplay);
+                Utilities.onLikeReplayClick(userID,this, this, currentReplayView, currentReplay);
                 break;
         }
     }
@@ -408,8 +408,8 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
                             CommentDetailsActivity.this);
                 }
                 else{
-                    Utilities.onLikeReplayClick(CommentDetailsActivity.this, CommentDetailsActivity.this,
-                            v, replay);
+                    Utilities.onLikeReplayClick(userID,CommentDetailsActivity.this,
+                            CommentDetailsActivity.this, v, replay);
                 }
             }
 

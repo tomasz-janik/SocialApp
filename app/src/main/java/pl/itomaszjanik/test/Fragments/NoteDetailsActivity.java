@@ -83,7 +83,8 @@ public class NoteDetailsActivity extends Activity implements ReactNoteCallback, 
     public void onResume(){
         super.onResume();
         if (currentComment != null){
-            Utilities.updateCommentCall(this, currentComment);
+            userID = sharedPreferences.getInt("userID", 0);
+            Utilities.updateCommentCall(userID,this, currentComment);
         }
     }
 
@@ -331,7 +332,7 @@ public class NoteDetailsActivity extends Activity implements ReactNoteCallback, 
             Utilities.generateID(GEN_REACT_COMMENT, this, this);
         }
         else{
-            Utilities.onLikeCommentClick(this, this, v, comment);
+            Utilities.onLikeCommentClick(userID,this, this, v, comment);
         }
     }
 
