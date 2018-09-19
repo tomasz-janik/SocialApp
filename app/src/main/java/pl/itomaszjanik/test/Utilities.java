@@ -10,6 +10,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.FileProvider;
 import android.util.TypedValue;
@@ -567,12 +568,28 @@ public class Utilities {
     public static void showSnackbarText(Context context, View view, String text){
         Snackbar snackbar = Snackbar.make(view, text, Snackbar.LENGTH_SHORT);
 
-        final FrameLayout snackBarView = (FrameLayout) snackbar.getView();
-        final FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) snackBarView.getChildAt(0).getLayoutParams();
+        final float minHeight = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                56, context.getResources().getDisplayMetrics());
 
-        float height = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 56, context.getResources().getDisplayMetrics());
-        params.height = (int)height;
-        snackBarView.getChildAt(0).setLayoutParams(params);
+        snackbar.addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
+            @Override
+            public void onDismissed(Snackbar transientBottomBar, int event) {
+                super.onDismissed(transientBottomBar, event);
+            }
+
+            @Override
+            public void onShown(Snackbar transientBottomBar) {
+                if (transientBottomBar.getView().getHeight() <= minHeight){
+                    final FrameLayout snackBarView = (FrameLayout) transientBottomBar.getView();
+                    final FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) snackBarView.getChildAt(0).getLayoutParams();
+                    params.height = (int)minHeight;
+
+                    snackBarView.getChildAt(0).setLayoutParams(params);
+                }
+
+                super.onShown(transientBottomBar);
+            }
+        });
 
         snackbar.show();
     }
