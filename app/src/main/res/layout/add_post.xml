@@ -35,6 +35,7 @@
                     android:minHeight="128dp"
                     android:inputType="textMultiLine"
                     android:hint="@string/add_content_hint"
+                    android:maxLines="10"
                     android:textAlignment="viewStart"
                     android:gravity="start"
                     android:ems="10"

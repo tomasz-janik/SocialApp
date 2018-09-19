@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,7 +19,6 @@ import com.labo.kaji.relativepopupwindow.RelativePopupWindow;
 import org.joda.time.DateTime;
 import org.parceler.Parcels;
 import pl.itomaszjanik.test.*;
-import pl.itomaszjanik.test.BottomPopup.BottomPopup;
 import pl.itomaszjanik.test.Comments.*;
 import pl.itomaszjanik.test.EllipsisPopup.EllipsisPopup;
 import pl.itomaszjanik.test.EllipsisPopup.EllipsisPopupListener;
@@ -39,7 +39,6 @@ public class NoteDetailsActivity extends Activity implements ReactNoteCallback, 
 
     private Note note;
     private EditText input;
-    private BottomPopup bottomPopup;
     private EllipsisPopup ellipsisPopup;
 
     private int page;
@@ -82,9 +81,34 @@ public class NoteDetailsActivity extends Activity implements ReactNoteCallback, 
     @Override
     public void onResume(){
         super.onResume();
+
+        int uiOptions;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT){
+            uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+        }
+        else{
+            uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE;
+        }
+        getWindow().getDecorView().setSystemUiVisibility(uiOptions);
+
         if (currentComment != null){
             userID = sharedPreferences.getInt("userID", 0);
             Utilities.updateCommentCall(userID,this, currentComment);
+        }
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if(hasFocus) {
+            int uiOptions;
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT){
+                uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+            }
+            else{
+                uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE;
+            }
+            getWindow().getDecorView().setSystemUiVisibility(uiOptions);
         }
     }
 
@@ -117,23 +141,21 @@ public class NoteDetailsActivity extends Activity implements ReactNoteCallback, 
 
     @Override
     public void reactNoteLikeFailed(){
-        bottomPopup = Utilities.getBottomPopupText(this,
-                R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                getString(R.string.couldnt_like_post), bottomPopup);
+        Utilities.showSnackbarText(this, findViewById(R.id.main_layout),
+                getString(R.string.couldnt_like_post));
     }
 
     @Override
     public void reactNoteUnlikeFailed(){
-        bottomPopup = Utilities.getBottomPopupText(this,
-                R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                getString(R.string.couldnt_unlike_post), bottomPopup);
+        Utilities.showSnackbarText(this, findViewById(R.id.main_layout),
+                getString(R.string.couldnt_unlike_post));
     }
 
     @Override
     public void reactNoteNoInternet(){
-        bottomPopup = Utilities.getBottomPopupText(this,
-                R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                getString(R.string.no_internet), bottomPopup);
+        Utilities.showSnackbarText(this, findViewById(R.id.main_layout),
+                getString(R.string.no_internet));
+
     }
 
     @Override
@@ -146,9 +168,9 @@ public class NoteDetailsActivity extends Activity implements ReactNoteCallback, 
 
     @Override
     public void reactCommentLikeFailed(){
-        bottomPopup = Utilities.getBottomPopupText(this,
-                R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                getString(R.string.couldnt_like_comment), bottomPopup);
+        Utilities.showSnackbarText(this, findViewById(R.id.main_layout),
+                getString(R.string.couldnt_like_comment));
+
     }
 
     @Override
@@ -162,24 +184,22 @@ public class NoteDetailsActivity extends Activity implements ReactNoteCallback, 
 
     @Override
     public void reactCommentUnlikeFailed(){
-        bottomPopup = Utilities.getBottomPopupText(this,
-                R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                getString(R.string.couldnt_unlike_comment), bottomPopup);
+        Utilities.showSnackbarText(this, findViewById(R.id.main_layout),
+                getString(R.string.couldnt_unlike_comment));
     }
 
     @Override
     public void reactCommentNoInternet(){
-        bottomPopup = Utilities.getBottomPopupText(this,
-                R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                getString(R.string.no_internet), bottomPopup);
+        Utilities.showSnackbarText(this, findViewById(R.id.main_layout),
+                getString(R.string.no_internet));
     }
 
     @Override
     public void commentPostSucceeded(Comment comment){
         input.setText("");
-        bottomPopup = Utilities.getBottomPopupText(this,
-                R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                getString(R.string.comment_post_added), bottomPopup);
+
+        Utilities.showSnackbarText(this, findViewById(R.id.main_layout),
+                getString(R.string.comment_post_added));
 
         Utilities.hideKeyboard(this);
         mCommentAdapter.removeLast();
@@ -191,16 +211,14 @@ public class NoteDetailsActivity extends Activity implements ReactNoteCallback, 
 
     @Override
     public void commentPostFailed(){
-        bottomPopup = Utilities.getBottomPopupText(this,
-                R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                getString(R.string.comment_post_couldnt), bottomPopup);
+        Utilities.showSnackbarText(this, findViewById(R.id.main_layout),
+                getString(R.string.comment_post_couldnt));
     }
 
     @Override
     public void commentPostNoInternet(){
-        bottomPopup = Utilities.getBottomPopupText(this,
-                R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                getString(R.string.no_internet), bottomPopup);
+        Utilities.showSnackbarText(this, findViewById(R.id.main_layout),
+                getString(R.string.no_internet));
     }
 
     @Override
@@ -220,16 +238,14 @@ public class NoteDetailsActivity extends Activity implements ReactNoteCallback, 
 
     @Override
     public void getCommentFailed(){
-        bottomPopup = Utilities.getBottomPopupText(this,
-                R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                getString(R.string.comment_load_couldnt), bottomPopup);
+        Utilities.showSnackbarText(this, findViewById(R.id.main_layout),
+                getString(R.string.comment_load_couldnt));
     }
 
     @Override
     public void getCommentNoInternet(){
-        bottomPopup = Utilities.getBottomPopupText(this,
-                R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                getString(R.string.no_internet), bottomPopup);
+        Utilities.showSnackbarText(this, findViewById(R.id.main_layout),
+                getString(R.string.no_internet));
     }
 
     @Override
@@ -281,9 +297,8 @@ public class NoteDetailsActivity extends Activity implements ReactNoteCallback, 
             ellipsisPopup = new EllipsisPopup(view.getContext(), new EllipsisPopupListener(){
                 @Override
                 public void onClick(View view){
-                    bottomPopup = Utilities.getBottomPopupText(NoteDetailsActivity.this,
-                            R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                            getString(R.string.report_commited), bottomPopup);
+                    Utilities.showSnackbarText(NoteDetailsActivity.this, findViewById(R.id.main_layout),
+                            getString(R.string.report_commited));
                 }
             });
         }
@@ -294,8 +309,8 @@ public class NoteDetailsActivity extends Activity implements ReactNoteCallback, 
 
     @Override
     public void onNoteShareClick(View view, Note note){
-        bottomPopup = Utilities.getBottomPopupLoading(this, R.layout.bottom_popup_loading,
-                R.id.bottom_popup_text, getString(R.string.loading), bottomPopup);
+        Utilities.showSnackbarLoad(this, findViewById(R.id.main_layout), getString(R.string.loading));
+
         Bitmap screenshot = Utilities.getBitmapNote(this, note);
         Utilities.share(screenshot, NoteDetailsActivity.this);
     }
@@ -357,9 +372,8 @@ public class NoteDetailsActivity extends Activity implements ReactNoteCallback, 
             ellipsisPopup = new EllipsisPopup(v.getContext(), new EllipsisPopupListener() {
                 @Override
                 public void onClick(View v) {
-                    bottomPopup = Utilities.getBottomPopupText(NoteDetailsActivity.this,
-                            R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                            getString(R.string.report_commited), bottomPopup);
+                    Utilities.showSnackbarText(NoteDetailsActivity.this, findViewById(R.id.main_layout),
+                            getString(R.string.report_commited));
                 }
             });
         }
@@ -370,8 +384,8 @@ public class NoteDetailsActivity extends Activity implements ReactNoteCallback, 
 
     @Override
     public void onCommentShareClick(View v, Comment comment){
-        bottomPopup = Utilities.getBottomPopupLoading(this, R.layout.bottom_popup_loading,
-                R.id.bottom_popup_text, getString(R.string.loading), bottomPopup);
+        Utilities.showSnackbarLoad(this, findViewById(R.id.main_layout), getString(R.string.loading));
+
         Bitmap screenshot = Utilities.getBitmapComment(this, note, comment);
         Utilities.share(screenshot, this);
     }
@@ -527,12 +541,13 @@ public class NoteDetailsActivity extends Activity implements ReactNoteCallback, 
                                     NoteDetailsActivity.this);
                         }
                         else{
-                            bottomPopup = Utilities.getBottomPopupLogin(NoteDetailsActivity.this,
-                                    R.layout.bottom_popup_text, bottomPopup);
+                            Utilities.showSnackbarLogin(NoteDetailsActivity.this,
+                                    findViewById(R.id.main_layout), getString(R.string.not_logged));
                         }
                     }
                     else{
-                        bottomPopup = Utilities.errorComment(checkComment, NoteDetailsActivity.this, bottomPopup);
+                        Utilities.errorComment(checkComment, NoteDetailsActivity.this,
+                                findViewById(R.id.main_layout));
                     }
                 }
 

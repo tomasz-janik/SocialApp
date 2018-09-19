@@ -21,7 +21,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import org.parceler.Parcels;
 import pl.itomaszjanik.test.*;
-import pl.itomaszjanik.test.BottomPopup.BottomPopup;
 import pl.itomaszjanik.test.ExtendedComponents.TextViewClickable;
 import pl.itomaszjanik.test.Posts.*;
 import pl.itomaszjanik.test.Remote.GenerateIDCallback;
@@ -62,7 +61,7 @@ public class TopFeed extends Fragment implements ReactNoteCallback, NoteClickLis
     private int page = 0;
 
     private RelativeLayout refreshLayout;
-    private BottomPopup bottomPopup;
+    private RelativeLayout mainLayout;
 
     private SharedPreferences sharedPreferences;
     private int userID;
@@ -143,9 +142,7 @@ public class TopFeed extends Fragment implements ReactNoteCallback, NoteClickLis
         if (isAdded()){
             mSwipeRefreshLayout.setRefreshing(false);
             if (isAdded()){
-                bottomPopup = Utilities.getBottomPopupText(getContext(),
-                        R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                        getString(R.string.couldnt_refresh), bottomPopup);
+                Utilities.showSnackbarText(getContext(), mainLayout, getString(R.string.couldnt_refresh));
             }
             if (recyclerView == null){
                 refreshLayout.setVisibility(View.VISIBLE);
@@ -157,9 +154,7 @@ public class TopFeed extends Fragment implements ReactNoteCallback, NoteClickLis
     public void getPostNoInternet(){
         if (isAdded()){
             mSwipeRefreshLayout.setRefreshing(false);
-            bottomPopup = Utilities.getBottomPopupText(getContext(),
-                    R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                    getString(R.string.no_internet), bottomPopup);
+            Utilities.showSnackbarText(getContext(), mainLayout, getString(R.string.no_internet));
         }
     }
 
@@ -193,27 +188,21 @@ public class TopFeed extends Fragment implements ReactNoteCallback, NoteClickLis
     @Override
     public void reactNoteLikeFailed(){
         if (isAdded()){
-            bottomPopup = Utilities.getBottomPopupText(getContext(),
-                    R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                    getString(R.string.couldnt_like_post), bottomPopup);
+            Utilities.showSnackbarText(getContext(), mainLayout, getString(R.string.couldnt_like_post));
         }
     }
 
     @Override
     public void reactNoteUnlikeFailed(){
         if (isAdded()){
-            bottomPopup = Utilities.getBottomPopupText(getContext(),
-                    R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                    getString(R.string.couldnt_unlike_post), bottomPopup);
+            Utilities.showSnackbarText(getContext(), mainLayout, getString(R.string.couldnt_unlike_post));
         }
     }
 
     @Override
     public void reactNoteNoInternet(){
         if (isAdded()){
-            bottomPopup = Utilities.getBottomPopupText(getContext(),
-                    R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                    getString(R.string.no_internet), bottomPopup);
+            Utilities.showSnackbarText(getContext(), mainLayout, getString(R.string.no_internet));
         }
     }
 
@@ -416,6 +405,7 @@ public class TopFeed extends Fragment implements ReactNoteCallback, NoteClickLis
         initRefreshLayout(view);
         initSwipeRefreshLayout(view);
 
+        mainLayout = view.findViewById(R.id.main_layout);
         sharedPreferences = getContext().getSharedPreferences(Values.SHARED_PREFERENCES, Context.MODE_PRIVATE);
         userID = sharedPreferences.getInt("userID", 0);
     }

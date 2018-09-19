@@ -3,6 +3,7 @@ package pl.itomaszjanik.test.Fragments;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -11,10 +12,8 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 import org.joda.time.DateTime;
-import org.joda.time.Instant;
 import pl.itomaszjanik.test.*;
 import pl.itomaszjanik.test.AddPostTags.AddedTagView;
-import pl.itomaszjanik.test.BottomPopup.BottomPopup;
 import pl.itomaszjanik.test.ExtendedComponents.EditTextKeyboard;
 import pl.itomaszjanik.test.Remote.PostService;
 import retrofit2.Call;
@@ -27,7 +26,6 @@ public class AddPost extends Fragment {
     private ScrollView scrollView;
     private EditTextKeyboard mContent, tags;
     private AddedTagView addedTagView;
-    private BottomPopup bottomPopup;
     private PostService postService;
     private String hashesh = "";
 
@@ -146,19 +144,13 @@ public class AddPost extends Fragment {
                     if (respond > 0){
                         switch (respond){
                             case AddedTagView.INVALID:
-                                bottomPopup = Utilities.getBottomPopupText(getContext(),
-                                        R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                                        getString(R.string.tags_invalid), bottomPopup);
+                                Utilities.showSnackbarText(getContext(), scrollView, getString(R.string.tags_invalid));
                                 break;
                             case AddedTagView.DUPLICATE:
-                                bottomPopup = Utilities.getBottomPopupText(getContext(),
-                                        R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                                        getString(R.string.tags_duplicate), bottomPopup);
+                                Utilities.showSnackbarText(getContext(), scrollView, getString(R.string.tags_duplicate));
                                 break;
                             case AddedTagView.LIMIT:
-                                bottomPopup = Utilities.getBottomPopupText(getContext(),
-                                        R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                                        getString(R.string.tags_too_many), bottomPopup);
+                                Utilities.showSnackbarText(getContext(), scrollView, getString(R.string.tags_too_many));
                                 break;
                         }
                     }
@@ -211,14 +203,10 @@ public class AddPost extends Fragment {
             @Override
             public void onClick(View view) {
                 if (mContent.getText().toString().equals("")){
-                    bottomPopup = Utilities.getBottomPopupText(getContext(),
-                            R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                            getString(R.string.add_empty_content), bottomPopup);
+                    Utilities.showSnackbarText(getContext(), scrollView, getString(R.string.add_empty_content));
                 }
                 else if (hashesh.equals("")){
-                    bottomPopup = Utilities.getBottomPopupText(getContext(),
-                            R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                            getString(R.string.add_empty_tags), bottomPopup);
+                    Utilities.showSnackbarText(getContext(), scrollView, getString(R.string.add_empty_tags));
                 }
                 else{
                     SharedPreferences sharedPreferences = getContext().getSharedPreferences(Values.SHARED_PREFERENCES, Context.MODE_PRIVATE);
@@ -238,31 +226,23 @@ public class AddPost extends Fragment {
 
     private void sendPost(String username, String date, String content, String hashesh) {
         if (!Utilities.isNetworkAvailable(getContext())){
-            bottomPopup = Utilities.getBottomPopupText(getContext(),
-                    R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                    getString(R.string.no_internet), bottomPopup);
+            Utilities.showSnackbarText(getContext(), scrollView, getString(R.string.no_internet));
             return;
         }
 
         postService.savePost(username, date, content, hashesh).enqueue(new Callback<Note>() {
             @Override
-            public void onResponse(Call<Note> call, Response<Note> response) {
-                //Toast.makeText(getContext(), ":)", Toast.LENGTH_SHORT).show();
-                if (response.isSuccessful()){
-                    bottomPopup = Utilities.getBottomPopupText(getContext(),
-                            R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                            getString(R.string.added_post), bottomPopup);
+            public void onResponse(@Nullable Call<Note> call, @Nullable Response<Note> response) {
+                if (response != null && response.isSuccessful()){
+                    Utilities.showSnackbarText(getContext(), scrollView, getString(R.string.added_post));
                     mContent.setText("");
                     addedTagView.clearTags();
                 }
             }
 
             @Override
-            public void onFailure(Call<Note> call, Throwable t) {
-                //Toast.makeText(getContext(), ":(\n"+t, Toast.LENGTH_SHORT).show();
-                bottomPopup = Utilities.getBottomPopupText(getContext(),
-                        R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                        getString(R.string.couldnt_add_post), bottomPopup);
+            public void onFailure(@Nullable Call<Note> call, @Nullable Throwable t) {
+                Utilities.showSnackbarText(getContext(), scrollView, getString(R.string.couldnt_add_post));
             }
         });
     }

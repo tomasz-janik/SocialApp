@@ -2,6 +2,7 @@ package pl.itomaszjanik.test;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -18,7 +19,7 @@ import pl.itomaszjanik.test.Fragments.*;
 
 public class MainActivity extends AppCompatActivity {
 
-    private NavigationController mNavigationControllerBottom, mNavigationControllerTop;
+    private NavigationController mNavigationControllerBottom;
     private TestViewPagerAdapter testViewPagerAdapter;
     private FloatingSearchView searchView;
     private ViewPager viewPager;
@@ -40,12 +41,12 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(testViewPagerAdapter);
         viewPager.setOffscreenPageLimit(4);
 
-        mNavigationControllerTop = findViewById(R.id.navigation_top);
         mNavigationControllerBottom = findViewById(R.id.navigation_bottom);
         searchView = findViewById(R.id.floating_search_view);
 
         buttonLogic = new ButtonLogic();
         initImages();
+
     }
 
     private void initImages(){
@@ -75,6 +76,34 @@ public class MainActivity extends AppCompatActivity {
         buttonLogic.clickProfile();
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
+
+        int uiOptions;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT){
+            uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+        }
+        else{
+            uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE;
+        }
+        getWindow().getDecorView().setSystemUiVisibility(uiOptions);
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if(hasFocus) {
+            int uiOptions;
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT){
+                uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+            }
+            else{
+                uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE;
+            }
+            getWindow().getDecorView().setSystemUiVisibility(uiOptions);
+        }
+    }
 
     @Override
     public void onBackPressed() {

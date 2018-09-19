@@ -10,15 +10,15 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.FileProvider;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 import okhttp3.ResponseBody;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
@@ -26,7 +26,6 @@ import org.joda.time.Instant;
 import org.joda.time.Interval;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import pl.itomaszjanik.test.BottomPopup.BottomPopup;
 import pl.itomaszjanik.test.Comments.*;
 import pl.itomaszjanik.test.Posts.GetPostsCallback;
 import pl.itomaszjanik.test.Posts.ReactNoteCallback;
@@ -565,16 +564,61 @@ public class Utilities {
         return 1;
     }
 
-    public static BottomPopup errorComment(int error, Context context, BottomPopup popup){
+    public static void showSnackbarText(Context context, View view, String text){
+        Snackbar snackbar = Snackbar.make(view, text, Snackbar.LENGTH_SHORT);
+
+        final FrameLayout snackBarView = (FrameLayout) snackbar.getView();
+        final FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) snackBarView.getChildAt(0).getLayoutParams();
+
+        float height = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 56, context.getResources().getDisplayMetrics());
+        params.height = (int)height;
+        snackBarView.getChildAt(0).setLayoutParams(params);
+
+        snackbar.show();
+    }
+
+    public static void showSnackbarLoad(Context context, View view, String text){
+        Snackbar snackbar = Snackbar.make(view, text, Snackbar.LENGTH_SHORT);
+
+        final FrameLayout snackBarView = (FrameLayout) snackbar.getView();
+        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) snackBarView.getChildAt(0).getLayoutParams();
+
+        float height = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 56, context.getResources().getDisplayMetrics());
+        params.height = (int)height;
+        snackBarView.getChildAt(0).setLayoutParams(params);
+
+        params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+        params.gravity = Gravity.END | Gravity.CENTER_VERTICAL;
+
+        ProgressBar item = new ProgressBar(context);
+        item.setIndeterminate(true);
+
+        snackBarView.addView(item, params);
+        snackbar.show();
+    }
+
+    public static void showSnackbarLogin(Context context, View view, String text){
+        Snackbar snackbar = Snackbar.make(view, text, Snackbar.LENGTH_SHORT);
+
+        snackbar.setAction(R.string.login, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        snackbar.show();
+    }
+
+    public static void errorComment(int error, Context context, View view){
         switch (error){
             case Values.COMMENT_EMPTY:
-                popup = getBottomPopupText(context, R.layout.bottom_popup_text, R.id.bottom_popup_text, context.getString(R.string.comment_invalid), popup);
+                showSnackbarText(context, view, context.getString(R.string.comment_invalid));
                 break;
             case Values.COMMENT_TOO_LONG:
-                popup = getBottomPopupText(context, R.layout.bottom_popup_text, R.id.bottom_popup_text, context.getString(R.string.comment_too_long), popup);
+                showSnackbarText(context, view, context.getString(R.string.comment_too_long));
                 break;
         }
-        return popup;
     }
 
     public static void hideKeyboard(Activity activity) {
@@ -593,57 +637,6 @@ public class Utilities {
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
         if (imm != null)
             imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT,0);
-    }
-
-    public static BottomPopup getBottomPopupLogin(Context context, int layout, BottomPopup popup){
-        if (popup == null || popup.getText() != null){
-            popup = new BottomPopup.Builder(context)
-                    .setContentView(layout)
-                    .bindClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Toast.makeText(v.getContext(), "Click Button", Toast.LENGTH_SHORT).show();
-                        }
-                    }, R.id.bottom_popup_login)
-                    .setGravity(Gravity.BOTTOM)
-                    .setAutoDismiss(true)
-                    .build();
-        }
-
-        popup.show();
-        return popup;
-    }
-
-    public static BottomPopup getBottomPopupText(Context context, int layout, int textView, String text, BottomPopup popup){
-        if (popup == null || popup.getText() == null || popup.getText().equals(context.getString(R.string.loading))){
-            popup = new BottomPopup.Builder(context)
-                    .setContentView(layout)
-                    .setString(text, textView)
-                    .setAutoDismiss(true)
-                    .setGravity(Gravity.BOTTOM)
-                    .build();
-        }
-        else if (!popup.getText().equals(text)){
-            popup.setTextView(text);
-        }
-        popup.show();
-
-        return popup;
-    }
-
-
-    public static BottomPopup getBottomPopupLoading(Context context, int layout, int textView, String text, BottomPopup popup){
-        if (popup == null || popup.getText() == null || !popup.getText().equals(text)){
-            popup = new BottomPopup.Builder(context)
-                    .setContentView(layout)
-                    .setString(text, textView)
-                    .setAutoDismiss(true)
-                    .setGravity(Gravity.BOTTOM)
-                    .build();
-        }
-        popup.show();
-
-        return popup;
     }
 
     public static String decodeDate(String date, Context context){
@@ -777,7 +770,7 @@ public class Utilities {
     }
 
     public static Bitmap getBitmapNote(Activity activity, Note note){
-        final View view = LayoutInflater.from(activity).inflate(R.layout.screenshoot_note, (ViewGroup) activity.findViewById(R.id.ide), false);
+        final View view = LayoutInflater.from(activity).inflate(R.layout.screenshoot_note, (ViewGroup) activity.findViewById(R.id.main_layout), false);
         setNoteDetails(view, note);
 
         View rootView = activity.getWindow().getDecorView().findViewById(android.R.id.content);
@@ -804,7 +797,7 @@ public class Utilities {
     }
 
     public static Bitmap getBitmapComment(Activity activity, Note note, Comment comment){
-        final View view = LayoutInflater.from(activity).inflate(R.layout.screenshoot_comment, (ViewGroup) activity.findViewById(R.id.ide), false);
+        final View view = LayoutInflater.from(activity).inflate(R.layout.screenshoot_comment, (ViewGroup) activity.findViewById(R.id.main_layout), false);
 
         setNoteDetails(view, note);
         ((TextView)(view.findViewById(R.id.note_details_comments_number))).setText(String.valueOf(note.getComments()));
@@ -837,7 +830,7 @@ public class Utilities {
     }
 
     public static Bitmap getBitmapReplay(Activity activity, Note note, Comment comment, Replay replay){
-        final View view = LayoutInflater.from(activity).inflate(R.layout.screenshoot_replay, (ViewGroup) activity.findViewById(R.id.ide), false);
+        final View view = LayoutInflater.from(activity).inflate(R.layout.screenshoot_replay, (ViewGroup) activity.findViewById(R.id.main_layout), false);
 
         setNoteDetails(view, note);
         ((TextView)(view.findViewById(R.id.note_details_comments_number))).setText(String.valueOf(note.getComments()));

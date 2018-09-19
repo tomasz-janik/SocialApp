@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,8 +12,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.EditText;
-import android.widget.Toast;
-import pl.itomaszjanik.test.BottomPopup.BottomPopup;
+import android.widget.RelativeLayout;
 import pl.itomaszjanik.test.R;
 import pl.itomaszjanik.test.Remote.LoginCallback;
 import pl.itomaszjanik.test.SwitchLogged;
@@ -24,7 +22,8 @@ import pl.itomaszjanik.test.Values;
 public class ProfileUnsignedLogin extends Fragment implements LoginCallback {
 
     private CardView usernameCard, passwordCard;
-    private BottomPopup bottomPopup;
+
+    private RelativeLayout mainLayout;
     private EditText username, password;
     private SharedPreferences sharedPreferences;
 
@@ -72,9 +71,7 @@ public class ProfileUnsignedLogin extends Fragment implements LoginCallback {
     @Override
     public void onLoginFailed(){
         if (isAdded()){
-            bottomPopup = Utilities.getBottomPopupText(getContext(),
-                    R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                    getString(R.string.login_failed), bottomPopup);
+            Utilities.showSnackbarText(getContext(), mainLayout, getString(R.string.login_failed));
         }
     }
 
@@ -83,24 +80,22 @@ public class ProfileUnsignedLogin extends Fragment implements LoginCallback {
         if (isAdded()){
             Animation animShake = AnimationUtils.loadAnimation(getContext(), R.anim.shake);
             usernameCard.startAnimation(animShake);
-            bottomPopup = Utilities.getBottomPopupText(getContext(),
-                    R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                    getString(R.string.login_wrong_password), bottomPopup);
+
+            Utilities.showSnackbarText(getContext(), mainLayout, getString(R.string.login_wrong_password));
         }
     }
 
     @Override
     public void onLoginNoInternet(){
         if (isAdded()){
-            bottomPopup = Utilities.getBottomPopupText(getContext(),
-                    R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                    getString(R.string.no_internet), bottomPopup);
+            Utilities.showSnackbarText(getContext(), mainLayout, getString(R.string.no_internet));
         }
     }
 
     private void init(View view){
         sharedPreferences = getContext().getSharedPreferences(Values.SHARED_PREFERENCES, Context.MODE_PRIVATE);
 
+        mainLayout = view.findViewById(R.id.main_layout);
         usernameCard = view.findViewById(R.id.username_card);
         passwordCard = view.findViewById(R.id.password_card);
         username = view.findViewById(R.id.username);
@@ -114,18 +109,16 @@ public class ProfileUnsignedLogin extends Fragment implements LoginCallback {
                 if (usernameText.isEmpty() || usernameText.length() < 4){
                     Animation animShake = AnimationUtils.loadAnimation(getContext(), R.anim.shake);
                     usernameCard.startAnimation(animShake);
-                    bottomPopup = Utilities.getBottomPopupText(getContext(),
-                            R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                            getString(R.string.username_too_short), bottomPopup);
+
+                    Utilities.showSnackbarText(getContext(), mainLayout, getString(R.string.username_too_short));
                     return;
                 }
 
                 if (passwordText.isEmpty() || passwordText.length() < 6){
                     Animation animShake = AnimationUtils.loadAnimation(getContext(), R.anim.shake);
                     passwordCard.startAnimation(animShake);
-                    bottomPopup = Utilities.getBottomPopupText(getContext(),
-                            R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                            getString(R.string.password_too_short), bottomPopup);
+
+                    Utilities.showSnackbarText(getContext(), mainLayout, getString(R.string.password_too_short));
                     return;
                 }
 

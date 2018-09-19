@@ -1,6 +1,7 @@
 package pl.itomaszjanik.test.Fragments;
 
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
@@ -12,14 +13,12 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import pl.itomaszjanik.test.*;
-import pl.itomaszjanik.test.BottomPopup.BottomPopup;
 import pl.itomaszjanik.test.ExtendedComponents.ConfirmExitDialogFragment;
 
 public class AddCommentActivity extends FragmentActivity implements ConfirmExitDialogFragment.NoticeDialogListener {
 
     private EditText input;
     private int length;
-    private BottomPopup bottomPopup;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,6 +50,35 @@ public class AddCommentActivity extends FragmentActivity implements ConfirmExitD
         //input.setText(comment);
         initInput();
         initListeners();
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+
+        int uiOptions;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT){
+            uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+        }
+        else{
+            uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE;
+        }
+        getWindow().getDecorView().setSystemUiVisibility(uiOptions);
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if(hasFocus) {
+            int uiOptions;
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT){
+                uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+            }
+            else{
+                uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE;
+            }
+            getWindow().getDecorView().setSystemUiVisibility(uiOptions);
+        }
     }
 
     private void initInput(){
@@ -119,10 +147,12 @@ public class AddCommentActivity extends FragmentActivity implements ConfirmExitD
 
                 int checkComment = Utilities.checkComment(input.getText().toString());
                 if (checkComment > 0){
-                    bottomPopup = Utilities.getBottomPopupLogin(AddCommentActivity.this, R.layout.bottom_popup_login, bottomPopup);
+                    Utilities.showSnackbarLogin(AddCommentActivity.this,
+                            findViewById(R.id.add_main_layout), getString(R.string.not_logged));
                 }
                 else{
-                    bottomPopup = Utilities.errorComment(checkComment, AddCommentActivity.this, bottomPopup);
+                    Utilities.errorComment(checkComment, AddCommentActivity.this,
+                            findViewById(R.id.add_main_layout));
                 }
             }
         });
@@ -132,10 +162,12 @@ public class AddCommentActivity extends FragmentActivity implements ConfirmExitD
             public void onClick(View view) {
                 int checkComment = Utilities.checkComment(input.getText().toString());
                 if (checkComment > 0){
-                    bottomPopup = Utilities.getBottomPopupLogin(AddCommentActivity.this, R.layout.bottom_popup_login, bottomPopup);
+                    Utilities.showSnackbarLogin(AddCommentActivity.this,
+                            findViewById(R.id.add_main_layout), getString(R.string.not_logged));
                 }
                 else{
-                    bottomPopup = Utilities.errorComment(checkComment, AddCommentActivity.this, bottomPopup);
+                    Utilities.errorComment(checkComment, AddCommentActivity.this,
+                            findViewById(R.id.add_main_layout));
                 }
             }
         });

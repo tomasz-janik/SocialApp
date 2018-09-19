@@ -15,6 +15,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.view.*;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.arlib.floatingsearchview.FloatingSearchView;
 import com.arlib.floatingsearchview.suggestions.SearchSuggestionsAdapter;
@@ -22,7 +23,6 @@ import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion;
 import com.mancj.materialsearchbar.MaterialSearchBar;
 import org.parceler.Parcels;
 import pl.itomaszjanik.test.*;
-import pl.itomaszjanik.test.BottomPopup.BottomPopup;
 import pl.itomaszjanik.test.Posts.*;
 import pl.itomaszjanik.test.Remote.GenerateIDCallback;
 import pl.itomaszjanik.test.Search.DataSuggestion;
@@ -41,11 +41,11 @@ public class Search extends Fragment implements MaterialSearchBar.OnSearchAction
     private FloatingSearchView mSearchView;
     private static List<DataSuggestion> suggestions = new ArrayList<>();
 
-    private BottomPopup bottomPopup;
     private CardView nonePosts;
 
     private RecyclerView recyclerView;
     private NoteAdapter mNoteAdapter;
+    private RelativeLayout mainLayout;
 
     private Note currentNote;
     private View currentView;
@@ -138,18 +138,14 @@ public class Search extends Fragment implements MaterialSearchBar.OnSearchAction
     @Override
     public void getPostFailed(){
         if (isAdded()){
-            bottomPopup = Utilities.getBottomPopupText(getContext(),
-                    R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                    getString(R.string.couldnt_refresh), bottomPopup);
+            Utilities.showSnackbarText(getContext(), mainLayout, getString(R.string.couldnt_refresh));
         }
     }
 
     @Override
     public void getPostNoInternet(){
         if (isAdded()){
-            bottomPopup = Utilities.getBottomPopupText(getContext(),
-                    R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                    getString(R.string.no_internet), bottomPopup);
+            Utilities.showSnackbarText(getContext(), mainLayout, getString(R.string.no_internet));
         }
     }
 
@@ -204,27 +200,21 @@ public class Search extends Fragment implements MaterialSearchBar.OnSearchAction
     @Override
     public void reactNoteLikeFailed(){
         if (isAdded()){
-            bottomPopup = Utilities.getBottomPopupText(getContext(),
-                    R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                    getString(R.string.couldnt_like_post), bottomPopup);
+            Utilities.showSnackbarText(getContext(), mainLayout, getString(R.string.couldnt_like_post));
         }
     }
 
     @Override
     public void reactNoteUnlikeFailed(){
         if (isAdded()){
-            bottomPopup = Utilities.getBottomPopupText(getContext(),
-                    R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                    getString(R.string.couldnt_unlike_post), bottomPopup);
+            Utilities.showSnackbarText(getContext(), mainLayout, getString(R.string.couldnt_unlike_post));
         }
     }
 
     @Override
     public void reactNoteNoInternet(){
         if (isAdded()){
-            bottomPopup = Utilities.getBottomPopupText(getContext(),
-                    R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                    getString(R.string.no_internet), bottomPopup);
+            Utilities.showSnackbarText(getContext(), mainLayout, getString(R.string.no_internet));
         }
     }
 
@@ -313,6 +303,7 @@ public class Search extends Fragment implements MaterialSearchBar.OnSearchAction
         initSearch();
         initRecyclerView(view);
 
+        mainLayout = view.findViewById(R.id.main_layout);
         userID = sharedPreferences.getInt("userID", 0);
     }
 

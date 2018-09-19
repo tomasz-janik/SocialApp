@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,7 +20,6 @@ import com.labo.kaji.relativepopupwindow.RelativePopupWindow;
 import org.joda.time.DateTime;
 import org.parceler.Parcels;
 import pl.itomaszjanik.test.*;
-import pl.itomaszjanik.test.BottomPopup.BottomPopup;
 import pl.itomaszjanik.test.Comments.*;
 import pl.itomaszjanik.test.EllipsisPopup.EllipsisPopup;
 import pl.itomaszjanik.test.EllipsisPopup.EllipsisPopupListener;
@@ -42,7 +42,6 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
     private EditText input;
     private int length;
     private boolean change;
-    private BottomPopup bottomPopup;
     private EllipsisPopup ellipsisPopup;
 
     private ReplayAdapter mCommentAdapter;
@@ -92,6 +91,40 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
     }
 
     @Override
+    public void onResume(){
+        super.onResume();
+        int uiOptions;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT){
+            uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+        }
+        else{
+            uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE;
+        }
+        getWindow().getDecorView().setSystemUiVisibility(uiOptions);
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if(hasFocus) {
+            int uiOptions;
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT){
+                uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+            }
+            else{
+                uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE;
+            }
+            getWindow().getDecorView().setSystemUiVisibility(uiOptions);
+        }
+    }
+
+    @Override
+    public void onBackPressed(){
+        super.onBackPressed();
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+    }
+
+    @Override
     public void reactCommentLikeSucceeded(Comment comment, View view){
         comment.changeLiked();
         comment.incrementLikes();
@@ -101,9 +134,8 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
 
     @Override
     public void reactCommentLikeFailed(){
-        bottomPopup = Utilities.getBottomPopupText(this,
-                R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                getString(R.string.couldnt_like_comment), bottomPopup);
+        Utilities.showSnackbarText(this, findViewById(R.id.main_layout),
+                getString(R.string.couldnt_like_comment));
     }
 
     @Override
@@ -117,24 +149,21 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
 
     @Override
     public void reactCommentUnlikeFailed(){
-        bottomPopup = Utilities.getBottomPopupText(this,
-                R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                getString(R.string.couldnt_unlike_comment), bottomPopup);
+        Utilities.showSnackbarText(this, findViewById(R.id.main_layout),
+                getString(R.string.couldnt_unlike_comment));
     }
 
     @Override
     public void reactCommentNoInternet(){
-        bottomPopup = Utilities.getBottomPopupText(this,
-                R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                getString(R.string.no_internet), bottomPopup);
+        Utilities.showSnackbarText(this, findViewById(R.id.main_layout),
+                getString(R.string.no_internet));
     }
 
     @Override
     public void replayCommentSucceeded(Replay replay){
         input.setText("");
-        bottomPopup = Utilities.getBottomPopupText(this,
-                R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                getString(R.string.comment_post_added), bottomPopup);
+        Utilities.showSnackbarText(this, findViewById(R.id.main_layout),
+                getString(R.string.comment_post_added));
 
         Utilities.hideKeyboard(this);
         mCommentAdapter.removeLast();
@@ -146,16 +175,14 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
 
     @Override
     public void replayCommentFailed(){
-        bottomPopup = Utilities.getBottomPopupText(this,
-                R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                getString(R.string.couldnt_unlike_comment), bottomPopup);
+        Utilities.showSnackbarText(this, findViewById(R.id.main_layout),
+                getString(R.string.comment_post_couldnt));
     }
 
     @Override
     public void replayCommentNoInternet(){
-        bottomPopup = Utilities.getBottomPopupText(this,
-                R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                getString(R.string.no_internet), bottomPopup);
+        Utilities.showSnackbarText(this, findViewById(R.id.main_layout),
+                getString(R.string.no_internet));
     }
 
     @Override
@@ -177,16 +204,14 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
 
     @Override
     public void getReplayFailed(){
-        bottomPopup = Utilities.getBottomPopupText(this,
-                R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                getString(R.string.comment_load_couldnt), bottomPopup);
+        Utilities.showSnackbarText(this, findViewById(R.id.main_layout),
+                getString(R.string.comment_load_couldnt));
     }
 
     @Override
     public void getReplayNoInternet(){
-        bottomPopup = Utilities.getBottomPopupText(this,
-                R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                getString(R.string.no_internet), bottomPopup);
+        Utilities.showSnackbarText(this, findViewById(R.id.main_layout),
+                getString(R.string.no_internet));
     }
 
     @Override
@@ -199,9 +224,8 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
 
     @Override
     public void reactReplayLikeFailed(){
-        bottomPopup = Utilities.getBottomPopupText(this,
-                R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                getString(R.string.couldnt_like_comment), bottomPopup);
+        Utilities.showSnackbarText(this, findViewById(R.id.main_layout),
+                getString(R.string.couldnt_like_comment));
     }
 
     @Override
@@ -215,16 +239,14 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
 
     @Override
     public void reactReplayUnlikeFailed(){
-        bottomPopup = Utilities.getBottomPopupText(this,
-                R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                getString(R.string.couldnt_unlike_comment), bottomPopup);
+        Utilities.showSnackbarText(this, findViewById(R.id.main_layout),
+                getString(R.string.couldnt_unlike_comment));
     }
 
     @Override
     public void reactReplayNoInternet(){
-        bottomPopup = Utilities.getBottomPopupText(this,
-                R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                getString(R.string.no_internet), bottomPopup);
+        Utilities.showSnackbarText(this, findViewById(R.id.main_layout),
+                getString(R.string.no_internet));
     }
 
     @Override
@@ -259,9 +281,8 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
             ellipsisPopup = new EllipsisPopup(view.getContext(), new EllipsisPopupListener() {
                 @Override
                 public void onClick(View v) {
-                    bottomPopup = Utilities.getBottomPopupText(CommentDetailsActivity.this,
-                            R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                            getString(R.string.report_commited), bottomPopup);
+                    Utilities.showSnackbarText(CommentDetailsActivity.this, findViewById(R.id.main_layout),
+                            getString(R.string.report_commited));
                 }
             });
         }
@@ -271,8 +292,8 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
 
     @Override
     public void onCommentShareClick(View view, Comment comment){
-        bottomPopup = Utilities.getBottomPopupLoading(this, R.layout.bottom_popup_loading,
-                R.id.bottom_popup_text, getString(R.string.loading), bottomPopup);
+        Utilities.showSnackbarLoad(CommentDetailsActivity.this, findViewById(R.id.main_layout),
+                getString(R.string.loading));
         Bitmap screenshot = Utilities.getBitmapComment(this, note, comment);
         Utilities.share(screenshot, this);
     }
@@ -388,12 +409,6 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
         initCommentAdapter();
     }
 
-    @Override
-    public void onBackPressed(){
-        super.onBackPressed();
-        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-    }
-
     private void initCommentAdapter(){
         mCommentAdapter = new ReplayAdapter(new ReplayClickListener() {
             @Override
@@ -437,9 +452,8 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
                     ellipsisPopup = new EllipsisPopup(v.getContext(), new EllipsisPopupListener() {
                         @Override
                         public void onClick(View v) {
-                            bottomPopup = Utilities.getBottomPopupText(CommentDetailsActivity.this,
-                                    R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                                    getString(R.string.report_commited), bottomPopup);
+                            Utilities.showSnackbarText(CommentDetailsActivity.this, findViewById(R.id.main_layout),
+                                    getString(R.string.report_commited));
                         }
                     });
                 }
@@ -449,8 +463,9 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
 
             @Override
             public void onShareClick(View v, Replay replay){
-                bottomPopup = Utilities.getBottomPopupLoading(CommentDetailsActivity.this,
-                        R.layout.bottom_popup_loading, R.id.bottom_popup_text, getString(R.string.loading), bottomPopup);
+                Utilities.showSnackbarLoad(CommentDetailsActivity.this, findViewById(R.id.main_layout),
+                        getString(R.string.loading));
+
                 Bitmap screenshot = Utilities.getBitmapReplay(CommentDetailsActivity.this, note, comment, replay);
                 Utilities.share(screenshot, CommentDetailsActivity.this);
             }
@@ -512,12 +527,13 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
                                     CommentDetailsActivity.this, CommentDetailsActivity.this);
                         }
                         else{
-                            bottomPopup = Utilities.getBottomPopupLogin(CommentDetailsActivity.this,
-                                    R.layout.bottom_popup_text, bottomPopup);
+                            Utilities.showSnackbarLogin(CommentDetailsActivity.this, findViewById(R.id.main_layout),
+                                    getString(R.string.not_logged));
+
                         }
                     }
                     else{
-                        bottomPopup = Utilities.errorComment(checkComment, CommentDetailsActivity.this, bottomPopup);
+                        Utilities.errorComment(checkComment, CommentDetailsActivity.this, findViewById(R.id.main_layout));
                     }
                 }
 

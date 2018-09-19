@@ -13,7 +13,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import pl.itomaszjanik.test.BottomPopup.BottomPopup;
+import android.widget.RelativeLayout;
 import pl.itomaszjanik.test.R;
 import pl.itomaszjanik.test.Remote.RegisterCallback;
 import pl.itomaszjanik.test.SwitchLogged;
@@ -22,8 +22,8 @@ import pl.itomaszjanik.test.Values;
 
 public class ProfileUnsignedRegister extends Fragment implements RegisterCallback {
 
-    private BottomPopup bottomPopup;
     private CardView usernameCard, passwordCard;
+    private RelativeLayout mainLayout;
     private EditText username, password;
     private CheckBox checkbox;
     private SharedPreferences sharedPreferences;
@@ -72,9 +72,7 @@ public class ProfileUnsignedRegister extends Fragment implements RegisterCallbac
     @Override
     public void onRegisterFailed(){
         if (isAdded()){
-            bottomPopup = Utilities.getBottomPopupText(getContext(),
-                    R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                    getString(R.string.register_failed), bottomPopup);
+            Utilities.showSnackbarText(getContext(), mainLayout, getString(R.string.register_failed));
         }
     }
 
@@ -83,24 +81,21 @@ public class ProfileUnsignedRegister extends Fragment implements RegisterCallbac
         if (isAdded()){
             Animation animShake = AnimationUtils.loadAnimation(getContext(), R.anim.shake);
             usernameCard.startAnimation(animShake);
-            bottomPopup = Utilities.getBottomPopupText(getContext(),
-                    R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                    getString(R.string.register_not_unique), bottomPopup);
+            Utilities.showSnackbarText(getContext(), mainLayout, getString(R.string.register_not_unique));
         }
     }
 
     @Override
     public void onRegisterNoInternet(){
         if (isAdded()){
-            bottomPopup = Utilities.getBottomPopupText(getContext(),
-                    R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                    getString(R.string.no_internet), bottomPopup);
+            Utilities.showSnackbarText(getContext(), mainLayout, getString(R.string.no_internet));
         }
     }
 
     private void init(View view){
         sharedPreferences = getContext().getSharedPreferences(Values.SHARED_PREFERENCES, Context.MODE_PRIVATE);
 
+        mainLayout = view.findViewById(R.id.main_layout);
         usernameCard = view.findViewById(R.id.username_card);
         passwordCard = view.findViewById(R.id.password_card);
         username = view.findViewById(R.id.username);
@@ -115,27 +110,24 @@ public class ProfileUnsignedRegister extends Fragment implements RegisterCallbac
                 if (usernameText.isEmpty() || usernameText.length() < 4){
                     Animation animShake = AnimationUtils.loadAnimation(getContext(), R.anim.shake);
                     usernameCard.startAnimation(animShake);
-                    bottomPopup = Utilities.getBottomPopupText(getContext(),
-                            R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                            getString(R.string.username_too_short), bottomPopup);
+
+                    Utilities.showSnackbarText(getContext(), mainLayout, getString(R.string.username_too_short));
                     return;
                 }
 
                 if (passwordText.isEmpty() || passwordText.length() < 6){
                     Animation animShake = AnimationUtils.loadAnimation(getContext(), R.anim.shake);
                     passwordCard.startAnimation(animShake);
-                    bottomPopup = Utilities.getBottomPopupText(getContext(),
-                            R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                            getString(R.string.password_too_short), bottomPopup);
+
+                    Utilities.showSnackbarText(getContext(), mainLayout, getString(R.string.password_too_short));
                     return;
                 }
 
                 if (!checkbox.isChecked()){
                     Animation animShake = AnimationUtils.loadAnimation(getContext(), R.anim.shake);
                     checkbox.startAnimation(animShake);
-                    bottomPopup = Utilities.getBottomPopupText(getContext(),
-                            R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                            getString(R.string.checkbox_not_checked), bottomPopup);
+
+                    Utilities.showSnackbarText(getContext(), mainLayout, getString(R.string.checkbox_not_checked));
                 }
                 else{
                     Utilities.register(usernameText, passwordText,

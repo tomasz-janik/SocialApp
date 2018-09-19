@@ -16,9 +16,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import org.parceler.Parcels;
-import pl.itomaszjanik.test.BottomPopup.BottomPopup;
 import pl.itomaszjanik.test.*;
 import pl.itomaszjanik.test.Posts.*;
 import pl.itomaszjanik.test.Remote.GenerateIDCallback;
@@ -32,7 +32,7 @@ public class ProfileSigned extends Fragment implements NoteClickListener, GetPos
     private static final int GEN_START = 1;
     private static final int GEN_REACT = 2;
 
-    private BottomPopup bottomPopup;
+    private RelativeLayout mainLayout;
     private RecyclerView recyclerView;
     private NoteAdapter mNoteAdapter;
     private CardView nonePosts;
@@ -69,6 +69,7 @@ public class ProfileSigned extends Fragment implements NoteClickListener, GetPos
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         init(view);
+
         Bundle bundle = getArguments();
         if (bundle != null){
             if (bundle.getBoolean("refresh", false)){
@@ -111,18 +112,14 @@ public class ProfileSigned extends Fragment implements NoteClickListener, GetPos
     @Override
     public void getPostFailed(){
         if (isAdded()){
-            bottomPopup = Utilities.getBottomPopupText(getContext(),
-                    R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                    getString(R.string.couldnt_refresh), bottomPopup);
+            Utilities.showSnackbarText(getContext(), mainLayout, getString(R.string.couldnt_refresh));
         }
     }
 
     @Override
     public void getPostNoInternet(){
         if (isAdded()){
-            bottomPopup = Utilities.getBottomPopupText(getContext(),
-                    R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                    getString(R.string.no_internet), bottomPopup);
+            Utilities.showSnackbarText(getContext(), mainLayout, getString(R.string.no_internet));
         }
     }
 
@@ -149,27 +146,21 @@ public class ProfileSigned extends Fragment implements NoteClickListener, GetPos
     @Override
     public void reactNoteLikeFailed(){
         if (isAdded()){
-            bottomPopup = Utilities.getBottomPopupText(getContext(),
-                    R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                    getString(R.string.couldnt_like_post), bottomPopup);
+            Utilities.showSnackbarText(getContext(), mainLayout, getString(R.string.couldnt_like_post));
         }
     }
 
     @Override
     public void reactNoteUnlikeFailed(){
         if (isAdded()){
-            bottomPopup = Utilities.getBottomPopupText(getContext(),
-                    R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                    getString(R.string.couldnt_unlike_post), bottomPopup);
+            Utilities.showSnackbarText(getContext(), mainLayout, getString(R.string.couldnt_unlike_post));
         }
     }
 
     @Override
     public void reactNoteNoInternet(){
         if (isAdded()){
-            bottomPopup = Utilities.getBottomPopupText(getContext(),
-                    R.layout.bottom_popup_text, R.id.bottom_popup_text,
-                    getString(R.string.no_internet), bottomPopup);
+            Utilities.showSnackbarText(getContext(), mainLayout, getString(R.string.no_internet));
         }
     }
 
@@ -293,6 +284,7 @@ public class ProfileSigned extends Fragment implements NoteClickListener, GetPos
 
     private void init(View view){
         nonePosts = view.findViewById(R.id.posts_none);
+        mainLayout = view.findViewById(R.id.main_layout);
 
         sharedPreferences = getContext().getSharedPreferences(Values.SHARED_PREFERENCES, Context.MODE_PRIVATE);
         userID = sharedPreferences.getInt("userID", 0);

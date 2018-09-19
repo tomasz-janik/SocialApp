@@ -6,7 +6,6 @@
         android:focusableInTouchMode="true"
         android:clickable="true"
         android:focusable="true"
-        android:fitsSystemWindows="true"
         android:background="#efefef" xmlns:android="http://schemas.android.com/apk/res/android">
 
     <android.support.v7.widget.CardView
