@@ -168,9 +168,12 @@ public class CommentDetailsActivity extends FragmentActivity implements ReactCom
                 getString(R.string.comment_post_added));
 
         Utilities.hideKeyboard(this);
-        //mCommentAdapter.removeLast();
-        //mCommentAdapter.insert(replay);
-        //mCommentAdapter.insertFooter();
+        if (mCommentAdapter.getItemCount() == comment.getReplays() + 3){
+            mCommentAdapter.removeLast();
+            mCommentAdapter.insert(replay);
+            mCommentAdapter.insertFooter();
+        }
+
         comment.incrementReplays();
         updateReplaysNumber();
     }

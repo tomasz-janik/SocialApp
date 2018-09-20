@@ -207,9 +207,12 @@ public class NoteDetailsActivity extends FragmentActivity implements ReactNoteCa
                 getString(R.string.comment_post_added));
 
         Utilities.hideKeyboard(this);
-        mCommentAdapter.removeLast();
-        mCommentAdapter.insert(comment);
-        mCommentAdapter.insertFooter();
+        if (mCommentAdapter.getItemCount() == note.getComments() + 3){
+            mCommentAdapter.removeLast();
+            mCommentAdapter.insert(comment);
+            mCommentAdapter.insertFooter();
+        }
+
         note.incrementComments();
         updateCommentsNumber();
     }
