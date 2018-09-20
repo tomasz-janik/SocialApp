@@ -1,6 +1,5 @@
 package pl.itomaszjanik.test.Fragments;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -8,6 +7,9 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -29,9 +31,9 @@ import pl.itomaszjanik.test.Remote.GenerateIDCallback;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NoteDetailsActivity extends Activity implements ReactNoteCallback, CommentPostCallback, GetCommentsCallback,
+public class NoteDetailsActivity extends FragmentActivity implements ReactNoteCallback, CommentPostCallback, GetCommentsCallback,
         ReactCommentsCallback, UpdateCommentCallback, NoteDetailsClickListener, OnEndScrolled, GenerateIDCallback,
-        CommentClickListener, CommentsFooterClickListener, SwipeRefreshLayout.OnRefreshListener{
+        CommentClickListener, CommentsFooterClickListener, OnLoginClick, SwitchLogged, SwipeRefreshLayout.OnRefreshListener{
 
     private static final int GEN_LOAD = 0;
     private static final int GEN_REACT_POST = 1;
@@ -52,6 +54,7 @@ public class NoteDetailsActivity extends Activity implements ReactNoteCallback, 
 
     private SharedPreferences sharedPreferences;
     private int userID;
+    private boolean login;
 
     private List<Comment> comments = new ArrayList<>();
 
@@ -115,7 +118,9 @@ public class NoteDetailsActivity extends Activity implements ReactNoteCallback, 
     @Override
     public void onBackPressed(){
         super.onBackPressed();
-        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        if (!login) {
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        }
     }
 
     @Override
@@ -377,7 +382,7 @@ public class NoteDetailsActivity extends Activity implements ReactNoteCallback, 
                 }
             });
         }
-        ellipsisPopup.showOnAnchor(findViewById(R.id.comment_ellipsis_icon),
+        ellipsisPopup.showOnAnchor(layout.findViewById(R.id.comment_ellipsis_icon),
                 RelativePopupWindow.VerticalPosition.ABOVE, RelativePopupWindow.HorizontalPosition.ALIGN_RIGHT, true);
 
     }
@@ -453,6 +458,24 @@ public class NoteDetailsActivity extends Activity implements ReactNoteCallback, 
         }
     }
 
+    @Override
+    public void onLoginClick(){
+        login = true;
+        FragmentTransaction mTransaction = getSupportFragmentManager().beginTransaction();
+        Fragment fragment = ProfileUnsigned.newInstance();
+
+        mTransaction.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
+        mTransaction.replace(R.id.main_content, fragment, fragment.getClass().getName());
+        mTransaction.addToBackStack(null);
+
+        mTransaction.commit();
+    }
+
+    @Override
+    public void switchLogged(){
+        getSupportFragmentManager().popBackStack();
+    }
+
     private void init(){
         initInput();
 
@@ -497,8 +520,13 @@ public class NoteDetailsActivity extends Activity implements ReactNoteCallback, 
         findViewById(R.id.note_details_button_back).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish();
-                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                if (!login){
+                    finish();
+                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                }
+                else{
+                    getSupportFragmentManager().popBackStack();
+                }
             }
         });
 

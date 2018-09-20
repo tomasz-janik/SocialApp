@@ -3,7 +3,6 @@ package pl.itomaszjanik.test.Posts;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
 import android.text.Spannable;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
@@ -60,7 +59,7 @@ public class NoteAdapter extends RecyclerView.Adapter{
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
-        if (position == notes.size() - 1){
+        if (position == notes.size() - 5){
             onEndScrolled.onEnd();
         }
         if (holder instanceof CustomViewHolder){

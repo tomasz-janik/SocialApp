@@ -24,6 +24,6 @@ public class Values {
 
     public static final String SHARED_PREFERENCES = "preferences";
 
-    public static final String URL = "https://marcinkurek997.000webhostap.com/";
+    public static final String URL = "https://marcinkurek997.000webhostapp.com/";
 
 }

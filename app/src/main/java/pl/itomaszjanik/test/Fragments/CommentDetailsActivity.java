@@ -1,6 +1,5 @@
 package pl.itomaszjanik.test.Fragments;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -8,6 +7,9 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -29,9 +31,9 @@ import pl.itomaszjanik.test.Replays.ReplaysFooterClickListener;
 
 import java.util.List;
 
-public class CommentDetailsActivity extends Activity implements ReactCommentsCallback, ReplayCommentCallback,
+public class CommentDetailsActivity extends FragmentActivity implements ReactCommentsCallback, ReplayCommentCallback,
         GetReplaysCallback, ReactReplayCallback, CommentClickListener, ReplaysFooterClickListener,
-        GenerateIDCallback, OnEndScrolled {
+        GenerateIDCallback, OnLoginClick, SwitchLogged, OnEndScrolled {
 
     private static final int GEN_LOAD = 0;
     private static final int GEN_REACT_COMMENT = 1;
@@ -166,9 +168,9 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
                 getString(R.string.comment_post_added));
 
         Utilities.hideKeyboard(this);
-        mCommentAdapter.removeLast();
-        mCommentAdapter.insert(replay);
-        mCommentAdapter.insertFooter();
+        //mCommentAdapter.removeLast();
+        //mCommentAdapter.insert(replay);
+        //mCommentAdapter.insertFooter();
         comment.incrementReplays();
         updateReplaysNumber();
     }
@@ -369,6 +371,24 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
         }
     }
 
+    @Override
+    public void onLoginClick(){
+        FragmentTransaction mTransaction = getSupportFragmentManager().beginTransaction();
+        Fragment fragment = ProfileUnsigned.newInstance();
+
+        mTransaction.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
+        mTransaction.replace(R.id.main_content, fragment, fragment.getClass().getName());
+        mTransaction.addToBackStack(null);
+
+        mTransaction.commit();
+    }
+
+    @Override
+    public void switchLogged(){
+        getSupportFragmentManager().popBackStack();
+    }
+
+
     private void initInput(boolean replay){
         input = findViewById(R.id.comment_insert_text);
 
@@ -432,7 +452,8 @@ public class CommentDetailsActivity extends Activity implements ReactCommentsCal
             public void onReplayClick(View v, Replay comment){
                 String output = "@" + comment.getUsername() + " ";
                 Spannable spannable = new SpannableString(output);
-                spannable.setSpan(new BackgroundColorSpan(Color.parseColor("#22000000")),0, output.length() - 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                spannable.setSpan(new BackgroundColorSpan(Color.parseColor("#22000000")),0,
+                        output.length() - 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
                 change = true;
                 length = output.length();

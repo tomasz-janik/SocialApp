@@ -3,6 +3,9 @@ package pl.itomaszjanik.test.Replays;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.BackgroundColorSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -231,7 +234,19 @@ public class ReplayAdapter extends RecyclerView.Adapter{
     private void initReplayMiddleViewHolder(final ReplaysMiddleViewHolder holder, final Replay replay){
         holder.username.setText(replay.getUsername());
         holder.date.setText(Utilities.decodeDate(replay.getDate(), context));
-        holder.content.setText(replay.getContent());
+
+        String replayContent = replay.getContent();
+        if (replayContent.startsWith("@" + mComment.getUsername())){
+            Spannable spannable = new SpannableString(replayContent);
+            spannable.setSpan(new BackgroundColorSpan(Color.parseColor("#22000000")),0,
+                    mComment.getUsername().length() + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            holder.content.setText(spannable);
+        }
+        else{
+            holder.content.setText(replay.getContent());
+        }
+
         holder.likes.setText(String.valueOf(replay.getLikes()));
 
         if (replay.getLiked()){

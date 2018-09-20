@@ -12,6 +12,9 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.FileProvider;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -28,6 +31,10 @@ import org.joda.time.Interval;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import pl.itomaszjanik.test.Comments.*;
+import pl.itomaszjanik.test.Fragments.CommentDetailsActivity;
+import pl.itomaszjanik.test.Fragments.ProfileUnsigned;
+import pl.itomaszjanik.test.Fragments.ProfileUnsignedLogin;
+import pl.itomaszjanik.test.Fragments.ProfileUnsignedRegister;
 import pl.itomaszjanik.test.Posts.GetPostsCallback;
 import pl.itomaszjanik.test.Posts.ReactNoteCallback;
 import pl.itomaszjanik.test.Posts.UpdatePostCallback;
@@ -614,13 +621,13 @@ public class Utilities {
         snackbar.show();
     }
 
-    public static void showSnackbarLogin(Context context, View view, String text){
+    public static void showSnackbarLogin(final OnLoginClick onLoginClick, View view, String text){
         Snackbar snackbar = Snackbar.make(view, text, Snackbar.LENGTH_SHORT);
 
         snackbar.setAction(R.string.login, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                onLoginClick.onLoginClick();
             }
         });
 

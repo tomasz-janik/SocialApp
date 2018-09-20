@@ -1,6 +1,5 @@
 package pl.itomaszjanik.test.Fragments;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -55,7 +54,11 @@ public class ProfileUnsigned extends Fragment implements SwitchLogged{
 
     @Override
     public void switchLogged(){
-        ((SwitchLogged)getParentFragment()).switchLogged();
+        if (getParentFragment() != null)
+            ((SwitchLogged)getParentFragment()).switchLogged();
+        else if (getActivity() != null){
+            ((SwitchLogged)getActivity()).switchLogged();
+        }
     }
 
     private void init(View view){
