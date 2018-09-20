@@ -121,6 +121,19 @@ public class CommentDetailsActivity extends FragmentActivity implements ReactCom
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == Values.REQUEST_FULLSCREEN){
+            if (resultCode == FragmentActivity.RESULT_OK){
+                Bundle bundle = data.getBundleExtra("result");
+                if (bundle != null){
+                    Replay replay = Parcels.unwrap(bundle.getParcelable("replay"));
+                    replayCommentSucceeded(replay);
+                }
+            }
+        }
+    }
+
+    @Override
     public void onBackPressed(){
         super.onBackPressed();
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
@@ -524,9 +537,12 @@ public class CommentDetailsActivity extends FragmentActivity implements ReactCom
                     }
                     input.setText("");
                 }
+                data.putParcelable("comment", Parcels.wrap(comment));
+
                 Intent intent = new Intent(getApplicationContext(), AddCommentActivity.class);
                 intent.putExtras(data);
-                startActivity(intent);
+
+                startActivityForResult(intent, Values.REQUEST_FULLSCREEN);
                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             }
         });
@@ -553,7 +569,6 @@ public class CommentDetailsActivity extends FragmentActivity implements ReactCom
                         else{
                             Utilities.showSnackbarLogin(CommentDetailsActivity.this, findViewById(R.id.main_layout),
                                     getString(R.string.not_logged));
-
                         }
                     }
                     else{

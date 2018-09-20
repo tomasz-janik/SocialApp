@@ -22,6 +22,8 @@ public class Values {
     static final int COMMENT_EMPTY = -1;
     static final int COMMENT_TOO_LONG = -2;
 
+    public static final int REQUEST_FULLSCREEN = 1;
+
     public static final String SHARED_PREFERENCES = "preferences";
 
     public static final String URL = "https://marcinkurek997.000webhostapp.com/";

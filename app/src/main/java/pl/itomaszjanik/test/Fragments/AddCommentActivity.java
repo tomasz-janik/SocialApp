@@ -1,5 +1,8 @@
 package pl.itomaszjanik.test.Fragments;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,14 +17,22 @@ import android.text.style.BackgroundColorSpan;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import org.joda.time.DateTime;
+import org.parceler.Parcels;
 import pl.itomaszjanik.test.*;
+import pl.itomaszjanik.test.Comments.CommentPostCallback;
+import pl.itomaszjanik.test.Comments.ReplayCommentCallback;
 import pl.itomaszjanik.test.ExtendedComponents.ConfirmExitDialogFragment;
 
 public class AddCommentActivity extends FragmentActivity implements ConfirmExitDialogFragment.NoticeDialogListener,
-        OnLoginClick, SwitchLogged{
+        OnLoginClick, SwitchLogged, CommentPostCallback, ReplayCommentCallback {
 
     private EditText input;
     private int length;
+    private SharedPreferences sharedPreferences;
+    private Comment comment;
+    private Note note;
+    private int userID;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -32,6 +43,9 @@ public class AddCommentActivity extends FragmentActivity implements ConfirmExitD
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null){
+            note = Parcels.unwrap(bundle.getParcelable("note"));
+            comment = Parcels.unwrap(bundle.getParcelable("comment"));
+
             String comment = bundle.getString("input", "");
             length = bundle.getInt("name_length", 0);
 
@@ -51,8 +65,7 @@ public class AddCommentActivity extends FragmentActivity implements ConfirmExitD
         }
         input.requestFocus();
 
-        initInput();
-        initListeners();
+        init();
     }
 
     @Override
@@ -84,6 +97,14 @@ public class AddCommentActivity extends FragmentActivity implements ConfirmExitD
         }
     }
 
+    private void init(){
+        initInput();
+        initListeners();
+
+        sharedPreferences = getSharedPreferences(Values.SHARED_PREFERENCES, Context.MODE_PRIVATE);
+        userID = sharedPreferences.getInt("userID", 0);
+    }
+
     private void initInput(){
         input.addTextChangedListener(new TextWatcherBackspace() {
             @Override
@@ -105,7 +126,60 @@ public class AddCommentActivity extends FragmentActivity implements ConfirmExitD
     }
 
     @Override
+    public void commentPostSucceeded(Comment comment){
+        input.setText("");
+
+        Intent returnIntent = new Intent();
+        Bundle data = new Bundle();
+        data.putParcelable("comment", Parcels.wrap(comment));
+        returnIntent.putExtra("result", data);
+
+        setResult(FragmentActivity.RESULT_OK, returnIntent);
+        finish();
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+    }
+
+    @Override
+    public void commentPostFailed(){
+        Utilities.showSnackbarText(this, findViewById(R.id.main_layout),
+                getString(R.string.comment_post_couldnt));
+    }
+
+    @Override
+    public void commentPostNoInternet(){
+        Utilities.showSnackbarText(this, findViewById(R.id.main_layout),
+                getString(R.string.no_internet));
+    }
+
+    @Override
+    public void replayCommentSucceeded(Replay replay){
+        input.setText("");
+
+        Intent returnIntent = new Intent();
+        Bundle data = new Bundle();
+        data.putParcelable("replay", Parcels.wrap(replay));
+        returnIntent.putExtra("result", data);
+
+        setResult(FragmentActivity.RESULT_OK, returnIntent);
+        finish();
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+    }
+
+    @Override
+    public void replayCommentFailed(){
+        Utilities.showSnackbarText(this, findViewById(R.id.main_layout),
+                getString(R.string.comment_post_couldnt));
+    }
+
+    @Override
+    public void replayCommentNoInternet(){
+        Utilities.showSnackbarText(this, findViewById(R.id.main_layout),
+                getString(R.string.no_internet));
+    }
+
+    @Override
     public void onDialogPositiveClick(DialogFragment dialog) {
+        setResult(FragmentActivity.RESULT_CANCELED);
         finish();
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
@@ -131,6 +205,7 @@ public class AddCommentActivity extends FragmentActivity implements ConfirmExitD
     private void onExit(){
         String inputString = input.getText().toString();
         if (inputString.equals("") || inputString.length() == length){
+            setResult(FragmentActivity.RESULT_CANCELED);
             finish();
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         }
@@ -145,6 +220,7 @@ public class AddCommentActivity extends FragmentActivity implements ConfirmExitD
                     exit_dialog.dismiss();
                 }
                 else{
+                    setResult(FragmentActivity.RESULT_CANCELED);
                     finish();
                     overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 }
@@ -163,36 +239,58 @@ public class AddCommentActivity extends FragmentActivity implements ConfirmExitD
         findViewById(R.id.add_comment_commit).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                input.clearFocus();
-                Utilities.hideKeyboard(AddCommentActivity.this);
-
-                int checkComment = Utilities.checkComment(input.getText().toString());
-                if (checkComment > 0){
-                    Utilities.showSnackbarLogin(AddCommentActivity.this,
-                            findViewById(R.id.add_main_layout), getString(R.string.not_logged));
-                }
-                else{
-                    Utilities.errorComment(checkComment, AddCommentActivity.this,
-                            findViewById(R.id.add_main_layout));
-                }
+                addComment();
             }
         });
 
         findViewById(R.id.add_comment_commit_top).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int checkComment = Utilities.checkComment(input.getText().toString());
-                if (checkComment > 0){
-                    Utilities.showSnackbarLogin(AddCommentActivity.this,
-                            findViewById(R.id.add_main_layout), getString(R.string.not_logged));
-                }
-                else{
-                    Utilities.errorComment(checkComment, AddCommentActivity.this,
-                            findViewById(R.id.add_main_layout));
-                }
+                addComment();
             }
         });
     }
 
+
+    private void addComment(){
+        if (input != null){
+            int checkComment = Utilities.checkComment(input.getText().toString());
+
+            if (checkComment > 0){
+                Utilities.hideKeyboard(AddCommentActivity.this);
+                input.clearFocus();
+
+                if (sharedPreferences.getBoolean("signed", false)) {
+                    DateTime dateTime = new DateTime();
+                    String time = dateTime.toString("yyyy-MM-dd HH:mm:ss");
+                    userID = sharedPreferences.getInt("userID", 0);
+
+                    if (note != null){
+                        Utilities.commentPost(note.getId(), userID,
+                                sharedPreferences.getString("username", "Anonim"), time, input.getText().toString(),
+                                AddCommentActivity.this, AddCommentActivity.this);
+                    }
+                    else{
+                        Utilities.replayComment(comment.getCommentID(), userID,
+                                sharedPreferences.getString("username", "Anonim"), time, input.getText().toString(),
+                                AddCommentActivity.this, AddCommentActivity.this);
+                    }
+                }
+                else{
+                    Utilities.showSnackbarLogin(AddCommentActivity.this,
+                            findViewById(R.id.add_main_layout), getString(R.string.not_logged));
+                }
+            }
+            else{
+                Utilities.errorComment(checkComment, AddCommentActivity.this,
+                        findViewById(R.id.add_main_layout));
+            }
+
+        }
+
+
+
+
+    }
 
 }

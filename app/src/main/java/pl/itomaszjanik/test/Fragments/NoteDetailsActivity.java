@@ -116,6 +116,19 @@ public class NoteDetailsActivity extends FragmentActivity implements ReactNoteCa
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == Values.REQUEST_FULLSCREEN){
+            if (resultCode == FragmentActivity.RESULT_OK){
+                Bundle bundle = data.getBundleExtra("result");
+                if (bundle != null){
+                    Comment comment = Parcels.unwrap(bundle.getParcelable("comment"));
+                    commentPostSucceeded(comment);
+                }
+            }
+        }
+    }
+
+    @Override
     public void onBackPressed(){
         super.onBackPressed();
         if (!login) {
@@ -545,9 +558,11 @@ public class NoteDetailsActivity extends FragmentActivity implements ReactNoteCa
                     input.setText("");
                     input.clearFocus();
                 }
+                data.putParcelable("note", Parcels.wrap(note));
+
                 Intent intent = new Intent(getApplicationContext(), AddCommentActivity.class);
                 intent.putExtras(data);
-                startActivity(intent);
+                startActivityForResult(intent, Values.REQUEST_FULLSCREEN);
                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             }
         });
