@@ -74,6 +74,7 @@
     <string name="replay_comment_string">Odpowiedz na komentarz</string>
 
     <string name="report">Zgłoś</string>
+    <string name="remove">Usuń</string>
     <string name="report_commited">Zgłoszenie zostało przyjęte, dziękujemy!</string>
 
     <string name="refresh">Załaduj posty</string>
@@ -122,5 +123,8 @@
     <string name="username_too_short">Login musi być dłuższy niż 3 znaki!</string>
     <string name="password_too_short">Hasło musi być dłuższe niż 5 znaków!</string>
     <string name="checkbox_not_checked">Musisz zaakceptować regulamin!</string>
+
+    <string name="failed">Serwer zrobił umcy-umcy i sie wywalił :(</string>
+    <string name="success">Bumcy-bumcy i nie ma tego ziomulcy :)</string>
 
 </resources>

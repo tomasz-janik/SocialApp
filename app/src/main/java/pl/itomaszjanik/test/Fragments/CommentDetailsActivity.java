@@ -95,29 +95,6 @@ public class CommentDetailsActivity extends FragmentActivity implements ReactCom
     @Override
     public void onResume(){
         super.onResume();
-        int uiOptions;
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT){
-            uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-        }
-        else{
-            uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE;
-        }
-        getWindow().getDecorView().setSystemUiVisibility(uiOptions);
-    }
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        if(hasFocus) {
-            int uiOptions;
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT){
-                uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-            }
-            else{
-                uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE;
-            }
-            getWindow().getDecorView().setSystemUiVisibility(uiOptions);
-        }
     }
 
     @Override

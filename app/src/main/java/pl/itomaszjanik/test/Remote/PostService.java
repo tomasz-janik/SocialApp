@@ -138,4 +138,19 @@ public interface PostService {
     @POST("generateID.php")
     Call<ResponseBody> generateID();
 
+    @POST("remove_post.php")
+    @FormUrlEncoded
+    Call<ResponseBody> removePost(@Field("post_id")  int postID
+    );
+
+    @POST("remove_comment.php")
+    @FormUrlEncoded
+    Call<ResponseBody> removeComment(@Field("comment_id")  int commentID
+    );
+
+    @POST("remove_replay.php")
+    @FormUrlEncoded
+    Call<ResponseBody> removeReplay(@Field("replay_id")  int replayID
+    );
+
 }

@@ -5,6 +5,6 @@ import android.widget.RelativeLayout;
 import pl.itomaszjanik.test.Comment;
 
 public interface EllipsisPopupListener {
-    public void onClick(View v);
+    void onClick(View v);
 
 }

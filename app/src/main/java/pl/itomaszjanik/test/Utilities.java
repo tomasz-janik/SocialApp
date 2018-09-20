@@ -12,9 +12,6 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.FileProvider;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -31,10 +28,6 @@ import org.joda.time.Interval;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import pl.itomaszjanik.test.Comments.*;
-import pl.itomaszjanik.test.Fragments.CommentDetailsActivity;
-import pl.itomaszjanik.test.Fragments.ProfileUnsigned;
-import pl.itomaszjanik.test.Fragments.ProfileUnsignedLogin;
-import pl.itomaszjanik.test.Fragments.ProfileUnsignedRegister;
 import pl.itomaszjanik.test.Posts.GetPostsCallback;
 import pl.itomaszjanik.test.Posts.ReactNoteCallback;
 import pl.itomaszjanik.test.Posts.UpdatePostCallback;
@@ -559,6 +552,81 @@ public class Utilities {
         }
         else{
             generateIDCallback.onGenerateNoInternet(task);
+        }
+    }
+
+    public static void removePost(int postID, final RemoveCallback callback, Context context){
+        if (isNetworkAvailable(context)){
+            PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
+            service.removePost(postID).enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(@Nullable Call<ResponseBody> call, @Nullable Response<ResponseBody> response) {
+                    if (response != null && response.isSuccessful()){
+                        callback.onRemovePostSuccess();
+                    }
+                    else{
+                        callback.onRemoveFailed();
+                    }
+                }
+
+                @Override
+                public void onFailure(@Nullable Call<ResponseBody> call, @Nullable Throwable t) {
+                    callback.onRemoveFailed();
+                }
+            });
+        }
+        else{
+            callback.onRemoveNoInternet();
+        }
+    }
+
+    public static void removeComment(int commentID, final RemoveCallback callback, Context context){
+        if (isNetworkAvailable(context)){
+            PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
+            service.removeComment(commentID).enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(@Nullable Call<ResponseBody> call, @Nullable Response<ResponseBody> response) {
+                    if (response != null && response.isSuccessful()){
+                        callback.onRemoveCommentSuccess();
+                    }
+                    else{
+                        callback.onRemoveFailed();
+                    }
+                }
+
+                @Override
+                public void onFailure(@Nullable Call<ResponseBody> call, @Nullable Throwable t) {
+                    callback.onRemoveFailed();
+                }
+            });
+        }
+        else{
+            callback.onRemoveNoInternet();
+        }
+    }
+
+    public static void removeReplay(int replayID, final RemoveCallback callback, Context context){
+        if (isNetworkAvailable(context)){
+            PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
+            service.removeReplay(replayID).enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(@Nullable Call<ResponseBody> call, @Nullable Response<ResponseBody> response) {
+                    if (response != null && response.isSuccessful()){
+                        callback.onRemoveReplaySuccess();
+                    }
+                    else{
+                        callback.onRemoveFailed();
+                    }
+                }
+
+                @Override
+                public void onFailure(@Nullable Call<ResponseBody> call, @Nullable Throwable t) {
+                    callback.onRemoveFailed();
+                }
+            });
+        }
+        else{
+            callback.onRemoveNoInternet();
         }
     }
 

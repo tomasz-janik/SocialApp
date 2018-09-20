@@ -83,6 +83,7 @@ public class ItemFeed extends Fragment implements ReactNoteCallback, NoteClickLi
     @Override
     public void getPostSucceeded(List<Note> list){
         if (isAdded()){
+            mNoteAdapter.removeNull();
             if (list.size() != 0){
                 refreshLayout.setVisibility(View.GONE);
                 if (loading){
@@ -124,6 +125,8 @@ public class ItemFeed extends Fragment implements ReactNoteCallback, NoteClickLi
 
     @Override
     public void onRefresh() {
+        loading = false;
+        page = 0;
         getPosts();
     }
 

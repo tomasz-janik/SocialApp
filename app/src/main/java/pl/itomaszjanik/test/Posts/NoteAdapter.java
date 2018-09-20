@@ -182,6 +182,13 @@ public class NoteAdapter extends RecyclerView.Adapter{
         notifyItemInserted(notes.size() - 1);
     }
 
+    public void removeNull(){
+        if (notes.size() != 0 && notes.get(notes.size() - 1) == null){
+            notes.remove(notes.size() - 1);
+            notifyItemRemoved(notes.size());
+        }
+    }
+
     public void removeAll(){
         int size = notes.size();
         notes.clear();

@@ -3,6 +3,7 @@ package pl.itomaszjanik.test.EllipsisPopup;
 import android.animation.Animator;
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -14,12 +15,15 @@ import pl.itomaszjanik.test.R;
 
 public class EllipsisPopup extends RelativePopupWindow {
 
+    public EllipsisPopup(){}
+
     public EllipsisPopup(Context context, final EllipsisPopupListener listener) {
         setContentView(LayoutInflater.from(context).inflate(R.layout.popup_card, null));
         setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
         setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
         setOutsideTouchable(true);
-        getContentView().findViewById(R.id.ellipsis_popup_layout).setOnClickListener(new View.OnClickListener() {
+        setBackgroundDrawable(new ColorDrawable());
+        getContentView().findViewById(R.id.ellipsis_popup_report).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dismiss();

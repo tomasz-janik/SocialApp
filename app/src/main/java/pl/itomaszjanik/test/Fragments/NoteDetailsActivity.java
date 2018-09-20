@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -85,33 +84,9 @@ public class NoteDetailsActivity extends FragmentActivity implements ReactNoteCa
     public void onResume(){
         super.onResume();
 
-        int uiOptions;
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT){
-            uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-        }
-        else{
-            uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE;
-        }
-        getWindow().getDecorView().setSystemUiVisibility(uiOptions);
-
         if (currentComment != null){
             userID = sharedPreferences.getInt("userID", 0);
             Utilities.updateCommentCall(userID,this, currentComment);
-        }
-    }
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        if(hasFocus) {
-            int uiOptions;
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT){
-                uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-            }
-            else{
-                uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE;
-            }
-            getWindow().getDecorView().setSystemUiVisibility(uiOptions);
         }
     }
 
@@ -313,7 +288,7 @@ public class NoteDetailsActivity extends FragmentActivity implements ReactNoteCa
     }
 
     @Override
-    public void onNoteEllipsisClick(View view, Note note, RelativeLayout layout){
+    public void onNoteEllipsisClick(View view, final Note note, RelativeLayout layout){
         if (ellipsisPopup == null){
             ellipsisPopup = new EllipsisPopup(view.getContext(), new EllipsisPopupListener(){
                 @Override
@@ -388,11 +363,11 @@ public class NoteDetailsActivity extends FragmentActivity implements ReactNoteCa
     }
 
     @Override
-    public void onCommentEllipsisClick(View v, Comment comment, RelativeLayout layout){
+    public void onCommentEllipsisClick(View view, final Comment comment, RelativeLayout layout){
         if (ellipsisPopup == null){
-            ellipsisPopup = new EllipsisPopup(v.getContext(), new EllipsisPopupListener() {
+            ellipsisPopup = new EllipsisPopup(view.getContext(), new EllipsisPopupListener(){
                 @Override
-                public void onClick(View v) {
+                public void onClick(View view){
                     Utilities.showSnackbarText(NoteDetailsActivity.this, findViewById(R.id.main_layout),
                             getString(R.string.report_commited));
                 }
