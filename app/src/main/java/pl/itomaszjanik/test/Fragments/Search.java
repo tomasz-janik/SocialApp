@@ -125,7 +125,14 @@ public class Search extends Fragment implements MaterialSearchBar.OnSearchAction
             else{
                 mNoteAdapter.removeAll();
                 mNoteAdapter.insert(list);
+                if (list.size() < 10){
+                    mNoteAdapter.insertNull();
+                }
             }
+        }
+        else if (!loading && mNoteAdapter.getItemCount() != 0){
+            mNoteAdapter.removeAll();
+            nonePosts.setVisibility(View.VISIBLE);
         }
         else if (mNoteAdapter.getItemCount() != 0){
             mNoteAdapter.insertNull();
