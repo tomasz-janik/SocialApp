@@ -18,11 +18,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import org.joda.time.DateTime;
+import org.joda.time.Instant;
+import org.joda.time.Interval;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.parceler.Parcels;
 import pl.itomaszjanik.test.*;
 import pl.itomaszjanik.test.Posts.*;
 import pl.itomaszjanik.test.Remote.GenerateIDCallback;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class ItemFeed extends Fragment implements ReactNoteCallback, NoteClickListener, GetPostsCallback,
@@ -86,6 +93,35 @@ public class ItemFeed extends Fragment implements ReactNoteCallback, NoteClickLi
             mNoteAdapter.removeNull();
             if (list.size() != 0){
                 refreshLayout.setVisibility(View.GONE);
+
+                final DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+                final Instant instant = new Instant();
+
+                Collections.sort(list, new Comparator<Note>(){
+                    public int compare(Note note01, Note note02){
+
+                        DateTime date01 = dateTimeFormatter.parseDateTime(note01.getDate());
+                        DateTime date02 = dateTimeFormatter.parseDateTime(note02.getDate());
+
+                        Interval interval01 = new Interval(date01, instant);
+                        Interval interval02 = new Interval(date02, instant);
+
+                        long duration01 = interval01.toDuration().getStandardMinutes();
+                        long duration02 = interval02.toDuration().getStandardMinutes();
+
+                        //double durationRatio = 0.25f;
+                        double likeRatio = 10f;
+
+                        double note01Result = 1 / (double) duration01 + note01.getLikes() * likeRatio;// + note01.getLikes() * likeRatio;
+                        double note02Result = 1 / (double) duration02 + note02.getLikes() * likeRatio;// + note02.getLikes() * likeRatio;
+
+                        double result = Double.compare(note01Result, note02Result);
+                        if(result == 0)
+                            return 0;
+                        return result < 0 ? 1 : -1;
+                    }
+                });
+
                 if (loading){
                     mNoteAdapter.insert(list);
                     loading = false;

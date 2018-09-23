@@ -16,9 +16,9 @@ public interface PostService {
 
     @POST("{type}")
     @FormUrlEncoded
-    Call<List<Note>> getPostsTop(@Path("type")    String type,
+    Call<List<Note>> getPostsTop(@Path("type")     String type,
                                  @Field("user_id") int userID,
-                                 @Field("page")   int page
+                                 @Field("page")    int page
     );
 
     @POST("get_posts_search.php")
@@ -37,9 +37,9 @@ public interface PostService {
 
     @POST("get_comments_post.php")
     @FormUrlEncoded
-    Call<List<Comment>> getCommentsPost(@Field("userID") int userID,
-                                        @Field("postID") int postID,
-                                        @Field("page")   int page
+    Call<List<Comment>> getCommentsPost(@Field("user_id") int userID,
+                                        @Field("post_id") int postID,
+                                        @Field("page")    int page
     );
 
     @POST("get_replays_comment.php")
