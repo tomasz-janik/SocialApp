@@ -2,7 +2,6 @@ package pl.itomaszjanik.test;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -14,10 +13,12 @@ import android.view.ViewGroup;
 
 import com.arlib.floatingsearchview.FloatingSearchView;
 import net.danlew.android.joda.JodaTimeAndroid;
+import org.json.JSONException;
+import org.json.JSONObject;
 import pl.itomaszjanik.test.ExtendedComponents.CustomImage;
 import pl.itomaszjanik.test.Fragments.*;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements InitialData {
 
     private NavigationController mNavigationControllerBottom;
     private TestViewPagerAdapter testViewPagerAdapter;
@@ -31,34 +32,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        JodaTimeAndroid.init(this);
 
-        sharedPreferences = getSharedPreferences(Values.SHARED_PREFERENCES, Context.MODE_PRIVATE);
-        signed = sharedPreferences.getBoolean("signed", false);
-
-        testViewPagerAdapter = new TestViewPagerAdapter(getSupportFragmentManager());
-        viewPager = findViewById(R.id.viewPager);
-        viewPager.setAdapter(testViewPagerAdapter);
-        viewPager.setOffscreenPageLimit(4);
-
-        mNavigationControllerBottom = findViewById(R.id.navigation_bottom);
-        searchView = findViewById(R.id.floating_search_view);
-
-        buttonLogic = new ButtonLogic();
-        initImages();
-
+        init();
     }
-
-    private void initImages(){
-        ((CustomImage) (findViewById(R.id.icon_feed))).init(R.drawable.icon_wall_active_24dp, R.drawable.icon_wall_inactive_24dp);
-        ((CustomImage) (findViewById(R.id.icon_feed))).changeState();
-
-        ((CustomImage) (findViewById(R.id.icon_add))).init(R.drawable.icon_add_24dp, R.drawable.icon_add_24dp);
-        ((CustomImage) (findViewById(R.id.icon_search))).init(R.drawable.icon_search_active_24dp, R.drawable.icon_search_inactive_24dp);
-        ((CustomImage) (findViewById(R.id.icon_top))).init(R.drawable.icon_top_active_24dp, R.drawable.icon_top_active_24dp);
-        ((CustomImage) (findViewById(R.id.icon_profile))).init(R.drawable.icon_profile_active_24dp, R.drawable.icon_profile_inactive_24dp);
-    }
-
 
     public void clickFeed(View view){
         buttonLogic.clickFeed();
@@ -102,6 +78,63 @@ public class MainActivity extends AppCompatActivity {
         else{
             super.onBackPressed();
         }
+    }
+
+    @Override
+    public void initialSuccess(String input){
+        String url;
+        double like_ratio,date_ratio;
+        try{
+            JSONObject jObject = new JSONObject(input);
+            url = jObject.getString("URL");
+            like_ratio = jObject.getDouble("LIKE_RATIO");
+            date_ratio = jObject.getDouble("DATE_RATIO");
+        }
+        catch (JSONException e){
+            return;
+        }
+        Values.URL = url;
+        Values.LIKE_RATIO = like_ratio;
+        Values.DATE_RATIO = date_ratio;
+    }
+
+    @Override
+    public void initialFailed(){}
+
+    @Override
+    public void initialNoInternet(){}
+
+    private void init(){
+        JodaTimeAndroid.init(this);
+
+        initImages();
+        initViews();
+        buttonLogic = new ButtonLogic();
+
+        sharedPreferences = getSharedPreferences(Values.SHARED_PREFERENCES, Context.MODE_PRIVATE);
+        signed = sharedPreferences.getBoolean("signed", false);
+
+        Utilities.init(this, this);
+    }
+
+    private void initViews(){
+        testViewPagerAdapter = new TestViewPagerAdapter(getSupportFragmentManager());
+        viewPager = findViewById(R.id.viewPager);
+        viewPager.setAdapter(testViewPagerAdapter);
+        viewPager.setOffscreenPageLimit(4);
+
+        mNavigationControllerBottom = findViewById(R.id.navigation_bottom);
+        searchView = findViewById(R.id.floating_search_view);
+    }
+
+    private void initImages(){
+        ((CustomImage) (findViewById(R.id.icon_feed))).init(R.drawable.icon_wall_active_24dp, R.drawable.icon_wall_inactive_24dp);
+        ((CustomImage) (findViewById(R.id.icon_feed))).changeState();
+
+        ((CustomImage) (findViewById(R.id.icon_add))).init(R.drawable.icon_add_24dp, R.drawable.icon_add_24dp);
+        ((CustomImage) (findViewById(R.id.icon_search))).init(R.drawable.icon_search_active_24dp, R.drawable.icon_search_inactive_24dp);
+        ((CustomImage) (findViewById(R.id.icon_top))).init(R.drawable.icon_top_active_24dp, R.drawable.icon_top_active_24dp);
+        ((CustomImage) (findViewById(R.id.icon_profile))).init(R.drawable.icon_profile_active_24dp, R.drawable.icon_profile_inactive_24dp);
     }
 
     private class TestViewPagerAdapter extends FragmentPagerAdapter {

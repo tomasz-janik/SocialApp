@@ -109,11 +109,11 @@ public class ItemFeed extends Fragment implements ReactNoteCallback, NoteClickLi
                         long duration01 = interval01.toDuration().getStandardMinutes();
                         long duration02 = interval02.toDuration().getStandardMinutes();
 
-                        //double durationRatio = 0.25f;
-                        double likeRatio = 10f;
+                        double durationRatio = Values.DATE_RATIO;
+                        double likeRatio = Values.LIKE_RATIO;
 
-                        double note01Result = 1 / (double) duration01 + note01.getLikes() * likeRatio;// + note01.getLikes() * likeRatio;
-                        double note02Result = 1 / (double) duration02 + note02.getLikes() * likeRatio;// + note02.getLikes() * likeRatio;
+                        double note01Result = 1 / (double) duration01 * durationRatio + note01.getLikes() * likeRatio;
+                        double note02Result = 1 / (double) duration02 * durationRatio + note02.getLikes() * likeRatio;
 
                         double result = Double.compare(note01Result, note02Result);
                         if(result == 0)

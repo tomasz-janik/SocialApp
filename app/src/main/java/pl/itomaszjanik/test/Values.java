@@ -26,6 +26,8 @@ public class Values {
 
     public static final String SHARED_PREFERENCES = "preferences";
 
-    public static final String URL = "https://disapproved-visitor.000webhostapp.com/";
+    public static String URL = "https://disapproved-visitor.000webhostapp.com/";
+    public static double LIKE_RATIO = 10;
+    public static double DATE_RATIO = 1;
 
 }

@@ -555,78 +555,35 @@ public class Utilities {
         }
     }
 
-    public static void removePost(int postID, final RemoveCallback callback, Context context){
+    public static void init(final InitialData callback, final Context context){
         if (isNetworkAvailable(context)){
             PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
-            service.removePost(postID).enqueue(new Callback<ResponseBody>() {
+            service.init().enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(@Nullable Call<ResponseBody> call, @Nullable Response<ResponseBody> response) {
-                    if (response != null && response.isSuccessful()){
-                        callback.onRemovePostSuccess();
+                    if (response != null && response.body() != null && response.isSuccessful()){
+                        String output;
+                        try{
+                            output = response.body().string();
+                        }
+                        catch (Exception e){
+                            output = "";
+                        }
+                        callback.initialSuccess(output);
                     }
                     else{
-                        callback.onRemoveFailed();
+                        callback.initialFailed();
                     }
                 }
 
                 @Override
                 public void onFailure(@Nullable Call<ResponseBody> call, @Nullable Throwable t) {
-                    callback.onRemoveFailed();
+                    callback.initialFailed();
                 }
             });
         }
         else{
-            callback.onRemoveNoInternet();
-        }
-    }
-
-    public static void removeComment(int commentID, final RemoveCallback callback, Context context){
-        if (isNetworkAvailable(context)){
-            PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
-            service.removeComment(commentID).enqueue(new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(@Nullable Call<ResponseBody> call, @Nullable Response<ResponseBody> response) {
-                    if (response != null && response.isSuccessful()){
-                        callback.onRemoveCommentSuccess();
-                    }
-                    else{
-                        callback.onRemoveFailed();
-                    }
-                }
-
-                @Override
-                public void onFailure(@Nullable Call<ResponseBody> call, @Nullable Throwable t) {
-                    callback.onRemoveFailed();
-                }
-            });
-        }
-        else{
-            callback.onRemoveNoInternet();
-        }
-    }
-
-    public static void removeReplay(int replayID, final RemoveCallback callback, Context context){
-        if (isNetworkAvailable(context)){
-            PostService service = RetrofitClient.getClient(Values.URL).create(PostService.class);
-            service.removeReplay(replayID).enqueue(new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(@Nullable Call<ResponseBody> call, @Nullable Response<ResponseBody> response) {
-                    if (response != null && response.isSuccessful()){
-                        callback.onRemoveReplaySuccess();
-                    }
-                    else{
-                        callback.onRemoveFailed();
-                    }
-                }
-
-                @Override
-                public void onFailure(@Nullable Call<ResponseBody> call, @Nullable Throwable t) {
-                    callback.onRemoveFailed();
-                }
-            });
-        }
-        else{
-            callback.onRemoveNoInternet();
+            callback.initialNoInternet();
         }
     }
 
