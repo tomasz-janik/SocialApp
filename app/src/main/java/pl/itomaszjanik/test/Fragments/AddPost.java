@@ -27,7 +27,6 @@ public class AddPost extends Fragment {
     private EditTextKeyboard mContent, tags;
     private AddedTagView addedTagView;
     private PostService postService;
-    private String hashesh = "";
 
     public AddPost() { }
 
@@ -154,14 +153,6 @@ public class AddPost extends Fragment {
                                 break;
                         }
                     }
-                    else{
-                        if (respond == 0) {
-                            hashesh += " " + tags.getText().toString();
-                        }
-                        else if (respond == -1){
-                            hashesh += " #" + tags.getText().toString();
-                        }
-                    }
                     tags.setText("");
                 }
                 return false;
@@ -202,6 +193,7 @@ public class AddPost extends Fragment {
         addPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                String hashesh = addedTagView.getTags();
                 if (mContent.getText().toString().equals("")){
                     Utilities.showSnackbarText(getContext(), scrollView, getString(R.string.add_empty_content));
                 }

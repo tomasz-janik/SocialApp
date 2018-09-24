@@ -4,10 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.Toast;
 import com.google.android.flexbox.FlexboxLayout;
-import pl.itomaszjanik.test.R;
-import pl.itomaszjanik.test.Utilities;
 import pl.itomaszjanik.test.Values;
 
 import java.util.ArrayList;
@@ -41,11 +38,9 @@ public class AddedTagView extends FlexboxLayout {
     public int addTag(String text){
         if (noOfTags < Values.MAX_TAGS_NUMBER){
             if (text == null || text.equals("")){
-                //Toast.makeText(getContext(), getResources().getString(R.string.tags_invalid), Toast.LENGTH_SHORT).show();
                 return INVALID;
             }
             if (checkDuplicate(text)){
-                //Toast.makeText(getContext(), getResources().getString(R.string.tags_duplicate), Toast.LENGTH_SHORT).show();
                 return DUPLICATE;
             }
             SingleAddedTag tag = new SingleAddedTag(getContext());
@@ -59,7 +54,6 @@ public class AddedTagView extends FlexboxLayout {
             return format;
         }
         else{
-            //Toast.makeText(getContext(), getResources().getString(R.string.tags_too_many), Toast.LENGTH_LONG).show();
             return LIMIT;
         }
     }
@@ -106,13 +100,14 @@ public class AddedTagView extends FlexboxLayout {
         }
     }
 
-    /**
-     *
-     * @return true if there can't be anymore tags, false when there can be
-     */
-    public boolean isViewFull(){
-        return noOfTags == Values.MAX_TAGS_NUMBER;
-    }
+    public String getTags(){
+        StringBuilder builder = new StringBuilder();
+        for (SingleAddedTag tag : addedTags){
+            builder.append(tag.getText());
+            builder.append(" ");
+        }
 
+        return builder.toString();
+    }
 
 }

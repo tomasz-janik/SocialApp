@@ -45,7 +45,7 @@ public class NoteDetailsActivity extends FragmentActivity implements ReactNoteCa
     private int page;
 
     private Comment currentComment;
-    private View currentCommentView, currentNoteView;
+    private View currentCommentView = null, currentNoteView = null;
 
     private RecyclerView recyclerView;
     private CommentAdapter mCommentAdapter;
@@ -307,6 +307,7 @@ public class NoteDetailsActivity extends FragmentActivity implements ReactNoteCa
     public void onNoteShareClick(View view, Note note){
         Utilities.showSnackbarLoad(this, findViewById(R.id.main_layout), getString(R.string.loading));
 
+        currentNoteView = null;
         Bitmap screenshot = Utilities.getBitmapNote(this, note);
         Utilities.share(screenshot, NoteDetailsActivity.this);
     }
@@ -381,6 +382,8 @@ public class NoteDetailsActivity extends FragmentActivity implements ReactNoteCa
     @Override
     public void onCommentShareClick(View v, Comment comment){
         Utilities.showSnackbarLoad(this, findViewById(R.id.main_layout), getString(R.string.loading));
+
+        currentCommentView = null;
 
         Bitmap screenshot = Utilities.getBitmapComment(this, note, comment);
         Utilities.share(screenshot, this);

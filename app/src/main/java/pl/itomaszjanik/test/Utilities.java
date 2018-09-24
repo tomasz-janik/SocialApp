@@ -849,7 +849,8 @@ public class Utilities {
         final View view = LayoutInflater.from(activity).inflate(R.layout.screenshoot_comment, (ViewGroup) activity.findViewById(R.id.main_layout), false);
 
         setNoteDetails(view, note);
-        ((TextView)(view.findViewById(R.id.note_details_comments_number))).setText(String.valueOf(note.getComments()));
+        ((TextView)(view.findViewById(R.id.note_details_comments_number))).setText(
+                getCommentVariation(comment.getReplays(), activity));
 
         RelativeLayout commentMain = view.findViewById(R.id.comment_main);
         setCommentDetails(commentMain, comment, activity);
@@ -882,7 +883,8 @@ public class Utilities {
         final View view = LayoutInflater.from(activity).inflate(R.layout.screenshoot_replay, (ViewGroup) activity.findViewById(R.id.main_layout), false);
 
         setNoteDetails(view, note);
-        ((TextView)(view.findViewById(R.id.note_details_comments_number))).setText(String.valueOf(note.getComments()));
+        ((TextView)(view.findViewById(R.id.note_details_comments_number))).setText(
+                getCommentVariation(comment.getReplays(), activity));
 
         RelativeLayout commentMain = view.findViewById(R.id.comment_main);
         setCommentDetails(commentMain, comment, activity);
@@ -923,6 +925,7 @@ public class Utilities {
         ((TextView)view.findViewById(R.id.note_details_user)).setText(note.getUsername());
         ((TextView)view.findViewById(R.id.note_details_date)).setText(Utilities.decodeDate(note.getDate(), view.getContext()));
         ((TextView)view.findViewById(R.id.note_details_like_number)).setText(String.valueOf(note.getLikes()));
+        ((TextView)view.findViewById(R.id.note_comments_number)).setText(String.valueOf(note.getComments()));
     }
 
     private static void setCommentDetails(RelativeLayout layout, Comment comment, Activity activity){

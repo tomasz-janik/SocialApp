@@ -161,7 +161,7 @@
                             app:srcCompat="@drawable/icon_comments_gray_12dp"/>
 
                     <TextView
-                            android:id="@+id/note_details_comments_number"
+                            android:id="@+id/note_comments_number"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="4dp"
@@ -177,8 +177,8 @@
                             android:id="@+id/note_details_comment"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_toRightOf="@+id/note_details_item_replays"
-                            android:layout_toEndOf="@id/note_details_item_replays"
+                            android:layout_toRightOf="@+id/note_comments_number"
+                            android:layout_toEndOf="@id/note_comments_number"
                             android:layout_marginLeft="4dp"
                             android:layout_marginStart="4dp"
                             android:layout_marginRight="12dp"

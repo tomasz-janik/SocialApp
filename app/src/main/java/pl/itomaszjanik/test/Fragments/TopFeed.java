@@ -338,6 +338,9 @@ public class TopFeed extends Fragment implements ReactNoteCallback, NoteClickLis
                     currentView = null;
                     loading = false;
                     page = 0;
+                    mSwipeRefreshLayout.setRefreshing(true);
+                    mNoteAdapter.removeAll();
+
                     switch (value){
                         case Values.DAILY:
                             TYPE_CURRENT = TYPE_DAILY;

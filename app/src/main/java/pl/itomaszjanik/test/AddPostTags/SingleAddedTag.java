@@ -5,14 +5,11 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import pl.itomaszjanik.test.R;
-import pl.itomaszjanik.test.Values;
 
 public class SingleAddedTag extends LinearLayout {
 
@@ -39,9 +36,8 @@ public class SingleAddedTag extends LinearLayout {
     }
 
     private void init(){
-        textView = (TextView) this.findViewById(R.id.added_hash_text);
-        imageButton = (ImageButton) this.findViewById(R.id.added_hash_remove);
-        //this.setAlpha(0);
+        textView = this.findViewById(R.id.added_hash_text);
+        imageButton = this.findViewById(R.id.added_hash_remove);
     }
 
     public int setText(String text){
@@ -60,29 +56,21 @@ public class SingleAddedTag extends LinearLayout {
     }
 
     @Nullable
-    public ImageButton getRemoveButton(){
+    ImageButton getRemoveButton(){
         if (imageButton != null){
             return imageButton;
         }
         return null;
     }
 
-    public void fadeIn(){
+    void fadeIn(){
         if (!visible){
             visible = true;
             getAnimator().start();
         }
     }
 
-    public void fadeOut(){
-        if (visible){
-            visible = false;
-            getAnimator().reverse();
-        }
-    }
-
     private ObjectAnimator getAnimator(){
-
         if (animator == null){
             animator = ObjectAnimator.ofFloat(this,"alpha",0, 1);
 

@@ -289,6 +289,9 @@ public class CommentDetailsActivity extends FragmentActivity implements ReactCom
     public void onCommentShareClick(View view, Comment comment){
         Utilities.showSnackbarLoad(CommentDetailsActivity.this, findViewById(R.id.main_layout),
                 getString(R.string.loading));
+
+        currentCommentView = null;
+
         Bitmap screenshot = Utilities.getBitmapComment(this, note, comment);
         Utilities.share(screenshot, this);
     }
@@ -479,6 +482,8 @@ public class CommentDetailsActivity extends FragmentActivity implements ReactCom
             public void onShareClick(View v, Replay replay){
                 Utilities.showSnackbarLoad(CommentDetailsActivity.this, findViewById(R.id.main_layout),
                         getString(R.string.loading));
+
+                currentReplayView = null;
 
                 Bitmap screenshot = Utilities.getBitmapReplay(CommentDetailsActivity.this, note, comment, replay);
                 Utilities.share(screenshot, CommentDetailsActivity.this);
